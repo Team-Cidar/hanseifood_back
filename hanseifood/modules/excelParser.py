@@ -1,9 +1,11 @@
 import pandas as pd
 import datetime as dt
+import openpyxl
 
 
 def parse_students_menu(file_path):
     df = pd.read_excel(file_path, engine='openpyxl')
+
     df = df.iloc[3:11, 1:7]  # get only menu range
     df = df.transpose()
     # fill Nan data in date column as the right before data (e.g. mon tue wed Nan thu fri => mon tue wed wed thu fri)
@@ -56,7 +58,7 @@ def parse_students_menu(file_path):
                 continue
         daily_menus[key] = menus
 
-    print(daily_menus)
+    return daily_menus
 
 
 def parse_employee_menu(file_path):
