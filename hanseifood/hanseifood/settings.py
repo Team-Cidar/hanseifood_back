@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'food',
 
     # scheduler
-    'django_apscheduler'
+    'django_apscheduler',
 
     # something
     'django.contrib.admin',
