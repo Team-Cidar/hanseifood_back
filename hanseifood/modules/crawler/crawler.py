@@ -54,6 +54,13 @@ class ExcelCrawler:
 
 
 if __name__ == '__main__':
-    driver_path = "./drivers/chromedriver"
-    ex = ExcelCrawler(driver_path)
-    ex.getFile()  # 크롤링, 다운로드, 이름변경 3종 세트 메서드
+    # driver_path = "./drivers/chromedriver"
+    # ex = ExcelCrawler(driver_path)
+    # ex.getFile()  # 크롤링, 다운로드, 이름변경 3종 세트 메서드
+
+    import sys, os
+    sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+    import excelParser as ep
+
+    path = os.path.dirname(os.path.abspath(os.path.dirname(__file__))) + '/test2.xlsx'
+    print(ep.parse_excel(path))
