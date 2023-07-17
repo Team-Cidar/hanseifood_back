@@ -34,6 +34,9 @@ INSTALLED_APPS = [
     # my apps
     'food',
 
+    # scheduler
+    'django_apscheduler'
+
     # something
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,6 +46,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'modules'
 ]
+
+# for scheduler
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # default 로그 타임스탬프
+
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # default 최대 실행시간
+
+SCHEDULER_DEFAULT = True
+
+############
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

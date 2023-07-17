@@ -6,14 +6,14 @@ class Day(models.Model):
     date = models.DateField(null=False)
 
     def __str__(self):
-        return self.title
+        return self.date
 
 
 class Meal(models.Model):
     meal_name = models.TextField()
 
     def __str__(self):
-        return self.title
+        return self.meal_name
 
 
 class DayMeal(models.Model):
@@ -21,4 +21,4 @@ class DayMeal(models.Model):
     meal_id = models.ForeignKey(Meal, on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return self.title
+        return str(self.day_id) + '/' + str(self.meal_id)
