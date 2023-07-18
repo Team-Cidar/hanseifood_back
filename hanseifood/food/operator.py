@@ -17,7 +17,6 @@ def start():
             get_menu_data_schedule,
             trigger=CronTrigger(
                 day_of_week='mon', hour=8
-                # second=30,
             ),
             id='get_menu',
             max_instances=1,

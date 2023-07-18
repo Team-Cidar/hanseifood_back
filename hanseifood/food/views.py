@@ -1,43 +1,33 @@
+import datetime
+
 from django.http import HttpResponse, JsonResponse
 from .models import Day, Meal, DayMeal
+from .response_objs.menuResponse import MenuResponse
 
 
 def index(request):
     return HttpResponse("Hello world!")
 
 
-# /student
-def student_food_table(request):
-## Day table생성
-    file_path = "datas/test2.xlsx"  # 크롤링한 엑셀파일
-    data = excelParser.ExcelParser.parse_excel(file_path)
-    # response = JsonResponse(data, json_dumps_params={'ensure_ascii': False})
+# /menus GET
+def get_menu(request):
+    today = Day.objects.filter(date=datetime.datetime.today())[0]  # get day obj of today in db
+    todays_meal = DayMeal.objects.filter(day_id=today)  # get today's menus in db
 
-    for i in data.keys():
-        test = Day(date=f"{i}")
-        test.save()
-    sample = Day.objects.first()
-    response = sample.date
+    response = MenuResponse(today.date)
 
-    # sample.delete()
+    for item in todays_meal:
+        if item.for_student:
+            response.student_menu.append(item.meal_id.meal_name)
+        else:
+            response.employee_menu.append(item.meal_id.meal_name)
 
-    for i in data.values():
-        print(i)
+    if len(response.student_menu) == 0:
+        response.only_employee = True
 
-## 전체 삭제
-    # response = 0
-    # temp = Day.objects.all()
-    # temp.delete()
+    if len(response.employee_menu) > 1 and not response.only_employee:
+        response.has_two_menus = True
 
+    response_json = response.toJson()
 
-## test
-    # Day(date="")
-    # test = Meal(meal_name='helllllllllllo')  # create
-    # test.save()
-    #
-    # sample = Meal.objects.first()  # read
-    # response = sample.meal_name
-    # sample.delete()
-
-    response = 0
-    return HttpResponse(response)
+    return HttpResponse(response_json)
