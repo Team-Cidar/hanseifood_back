@@ -59,6 +59,7 @@ class ExcelCrawler:
 
 
 if __name__ == '__main__':
+    ...
     # driver_path = "./drivers/chromedriver"
     # ex = ExcelCrawler(driver_path)
     # ex.getFile()  # 크롤링, 다운로드, 이름변경 3종 세트 메서드
