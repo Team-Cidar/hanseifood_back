@@ -1,5 +1,4 @@
 from django.http import HttpResponse, JsonResponse
-from modules import excelParser
 from .models import Day, Meal, DayMeal
 
 
@@ -9,9 +8,8 @@ def index(request):
 
 # /student
 def student_food_table(request):
-
 ## Day table생성
-    file_path = "modules/test2.xlsx"  # 크롤링한 엑셀파일
+    file_path = "datas/test2.xlsx"  # 크롤링한 엑셀파일
     data = excelParser.ExcelParser.parse_excel(file_path)
     # response = JsonResponse(data, json_dumps_params={'ensure_ascii': False})
 
@@ -41,4 +39,5 @@ def student_food_table(request):
     # response = sample.meal_name
     # sample.delete()
 
+    response = 0
     return HttpResponse(response)

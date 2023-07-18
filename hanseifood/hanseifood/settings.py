@@ -34,9 +34,6 @@ INSTALLED_APPS = [
     # my apps
     'food',
 
-    # scheduler
-    'django_apscheduler',
-
     # something
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,11 +41,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'modules'
+    'modules',
+    'datas',
+    'drivers',
+    'logs',
+
+    # scheduler
+    'django_apscheduler',
 ]
 
 # for scheduler
-APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # default 로그 타임스탬프
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # default 최대 실행시간
 
@@ -92,8 +95,14 @@ WSGI_APPLICATION = 'hanseifood.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hansei_food',
+        'USER': 'django',
+        'PASSWORD': 'django',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 

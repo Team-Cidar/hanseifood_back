@@ -1,7 +1,5 @@
 import pandas as pd
 import datetime as dt
-import openpyxl
-
 
 class ExcelParser:
     @staticmethod
@@ -92,13 +90,13 @@ class ExcelParser:
     def parse_excel(file_path):
         excel = pd.read_excel(file_path, engine='openpyxl')
         if len(excel.columns) == 12:
-            return ExcelParser._parse_employee_menu(excel)
+            return ExcelParser._parse_employee_menu(excel), False
         else:
-            return ExcelParser._parse_students_menu(excel)
+            return ExcelParser._parse_students_menu(excel), True
 
 
 if __name__ == "__main__":
     # parse_employee_menu('test1.xlsx')
     # parse_students_menu('test2.xlsx')
-    print(ExcelParser.parse_excel('test2.xlsx'))
-    print(ExcelParser.parse_excel('test1.xlsx'))
+    print(ExcelParser.parse_excel('../datas/test2.xlsx'))
+    print(ExcelParser.parse_excel('../datas/test1.xlsx'))

@@ -1,0 +1,84 @@
+import datetime
+import logging
+from food.models import Day, DayMeal, Meal
+
+from modules.crawler import ExcelCrawler
+from modules.excelParser import ExcelParser
+
+
+# scheduler에 등록할 함수
+def get_menu_data_schedule():
+    logger = logging.getLogger('hanseifood.scheduler.get_menu_data_schedule')
+    try:
+        logger.info('Execute scheduled job / get_menu_data_schedule')
+        # clear all datas
+        Day.objects.all().delete()
+        Meal.objects.all().delete()
+        DayMeal.objects.all().delete()
+
+        # crawling
+        crawler = ExcelCrawler('drivers/chromedriver')
+        file_name = crawler.getFile()
+
+        # parse
+        path = 'datas/' + file_name + '.xlsx'
+        data, for_both = ExcelParser.parse_excel(path)
+
+        if for_both:
+            template1(data)  # for both students & employees (during the semester)
+        else:
+            template2(data)  # for only employees (during the vacation)
+    except Exception as e:
+        logger.error(e)
+
+
+def template1(res):
+    for day in res.keys():
+        date = datetime.datetime.strptime(day, '%Y-%m-%d')
+        db_day = Day(date=date)  # Days
+        db_day.save()
+
+        meals_per_day = []
+        if type(res[day][0]) is list:  # 메뉴 두개인 날
+            std, emp = res[day][0], res[day][1]
+            saved_menus = save_menus(menus=std, is_for_student=True)  # 학생 식당 메뉴 저장
+            meals_per_day.extend(saved_menus)  # day_meal table에 data 추가 위한 리스트
+            saved_menus = save_menus(menus=emp, is_for_student=False)  # 교직원 식당 메뉴 저장
+            meals_per_day.extend(saved_menus)
+        else:  # 메뉴 한개인 날
+            saved_menus = save_menus(menus=res[day], is_for_student=True)
+            meals_per_day.extend(saved_menus)
+
+        for menu, for_student in meals_per_day:  # day_meal에 추가
+            db_day_meal = DayMeal(day_id=db_day, meal_id=menu, for_student=for_student)
+            db_day_meal.save()
+
+
+def template2(res):
+    for day in res.keys():
+        date = datetime.datetime.strptime(day, '%Y-%m-%d')
+        db_day = Day(date=date)  # Days
+        db_day.save()
+
+        meals_per_day = []
+        saved_menus = save_menus(menus=res[day], is_for_student=False)
+        meals_per_day.extend(saved_menus)
+
+        for menu, for_student in meals_per_day:  # day_meal에 추가
+            db_day_meal = DayMeal(day_id=db_day, meal_id=menu, for_student=for_student)
+            db_day_meal.save()
+
+
+def save_menus(menus, is_for_student):
+    saved_meals = []
+    for menu in menus:
+        db_meal = Meal.objects.filter(meal_name=menu)  # 음식 저장
+        if not db_meal.exists():
+            db_meal = Meal(meal_name=menu)  # Meals
+            db_meal.save()
+        else:
+            db_meal = db_meal[0]
+        saved_meals.append([db_meal, is_for_student])
+    if is_for_student and len(saved_meals) > 5:  # 메뉴 6개 이상이면 마지막껀 교직원용 메뉴임
+        saved_meals[-1][1] = False
+    return saved_meals
