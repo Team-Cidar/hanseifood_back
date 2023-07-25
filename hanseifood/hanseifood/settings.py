@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'modules',
     'datas',
     'drivers',
-    'logs',
+    # 'logs',
 
     # my apps
     'food',

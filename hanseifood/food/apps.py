@@ -15,6 +15,8 @@ class FoodsConfig(AppConfig):
     sh.setFormatter(fm)
     logger.addHandler(sh)
 
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
     fh = logging.FileHandler('logs/scheduler.log')
     fh.setFormatter(fm)
     logger.addHandler(fh)
