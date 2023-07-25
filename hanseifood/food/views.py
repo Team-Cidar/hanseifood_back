@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from .models import Day, Meal, DayMeal
 from .response_objs.menuResponse import MenuResponse
 from .utils.menus import getDailyMenu
+from .utils.dates import getDatesInThisWeek
 
 
 def index(request):
@@ -22,4 +23,11 @@ def get_todays_menu(request):
 
 # /menus/week
 def get_weekly_menus(request):
-    today = datetime.today()
+    this_week = getDatesInThisWeek()
+
+    responses = []
+    for day in this_week:
+        daily_menu = getDailyMenu(day)
+        responses.append(daily_menu)
+
+    return HttpResponse(MenuResponse.listToJson(responses))

@@ -29,3 +29,15 @@ from unknown error: web view not found
 2023-07-25 09:09:16,066 - hanseifood.scheduler.get_menu_data_schedule - ERROR - [Errno 2] No such file or directory: ''
 2023-07-25 09:11:39,657 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
 2023-07-25 09:15:19,137 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 09:51:37,220 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 10:37:21,420 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 10:37:31,032 - hanseifood.scheduler.get_menu_data_schedule - ERROR - 'str' object has no attribute 'objects'
+2023-07-25 10:38:34,879 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 10:39:13,870 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 10:41:35,701 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 10:43:27,963 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 10:43:47,398 - hanseifood.scheduler.get_menu_data_schedule - INFO - 2023-07-24 is already exists
+2023-07-25 10:43:47,399 - hanseifood.scheduler.get_menu_data_schedule - INFO - 2023-07-25 is already exists
+2023-07-25 10:43:47,400 - hanseifood.scheduler.get_menu_data_schedule - INFO - 2023-07-26 is already exists
+2023-07-25 10:43:47,401 - hanseifood.scheduler.get_menu_data_schedule - INFO - 2023-07-27 is already exists
+2023-07-25 10:43:47,402 - hanseifood.scheduler.get_menu_data_schedule - INFO - 2023-07-28 is already exists

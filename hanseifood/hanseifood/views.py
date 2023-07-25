@@ -5,16 +5,17 @@ from food.models import Day, DayMeal, Meal
 from modules.crawler import ExcelCrawler
 from modules.excelParser import ExcelParser
 
+logger = logging.getLogger('hanseifood.scheduler.get_menu_data_schedule')
+
 
 # scheduler에 등록할 함수
 def get_menu_data_schedule():
-    logger = logging.getLogger('hanseifood.scheduler.get_menu_data_schedule')
     try:
         logger.info('Execute scheduled job / get_menu_data_schedule')
         # clear all datas
-        Day.objects.all().delete()
-        Meal.objects.all().delete()
-        DayMeal.objects.all().delete()
+        # Day.objects.all().delete()
+        # Meal.objects.all().delete()
+        # DayMeal.objects.all().delete()
 
         # crawling
         crawler = ExcelCrawler('drivers/chromedriver114')
@@ -25,16 +26,23 @@ def get_menu_data_schedule():
         data, for_both = ExcelParser.parse_excel(path)
 
         if for_both:
-            template1(data)  # for both students & employees (during the semester)
+            save_template1_data(data)  # for both students & employees (during the semester)
         else:
-            template2(data)  # for only employees (during the vacation)
+            save_template2_data(data)  # for only employees (during the vacation)
     except Exception as e:
         logger.error(e)
 
 
-def template1(res):
+def save_template1_data(res):
     for day in res.keys():
         date = datetime.datetime.strptime(day, '%Y-%m-%d')
+
+        # check if this day's data exists
+        db_day = Day.objects.filter(date=date)
+        if db_day.exists():
+            logger.info(f'{day} is already exists')
+            continue
+
         db_day = Day(date=date)  # Days
         db_day.save()
 
@@ -54,9 +62,16 @@ def template1(res):
             db_day_meal.save()
 
 
-def template2(res):
+def save_template2_data(res):
     for day in res.keys():
         date = datetime.datetime.strptime(day, '%Y-%m-%d')
+
+        # check if this day's data exists
+        db_day = Day.objects.filter(date=date)
+        if db_day.exists():
+            logger.info(f'{day} is already exists')
+            continue
+
         db_day = Day(date=date)  # Days
         db_day.save()
 
