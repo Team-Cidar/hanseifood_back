@@ -1,0 +1,31 @@
+2023-07-25 08:15:41,828 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:15:42,883 - hanseifood.scheduler.get_menu_data_schedule - ERROR - Message: unknown error: cannot find Chrome binary
+
+2023-07-25 08:27:25,902 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:27:36,909 - hanseifood.scheduler.get_menu_data_schedule - ERROR - [Errno 2] No such file or directory: 'datas/20230725.xlsx'
+2023-07-25 08:43:37,604 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:44:45,249 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:46:30,800 - hanseifood.scheduler.get_menu_data_schedule - ERROR - Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=115.0.5790.102)
+
+2023-07-25 08:47:30,815 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:48:10,865 - hanseifood.scheduler.get_menu_data_schedule - ERROR - Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=115.0.5790.102)
+
+2023-07-25 08:48:54,794 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:49:39,814 - hanseifood.scheduler.get_menu_data_schedule - ERROR - [Errno 2] No such file or directory: 'datas/20230725.xlsx'
+2023-07-25 08:51:30,813 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:55:23,590 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:55:43,059 - hanseifood.scheduler.get_menu_data_schedule - ERROR - [Errno 2] No such file or directory: ''
+2023-07-25 08:56:20,524 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:56:27,487 - hanseifood.scheduler.get_menu_data_schedule - ERROR - [Errno 2] No such file or directory: ''
+2023-07-25 08:57:17,501 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 08:58:54,380 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 09:05:15,220 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 09:06:03,973 - hanseifood.scheduler.get_menu_data_schedule - ERROR - [Errno 2] No such file or directory: ''
+2023-07-25 09:08:27,788 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 09:09:16,066 - hanseifood.scheduler.get_menu_data_schedule - ERROR - [Errno 2] No such file or directory: ''
+2023-07-25 09:11:39,657 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule
+2023-07-25 09:15:19,137 - hanseifood.scheduler.get_menu_data_schedule - INFO - Execute scheduled job / get_menu_data_schedule

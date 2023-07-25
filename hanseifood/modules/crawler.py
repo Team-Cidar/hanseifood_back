@@ -45,8 +45,18 @@ class ExcelCrawler:
         files = glob.glob(download_path)
         bef_len = len(files)
         a_tag.click()
-        while len(files) == bef_len:
+        latest_file = max(files, key=os.path.getctime)
+        while latest_file.endswith('crdownload') or len(files) == bef_len:  # wait until finish downloading
             files = glob.glob(download_path)
+            latest_file = max(files, key=os.path.getctime)
+            time.sleep(1)
+
+        temp_download_file = ''
+        for file in files:
+            if file.endswith('crdownload'):
+                temp_download_file = file
+        if len(temp_download_file) != 0:
+            os.remove(temp_download_file)  # remove temp file
 
     def __rename_last_downloaded_file(self):
         files = glob.glob(os.getcwd() + '/datas/*')
@@ -60,6 +70,6 @@ class ExcelCrawler:
 
 if __name__ == '__main__':
     ...
-    # driver_path = "./drivers/chromedriver"
+    # driver_path = "./drivers/chromedriver113"
     # ex = ExcelCrawler(driver_path)
     # ex.getFile()  # 크롤링, 다운로드, 이름변경 3종 세트 메서드

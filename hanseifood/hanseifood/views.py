@@ -17,7 +17,7 @@ def get_menu_data_schedule():
         DayMeal.objects.all().delete()
 
         # crawling
-        crawler = ExcelCrawler('drivers/chromedriver')
+        crawler = ExcelCrawler('drivers/chromedriver114')
         file_name = crawler.getFile()
 
         # parse
