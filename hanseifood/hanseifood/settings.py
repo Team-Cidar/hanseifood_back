@@ -146,3 +146,57 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Logger settings
+import os
+
+if not os.path.exists(BASE_DIR / 'logs'):
+    os.mkdir(BASE_DIR / 'logs')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '[%(asctime)s] %(name)s - %(levelname)s - %(message)s'
+        },
+        'request': {  # 차후 요청 ip 추가 예정
+            'format': '[%(asctime)s] %(name)s - %(levelname)s - %(message)s'
+        }
+    },
+    'handlers': {
+        'file_scheduler': {
+            'level': 'INFO',
+            'encoding': 'utf-8',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs/scheduler.log',
+            'formatter': 'standard'
+        },
+        'file_default': {
+            'level': 'INFO',
+            'encoding': 'utf-8',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs/server.log',
+            'formatter': 'request'
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        }
+    },
+    'loggers': {
+        'food.utils.schedulers': {
+            'handlers': ['console', 'file_scheduler'],
+            'level': 'DEBUG'
+        },
+        'django.server': {
+            'handlers': ['console', 'file_default'],
+            'level': 'INFO'
+        }
+    }
+}

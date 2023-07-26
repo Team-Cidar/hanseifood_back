@@ -7,7 +7,7 @@ from modules.crawler import MenuCrawler
 from modules.excel_parser import ExcelParser
 from food.utils.dates import get_dates_in_this_week
 
-logger = logging.getLogger('food.utils.schedulers.crawling_job')
+logger = logging.getLogger(__name__)
 __all__ = ['save_menu_scheduler_job']  # ~~ import * 로 불러오면 이 함수만 import 됨
 
 

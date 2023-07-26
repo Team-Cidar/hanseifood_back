@@ -8,21 +8,6 @@ class FoodsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'food'
 
-    # log settings for scheduler
-    logger = logging.getLogger('food.utils.schedulers.crawling_job')
-    logger.setLevel(logging.DEBUG)
-
-    fm = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    sh = logging.StreamHandler()
-    sh.setFormatter(fm)
-    logger.addHandler(sh)
-
-    if not os.path.exists('logs'):
-        os.mkdir('logs')
-    fh = logging.FileHandler('logs/scheduler.log')
-    fh.setFormatter(fm)
-    logger.addHandler(fh)
-
     def ready(self):
         super().ready()
 

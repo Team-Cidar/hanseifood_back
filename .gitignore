@@ -1,4 +1,4 @@
 .idea/
 env/
 hanseifood/.idea/
-*.log
+hanseifood/logs
