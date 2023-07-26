@@ -1,5 +1,7 @@
+import logging
+import os
+
 from django.apps import AppConfig
-import os, logging
 
 
 class FoodsConfig(AppConfig):
@@ -7,7 +9,7 @@ class FoodsConfig(AppConfig):
     name = 'food'
 
     # log settings for scheduler
-    logger = logging.getLogger('hanseifood.scheduler.get_menu_data_schedule')
+    logger = logging.getLogger('food.utils.schedulers.crawling_job')
     logger.setLevel(logging.DEBUG)
 
     fm = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -31,6 +33,6 @@ class FoodsConfig(AppConfig):
             from . import operator
             operator.start()
 
-            # get menu data when run server
-            from hanseifood.views import get_menu_data_schedule
-            get_menu_data_schedule()
+            # do scheduled job once server started
+            from .utils.schedulers.crawling_job import save_menu_scheduler_job
+            save_menu_scheduler_job()

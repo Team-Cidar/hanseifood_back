@@ -1,4 +1,4 @@
-from .abstractResponse import AbstractResponse
+from .abstract_response import AbstractResponse
 
 
 class MenuResponse(AbstractResponse):

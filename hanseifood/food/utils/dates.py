@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 
-def getDatesInThisWeek(start=0, end=4, today=datetime.today()):
+def get_dates_in_this_week(start=0, end=4, today=datetime.today()):
     """returns all dates of the week. If you don't set start and end parameter, it'll return a list from monday to friday.
 
     Parameters

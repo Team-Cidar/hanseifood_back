@@ -1,6 +1,7 @@
 import pandas as pd
 import datetime as dt
 
+
 class ExcelParser:
     @staticmethod
     def _parse_students_menu(excel_df):

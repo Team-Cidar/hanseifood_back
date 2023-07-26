@@ -2,10 +2,10 @@ import datetime
 
 from django.http import HttpResponse
 from ..models import Day, DayMeal
-from ..response_objs.menuResponse import MenuResponse
+from ..responses.menu import MenuResponse
 
 
-def getDailyMenu(date):
+def get_daily_menu(date):
     day = date.weekday()
     if day in [5, 6]:  # [sat, sun]
         date -= datetime.timedelta(days=day - 4)  # get friday

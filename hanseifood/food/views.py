@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from django.http import HttpResponse
-from .response_objs.menuResponse import MenuResponse
-from .utils.menus import getDailyMenu
-from .utils.dates import getDatesInThisWeek
+from .responses.menu import MenuResponse
+from .utils.menus import get_daily_menu
+from .utils.dates import get_dates_in_this_week
 
 
 def index(request):
@@ -14,19 +14,19 @@ def index(request):
 def get_todays_menu(request):
     today = datetime.today()
 
-    response = getDailyMenu(today)
+    response = get_daily_menu(today)
     response_json = response.toJson()
 
     return HttpResponse(response_json)
 
 
-# /menus/week
+# /menus/week GET
 def get_weekly_menus(request):
-    this_week = getDatesInThisWeek()
+    this_week = get_dates_in_this_week()
 
     responses = []
     for day in this_week:
-        daily_menu = getDailyMenu(day)
+        daily_menu = get_daily_menu(day)
         responses.append(daily_menu)
 
     return HttpResponse(MenuResponse.listToJson(responses))

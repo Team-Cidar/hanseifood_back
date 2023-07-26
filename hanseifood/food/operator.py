@@ -2,7 +2,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import register_events, DjangoJobStore
 from apscheduler.triggers.cron import CronTrigger
 
-from hanseifood.views import get_menu_data_schedule
+from food.utils.schedulers.crawling_job import save_menu_scheduler_job
 
 
 # apps.py에서 scheduler 등록 (실행)
@@ -14,7 +14,7 @@ def start():
         scheduler.start()
 
         scheduler.add_job(
-            get_menu_data_schedule,
+            save_menu_scheduler_job,
             trigger=CronTrigger(
                 day_of_week='mon', hour=8
             ),
