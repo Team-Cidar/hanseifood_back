@@ -1,9 +1,11 @@
-import datetime
+import os.path
+from datetime import datetime
 import logging
 from food.models import Day, DayMeal, Meal
 
-from modules.crawler import ExcelCrawler
+from modules.crawler import MenuCrawler
 from modules.excelParser import ExcelParser
+from food.utils.dates import getDatesInThisWeek
 
 logger = logging.getLogger('hanseifood.scheduler.get_menu_data_schedule')
 
@@ -17,9 +19,16 @@ def get_menu_data_schedule():
         # Meal.objects.all().delete()
         # DayMeal.objects.all().delete()
 
+        # check if already did crawling
+        for date in getDatesInThisWeek(end=6):
+            date_str = date.strftime('%Y%m%d')
+            if os.path.exists(f'datas/{date_str}.xlsx'):
+                logger.info("This week's menu data is already saved")
+                return
+
         # crawling
-        crawler = ExcelCrawler('drivers/chromedriver114')
-        file_name = crawler.getFile()
+        crawler = MenuCrawler('drivers/chromedriver114')
+        file_name = crawler.crawl()
 
         # parse
         path = 'datas/' + file_name + '.xlsx'
@@ -35,7 +44,7 @@ def get_menu_data_schedule():
 
 def save_template1_data(res):
     for day in res.keys():
-        date = datetime.datetime.strptime(day, '%Y-%m-%d')
+        date = datetime.strptime(day, '%Y-%m-%d')
 
         # check if this day's data exists
         db_day = Day.objects.filter(date=date)
@@ -64,7 +73,7 @@ def save_template1_data(res):
 
 def save_template2_data(res):
     for day in res.keys():
-        date = datetime.datetime.strptime(day, '%Y-%m-%d')
+        date = datetime.strptime(day, '%Y-%m-%d')
 
         # check if this day's data exists
         db_day = Day.objects.filter(date=date)

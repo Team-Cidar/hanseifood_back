@@ -6,7 +6,7 @@ def getDatesInThisWeek(start=0, end=4, today=datetime.today()):
 
     Parameters
     ----------
-    start: int
+    start : int
         start day of the week.
         range(0~6)
     end : int

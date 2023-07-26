@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from django.http import HttpResponse, JsonResponse
-from .models import Day, Meal, DayMeal
+from django.http import HttpResponse
 from .response_objs.menuResponse import MenuResponse
 from .utils.menus import getDailyMenu
 from .utils.dates import getDatesInThisWeek
