@@ -12,7 +12,10 @@ class IPLoggingMiddleware:
         logger = logging.getLogger(__name__)
         logger.info(f'{client_ip} - Request "{request.method} {request.path}"')  # 요청 들어왔을 때
 
-        response = self.get_response(request)
+        try:
+            response = self.get_response(request)
+        except Exception as e:
+            logger.error(f"{client_ip} - {e}")
 
         logger.info(f"{client_ip} - Response \"{request.method} {request.path}\" {response.status_code}")  # 응답 나가기 전
         return response
