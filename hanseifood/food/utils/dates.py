@@ -38,3 +38,5 @@ def get_dates_in_this_week(start=0, end=4, today=datetime.today()):
     return dates
 
 
+def get_week_number(today=datetime.today()):
+    return int(today.day / 7) + 1
