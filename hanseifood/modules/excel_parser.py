@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime as dt
+from food.utils.dates import get_week_number
 
 
 class ExcelParser:
@@ -89,11 +90,18 @@ class ExcelParser:
 
     @staticmethod
     def parse_excel(file_path):
-        excel = pd.read_excel(file_path, engine='openpyxl')
-        if len(excel.columns) == 12:
-            return ExcelParser._parse_employee_menu(excel), False
+        pages: dict = pd.read_excel(file_path, engine='openpyxl', sheet_name=None)
+        # check if it has two or more week's menu datas
+        if len(pages) == 1:
+            excel_pd = list(pages.values())[0]
         else:
-            return ExcelParser._parse_students_menu(excel), True
+            week_num = get_week_number()
+            excel_pd = list(pages.values())[week_num - 1]
+
+        if len(excel_pd.columns) == 12:
+            return ExcelParser._parse_employee_menu(excel_pd), False
+        else:
+            return ExcelParser._parse_students_menu(excel_pd), True
 
 
 if __name__ == "__main__":
