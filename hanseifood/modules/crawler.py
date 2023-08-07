@@ -16,6 +16,9 @@ class MenuCrawler:
     def __init__(self, driver_path):
         # Chrome Driver Path, Options
         options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-gpu')
         options.add_argument(
             "user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
         options.add_experimental_option("prefs", {'intl.accept_languages': 'ko',  # driver language setting
@@ -45,11 +48,16 @@ class MenuCrawler:
         files = glob.glob(download_path)  # get all files' name
         bef_len = len(files)
         a_tag.click()  # click download btn
-        latest_file = max(files, key=os.path.getctime)
-        while latest_file.endswith('crdownload') or len(files) == bef_len:  # wait until download finished
-            files = glob.glob(download_path)
+        if bef_len == 0:
+            while len(files) == bef_len:
+                files = glob.glob(download_path)
+                time.sleep(1)
+        else:
             latest_file = max(files, key=os.path.getctime)
-            time.sleep(1)
+            while latest_file.endswith('crdownload') or len(files) == bef_len:  # wait until download finished
+                files = glob.glob(download_path)
+                latest_file = max(files, key=os.path.getctime)
+                time.sleep(1)
 
         temp_download_file = ''
         for file in files:

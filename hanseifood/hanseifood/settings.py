@@ -102,9 +102,9 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'hansei_food',
-        'USER': 'root',
-        'PASSWORD': '12341234',
-        'HOST': 'localhost',
+        'USER': 'django',
+        'PASSWORD': 'django',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }

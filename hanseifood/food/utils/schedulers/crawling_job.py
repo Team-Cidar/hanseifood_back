@@ -28,7 +28,7 @@ def save_menu_scheduler_job():
                 return
 
         # crawling
-        crawler = MenuCrawler('drivers/chromedriver')
+        crawler = MenuCrawler('/app/src/hanseifood/drivers/chromedriver')
         file_name = crawler.crawl()
 
         # parse
