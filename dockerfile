@@ -11,5 +11,5 @@ RUN mkdir chrome
 RUN unzip /tmp/chromedriver.zip chromedriver -d /app/src/hanseifood/drivers
 RUN pip install -r requirement.txt
 EXPOSE 8000
-CMD ["python", "hanseifood/manage.py", "runserver"]
+CMD ["python", "hanseifood/manage.py", "runserver", "0.0.0.0:8000"]
 #CMD ["gunicorn", "--bind", "127.0.0.1:8000", "hanseifood.wsgi:application"]
