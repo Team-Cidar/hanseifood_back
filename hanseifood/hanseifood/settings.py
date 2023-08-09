@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-%634mt3)+%$kyzlt%c7_h=b$ot$fa#7=*-&z2s7%45ggis1gf_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -102,9 +102,9 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'hansei_food',
-        'USER': 'django',
-        'PASSWORD': 'django',
-        'HOST': 'host.docker.internal',
+        'USER': 'root',
+        'PASSWORD': '1234',
+        'HOST': 'mysql_service',
         'PORT': '3306',
     }
 }

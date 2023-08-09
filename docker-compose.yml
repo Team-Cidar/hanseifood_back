@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: mysql
+    container_name: mysql_service
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: hansei_food
+    networks:
+      - django-network
+    healthcheck:
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD']
+      interval: 10s
+      timeout: 2s
+      retries: 100
+    ports:
+      - "3306:3306"
+
+  app:
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_HOST: mysql_service
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: bash -c "python hanseifood/manage.py migrate && python hanseifood/manage.py runserver 0.0.0.0:8000"
+    networks:
+      - django-network
+
+networks:
+  django-network:
+
+volumes:
+  mysql-data:
