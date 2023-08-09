@@ -198,6 +198,10 @@ LOGGING = {
         'food.middlewares': {
             'handlers': ['console', 'file_request'],
             'level': 'INFO',
+        },
+        'food.views': {
+            'handlers': ['console', 'file_request'],
+            'level': 'INFO'
         }
     }
 }
