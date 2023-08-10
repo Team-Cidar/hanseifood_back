@@ -11,4 +11,4 @@ RUN unzip /tmp/chromedriver.zip chromedriver -d /app/src/hanseifood/drivers
 RUN pip install -r requirements.txt
 RUN chmod +x ./start.sh
 EXPOSE 8000
-CMD ["./start.sh"]
+ENTRYPOINT ["/bin/bash","./start.sh"]
