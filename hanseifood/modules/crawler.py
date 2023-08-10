@@ -48,21 +48,12 @@ class MenuCrawler:
         files = glob.glob(download_path)  # get all files' name
         bef_len = len(files)
         a_tag.click()  # click download btn
-        if bef_len == 0:
-            while len(files) == bef_len:
-                files = glob.glob(download_path)
-                time.sleep(1)
-        else:
-            latest_file = max(files, key=os.path.getctime)
-            while latest_file.endswith('crdownload') or len(files) == bef_len:  # wait until download finished
-                files = glob.glob(download_path)
-                latest_file = max(files, key=os.path.getctime)
-                time.sleep(1)
 
-        temp_download_file = ''
-        for file in files:
-            if file.endswith('crdownload'):
-                os.remove(file)  # remove temp file
+        latest_file = max(files, key=os.path.getctime, default='')
+        while latest_file.endswith('crdownload') or len(files) == bef_len:  # wait until download finished
+            files = glob.glob(download_path)
+            latest_file = max(files, key=os.path.getctime, default='')
+            time.sleep(1)
 
     def __rename_last_downloaded_file(self):
         files = glob.glob(os.getcwd() + '/datas/*')

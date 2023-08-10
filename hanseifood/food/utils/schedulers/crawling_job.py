@@ -31,6 +31,9 @@ def save_menu_scheduler_job():
         crawler = MenuCrawler('/app/src/hanseifood/drivers/chromedriver')
         file_name = crawler.crawl()
 
+        logger.info("Crawling job finished!")
+        logger.info("Start saving datas to database")
+
         # parse
         path = 'datas/' + file_name + '.xlsx'
         data, for_both = ExcelParser.parse_excel(path)
@@ -39,6 +42,8 @@ def save_menu_scheduler_job():
             _save_template1_data(data)  # for both students & employees (during the semester)
         else:
             _save_template2_data(data)  # for only employees (during the vacation)
+
+        logger.info("save finished!")
     except Exception as e:
         logger.error(e)
 
@@ -71,6 +76,8 @@ def _save_template1_data(res):
             db_day_meal = DayMeal(day_id=db_day, meal_id=menu, for_student=for_student)
             db_day_meal.save()
 
+        logger.info(f"success to save {day} menu data.")
+
 
 def _save_template2_data(res):
     for day in res.keys():
@@ -92,6 +99,8 @@ def _save_template2_data(res):
         for menu, for_student in meals_per_day:  # day_meal에 추가
             db_day_meal = DayMeal(day_id=db_day, meal_id=menu, for_student=for_student)
             db_day_meal.save()
+
+        logger.info(f"success to save {day} menu data.")
 
 
 def _save_menus(menus, is_for_student):

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import math
 
 
 def get_dates_in_this_week(start=0, end=4, today=datetime.today()):
@@ -39,4 +40,15 @@ def get_dates_in_this_week(start=0, end=4, today=datetime.today()):
 
 
 def get_week_number(today=datetime.today()):
-    return int(today.day / 7) + 1
+    first_day = today.replace(day=1)
+    first_sunday = first_day + timedelta(days=6 - first_day.weekday())
+    days_after_fir_sunday = (today - first_sunday).days
+    if days_after_fir_sunday <= 0:  # bef first sunday
+        week_of_month = 1
+    else:
+        week_of_month = math.ceil(days_after_fir_sunday / 7) + 1
+
+    if first_day.weekday() in [5, 6]:  # if month starts in sat or sun
+        week_of_month -= 1
+
+    return week_of_month

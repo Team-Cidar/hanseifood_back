@@ -7,6 +7,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: hansei_food
+      MYSQL_USER: hansei
+      MYSQL_PASSWORD: hansei_food
     networks:
       - django-network
     healthcheck:
@@ -17,8 +19,7 @@ services:
     ports:
       - "3306:3306"
 
-  app:
-    container_name: hansei_back
+  server:
     build:
       context: .
       dockerfile: ./dockerfile
@@ -27,7 +28,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    command: bash -c "python hanseifood/manage.py migrate && python hanseifood/manage.py runserver 0.0.0.0:8000"
     networks:
       - django-network
 

@@ -102,8 +102,8 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'hansei_food',
-        'USER': 'root',
-        'PASSWORD': '1234',
+        'USER': 'hansei',
+        'PASSWORD': 'hansei_food',
         'HOST': 'mysql_service',
         'PORT': '3306',
     }
@@ -199,7 +199,11 @@ LOGGING = {
             'handlers': ['console', 'file_request'],
             'level': 'INFO',
         },
-        'food.views': {
+        'food.utils.menus': {
+            'handlers': ['console', 'file_request'],
+            'level': 'INFO'
+        },
+        'food.utils.views': {
             'handlers': ['console', 'file_request'],
             'level': 'INFO'
         }
