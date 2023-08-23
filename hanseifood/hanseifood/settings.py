@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'modules',
     'datas',
     'drivers',
+    'corsheaders',
     # 'logs',
 
     # my apps
@@ -62,6 +63,7 @@ SCHEDULER_DEFAULT = True
 ############
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -209,3 +211,15 @@ LOGGING = {
         }
     }
 }
+
+# CORS middleware settings
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ORIGIN_WHITELIST = (정
+#     "https://example.com",
+#     "https://sub.example.com",
+#     "http://localhost:8080",
+#     "http://127.0.0.1:9000"
+# )
+
+CORS_ALLOW_CREDENTIALS = True
