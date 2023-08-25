@@ -20,7 +20,7 @@ services:
       - "3306:3306"
 
   server:
-    container_name: hanseifood_back
+    container_name: hanseifood_was
     build:
       context: .
       dockerfile: ./dockerfile
