@@ -212,9 +212,30 @@ LOGGING = {
     }
 }
 
-# CORS middleware settings
-CORS_ALLOWED_ORIGINS = [
-    "http://218.239.156.31:8001",  # 리액트 앱의 주소
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'http://218.239.156.31:8001',
+    'localhost:8001',
+    'localhost:8080'
 ]
-
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
+APPEND_SLASH = False
