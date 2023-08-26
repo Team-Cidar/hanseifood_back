@@ -213,13 +213,8 @@ LOGGING = {
 }
 
 # CORS middleware settings
-CORS_ORIGIN_ALLOW_ALL = True
-
-# CORS_ORIGIN_WHITELIST = (정
-#     "https://example.com",
-#     "https://sub.example.com",
-#     "http://localhost:8080",
-#     "http://127.0.0.1:9000"
-# )
+CORS_ALLOWED_ORIGINS = [
+    "http://218.239.156.31:8001",  # 리액트 앱의 주소
+]
 
 CORS_ALLOW_CREDENTIALS = True
