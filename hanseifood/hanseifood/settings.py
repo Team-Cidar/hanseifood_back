@@ -214,7 +214,7 @@ LOGGING = {
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    'http://218.239.156.31:80',
+    'http://218.239.156.31',
     'http://localhost:8080',
     'http://localhost:80',
 ]
