@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from typing import List
 
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..objs.abstract_model import AbstractModel
