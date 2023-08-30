@@ -1,7 +1,7 @@
-from .abstract_response import AbstractResponse
+from .abstract_model import AbstractModel
 
 
-class MenuResponse(AbstractResponse):
+class MenuModel(AbstractModel):
     # 여기에 필드 선언하면 static field
     def __init__(self, date):
         # 이렇게 선언하면 instance field
@@ -12,7 +12,7 @@ class MenuResponse(AbstractResponse):
         self.employee_menu = []
 
     # override
-    def _AbstractResponse__serialize(self) -> dict:  # 추상 메서드가 private이라 재정의 할 때 _추상클래스__method() 이런식으로 해줘야함
+    def _AbstractModel__serialize(self) -> dict:  # 추상 메서드가 private이라 재정의 할 때 _추상클래스__method() 이런식으로 해줘야함
         return {
             'date': self.date,
             'only_employee': self.only_employee,

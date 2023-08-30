@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import pymysql
 from pathlib import Path
+import os
 
 pymysql.install_as_MySQLdb()
 
@@ -71,7 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'food.middlewares.iplogging.IPLoggingMiddleware'
+    'food.middlewares.ip_logging_middleware.IPLoggingMiddleware'
 ]
 
 ROOT_URLCONF = 'hanseifood.urls'
@@ -104,9 +105,12 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'hansei_food',
-        'USER': 'hansei',
-        'PASSWORD': 'hansei_food',
-        'HOST': 'mysql_service',
+        'USER': 'django',
+        'PASSWORD': 'django',
+        'HOST': 'localhost',
+        # 'USER': 'hansei',
+        # 'PASSWORD': 'hansei_food',
+        # 'HOST': 'mysql_service',
         'PORT': '3306',
     }
 }
@@ -154,8 +158,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Logger settings
-import os, logging
-
 if not os.path.exists(BASE_DIR / 'logs'):
     os.mkdir(BASE_DIR / 'logs')
 

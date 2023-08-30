@@ -1,8 +1,9 @@
 from abc import *
+
 from django.http import JsonResponse
 
 
-class AbstractResponse(metaclass=ABCMeta):
+class AbstractModel(metaclass=ABCMeta):
     @abstractmethod
     def __serialize(self) -> dict:
         raise NotImplementedError

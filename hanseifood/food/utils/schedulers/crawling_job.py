@@ -16,9 +16,9 @@ def save_menu_scheduler_job():
     try:
         logger.info('Execute scheduled job / get_menu_data_schedule')
         # clear all datas
-        # Day.objects.all().delete()
-        # Meal.objects.all().delete()
-        # DayMeal.objects.all().delete()
+        # Day.objs.all().delete()
+        # Meal.objs.all().delete()
+        # DayMeal.objs.all().delete()
 
         # check if already did crawling
         for date in get_dates_in_this_week(end=6):

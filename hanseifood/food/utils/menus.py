@@ -1,9 +1,9 @@
 import datetime
 import logging
 
-from django.http import HttpResponse
+from ..exceptions.menu_exceptions import MenuNotExistsError
 from ..models import Day, DayMeal
-from ..responses.menu import MenuResponse
+from ..objs.menu import MenuModel
 
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ def get_daily_menu(date):
         today = Day.objects.filter(date=date)[0]  # get day obj of today in db
         todays_meal = DayMeal.objects.filter(day_id=today)  # get today's menus in db
 
-        response = MenuResponse(today.date)
+        response = MenuModel(today.date)
 
         for item in todays_meal:
             if item.for_student:
@@ -33,6 +33,10 @@ def get_daily_menu(date):
             response.has_two_menus = True
 
         return response
+    except MenuNotExistsError as e:
+        logger.error(e)
+        return MenuModel
     except Exception as e:
         logger.error(e)
-        return MenuResponse(date)
+        return MenuModel(date)
+
