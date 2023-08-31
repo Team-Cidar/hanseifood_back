@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.http import HttpResponse
+
+from .objs.menu import MenuModel
 from .responses.model_response import ModelResponse
 from .utils.menus import get_daily_menu
 from .utils.dates import get_dates_in_this_week
@@ -14,7 +16,12 @@ def index(request):
 def get_todays_menu(request):
     today = datetime.today()
 
-    response = get_daily_menu(today)
+    response = MenuModel()
+
+    response = get_daily_menu(today, response)
+
+    if len(response.student_menu) == 0:
+        response.only_employee = True
 
     return ModelResponse.getResponse(response)
 
@@ -23,9 +30,16 @@ def get_todays_menu(request):
 def get_weekly_menus(request):
     this_week = get_dates_in_this_week()
 
-    responses = []
-    for day in this_week:
-        daily_menu = get_daily_menu(day)
-        responses.append(daily_menu)
+    # responses = []
+    # for day in this_week:
+    #     daily_menu = get_daily_menu(day)
+    #     responses.append(daily_menu)
 
-    return ModelResponse.getResponse(responses)
+    response = MenuModel()
+    for day in this_week:
+        response = get_daily_menu(day, response)
+
+    if len(response.student_menu) == 0:
+        response.only_employee = True
+
+    return ModelResponse.getResponse(response)
