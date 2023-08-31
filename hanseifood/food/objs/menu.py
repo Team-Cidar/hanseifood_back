@@ -7,7 +7,7 @@ class MenuModel(AbstractModel):
         # 이렇게 선언하면 instance field
         self.date = date
         self.only_employee = False
-        self.has_two_menus = False
+        # self.has_two_menus = False
         self.student_menu = []
         self.employee_menu = []
 
@@ -16,7 +16,7 @@ class MenuModel(AbstractModel):
         return {
             'date': self.date,
             'only_employee': self.only_employee,
-            'has_two_menus': self.has_two_menus,
+            # 'has_two_menus': self.has_two_menus,
             'student_menu': self.student_menu,
             'employee_menu': self.employee_menu,
         }

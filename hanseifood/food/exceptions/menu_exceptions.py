@@ -1,3 +1,3 @@
-class MenuNotExistsError(Exception):
-    def __init__(self, msg="Today's menu is not exists"):
+class EmptyDataError(Exception):
+    def __init__(self, msg="Data is not exist"):
         super().__init__(msg)

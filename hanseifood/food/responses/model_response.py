@@ -13,7 +13,7 @@ class ModelResponse:
         elif isinstance(data, list) and all(isinstance(item, AbstractModel) for item in data):
             response = HttpResponse(MenuModel.listToJson(data))
         else:
-            raise NotAbstractModelError()
+            raise NotAbstractModelError(f"{type(data)} is not an instance of AbstractModel.")
         response.status_code = status_code
 
         return response
