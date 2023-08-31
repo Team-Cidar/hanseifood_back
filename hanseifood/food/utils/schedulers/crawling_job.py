@@ -29,7 +29,7 @@ def save_menu_scheduler_job():
 
         # crawling
         crawler = MenuCrawler('/app/src/hanseifood/drivers/chromedriver')
-        # crawler = MenuCrawler('food/chromedriver')
+        # crawler = MenuCrawler('food/chromedriver')  # for test
         file_name = crawler.crawl()
 
         logger.info("Crawling job finished!")
@@ -37,6 +37,7 @@ def save_menu_scheduler_job():
 
         # parse
         path = 'datas/' + file_name + '.xlsx'
+        # path = 'datas/test2.xlsx'    # for test
         data, for_both = ExcelParser.parse_excel(path)
 
         if for_both:

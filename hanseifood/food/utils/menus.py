@@ -19,34 +19,23 @@ def get_daily_menu(date, response: MenuModel):
         if day in [5, 6]:  # [sat, sun]
             date -= datetime.timedelta(days=day - 4)  # get friday
 
-        # today = Day.objects.filter(date=date)[0]  # get day obj of today in db
         today = dayRepository.findByDate(date)[0]
-        # todays_meal = DayMeal.objects.filter(day_id=today)  # get today's menus in db
         todays_meal = dayMealRepository.findByDayId(today)
 
         student = []
         employee = []
         for item in todays_meal:
-            if not item.for_student:
-                employee.append(item.meal_id.meal_name)
-            else:
+            if item.for_student:
                 student.append(item.meal_id.meal_name)
+            else:
                 employee.append(item.meal_id.meal_name)
-            # if item.for_student:
-            #     response.student_menu.append(item.meal_id.meal_name)
-            # else:
-            #     response.employee_menu.append(item.meal_id.meal_name)
+
+        if len(employee) <= 1:
+            employee = student + employee
 
         if len(student) != 0:
             response.student_menu[str(today.date)] = student
-        if len(employee) != 0:
-            response.employee_menu[str(today.date)] = employee
-
-        # if len(response.student_menu) == 0:
-        #     response.only_employee = True
-
-        # if len(response.employee_menu) > 1 and not response.only_employee:
-        #     response.has_two_menus = True
+        response.employee_menu[str(today.date)] = employee
 
         return response
     except EmptyDataError as e:

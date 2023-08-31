@@ -30,11 +30,6 @@ def get_todays_menu(request):
 def get_weekly_menus(request):
     this_week = get_dates_in_this_week()
 
-    # responses = []
-    # for day in this_week:
-    #     daily_menu = get_daily_menu(day)
-    #     responses.append(daily_menu)
-
     response = MenuModel()
     for day in this_week:
         response = get_daily_menu(day, response)
