@@ -1,8 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import math
 
 
-def get_dates_in_this_week(start=0, end=4, today=datetime.today()):
+def get_dates_in_this_week(start=0, end=4, today=date.today()):
     """returns all dates of the week. If you don't set start and end parameter, it'll return a list from monday to friday.
 
     Parameters
@@ -13,7 +13,7 @@ def get_dates_in_this_week(start=0, end=4, today=datetime.today()):
     end : int
         end day of the week.
         range(0~6)
-    today : datetime
+    today : date
         date included in the week you want to get.
 
     Returns
@@ -52,3 +52,10 @@ def get_week_number(today=datetime.today()):
         week_of_month -= 1
 
     return week_of_month
+
+
+def get_weekday(today_date):
+    day = today_date.weekday()
+    if day in [5, 6]:  # [sat, sun]
+        today_date -= timedelta(days=day - 4)  # get friday
+    return today_date

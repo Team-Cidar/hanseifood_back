@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 
 from ..exceptions.type_exceptions import NotAbstractModelError
-from ..objs.abstract_model import AbstractModel
-from ..objs.menu import MenuModel
+from .objs.abstract_model import AbstractModel
+from .objs.menu import MenuModel
 
 
 class ModelResponse:
