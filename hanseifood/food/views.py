@@ -1,10 +1,6 @@
-from datetime import datetime
-
 from django.http import HttpResponse
 
-from .responses.objs.menu import MenuModel
 from .responses.model_response import ModelResponse
-from .utils.dates import get_dates_in_this_week
 from .services.menu_service import MenuService
 
 

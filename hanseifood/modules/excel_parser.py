@@ -1,6 +1,6 @@
 import pandas as pd
 import datetime as dt
-from food.utils.dates import get_week_number
+from food.utils.date_utils import get_week_number
 
 
 class ExcelParser:

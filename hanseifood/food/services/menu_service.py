@@ -1,6 +1,6 @@
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
-from ..utils import dates
+from ..utils import date_utils
 from ..exceptions.menu_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..responses.objs.menu import MenuModel
@@ -20,7 +20,7 @@ class MenuService:
     def get_one_day_menu(self):
         # return daily menu
         try:
-            date = dates.get_weekday(datetime.date.today())  # to get friday when today is 'sat' or 'sun'
+            date = date_utils.get_weekday(datetime.date.today())  # to get friday when today is 'sat' or 'sun'
 
             today = self.__day_repository.findByDate(date)[0]
             today_meals = self.__day_meal_repository.findByDayId(today)
@@ -40,7 +40,7 @@ class MenuService:
 
     def get_this_week_menu(self):
         try:
-            this_week = dates.get_dates_in_this_week()
+            this_week = date_utils.get_dates_in_this_week()
 
             response = MenuModel()
             for date in this_week:
