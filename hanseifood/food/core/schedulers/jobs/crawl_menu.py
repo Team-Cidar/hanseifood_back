@@ -2,13 +2,19 @@ import os.path
 from datetime import datetime
 import logging
 
-from ....models import Day, DayMeal, Meal
 from ...utils.date_utils import get_dates_in_this_week
 from ..modules.crawler import MenuCrawler
 from ..modules.excel_parser import ExcelParser
+from ....repositories.day_repository import DayRepository
+from ....repositories.daymeal_repository import DayMealRepository
+from ....repositories.meal_repository import MealRepository
 
 logger = logging.getLogger(__name__)
 __all__ = ['get_and_save_menus']  # ~~ import * 로 불러오면 이 함수만 import 됨
+
+day_repository = DayRepository()
+meal_repository = MealRepository()
+day_meal_repository = DayMealRepository()
 
 
 # scheduler에 등록할 함수
@@ -16,9 +22,9 @@ def get_and_save_menus():
     try:
         logger.info('Execute scheduled job / get_menu_data_schedule')
         # clear all datas
-        # Day.objs.all().delete()
-        # Meal.objs.all().delete()
-        # DayMeal.objs.all().delete()
+        # day_repository.clearAll()
+        # meal_repository.clearAll()
+        # day_meal_repository.clearAll()
 
         # check if already did crawling
         for date in get_dates_in_this_week(end=6):
@@ -55,13 +61,12 @@ def _save_template1_data(res):
         date = datetime.strptime(day, '%Y-%m-%d')
 
         # check if this day's data exists
-        db_day = Day.objects.filter(date=date)
+        db_day = day_repository.findByDate(date)
         if db_day.exists():
             logger.info(f'{day} is already exists')
             continue
 
-        db_day = Day(date=date)  # Days
-        db_day.save()
+        db_day = day_repository.save(date)
 
         meals_per_day = []
         if type(res[day][0]) is list:  # 메뉴 두개인 날
@@ -75,8 +80,7 @@ def _save_template1_data(res):
             meals_per_day.extend(saved_menus)
 
         for menu, for_student in meals_per_day:  # day_meal에 추가
-            db_day_meal = DayMeal(day_id=db_day, meal_id=menu, for_student=for_student)
-            db_day_meal.save()
+            day_meal_repository.save(db_day, menu, for_student)
 
         logger.info(f"success to save {day} menu data.")
 
@@ -86,21 +90,20 @@ def _save_template2_data(res):
         date = datetime.strptime(day, '%Y-%m-%d')
 
         # check if this day's data exists
-        db_day = Day.objects.filter(date=date)
+        db_day = day_repository.findByDate(date)
+
         if db_day.exists():
             logger.info(f'{day} is already exists')
             continue
 
-        db_day = Day(date=date)  # Days
-        db_day.save()
+        db_day = day_repository.save(date)
 
         meals_per_day = []
         saved_menus = _save_menus(menus=res[day], is_for_student=False)
         meals_per_day.extend(saved_menus)
 
         for menu, for_student in meals_per_day:  # day_meal에 추가
-            db_day_meal = DayMeal(day_id=db_day, meal_id=menu, for_student=for_student)
-            db_day_meal.save()
+            day_meal_repository.save(db_day, menu, for_student)
 
         logger.info(f"success to save {day} menu data.")
 
@@ -108,10 +111,9 @@ def _save_template2_data(res):
 def _save_menus(menus, is_for_student):
     saved_meals = []
     for menu in menus:
-        db_meal = Meal.objects.filter(meal_name=menu)  # 음식 저장
+        db_meal = meal_repository.findByMenuName(menu)
         if not db_meal.exists():
-            db_meal = Meal(meal_name=menu)  # Meals
-            db_meal.save()
+            db_meal = meal_repository.save(meal_name=menu)
         else:
             db_meal = db_meal[0]
         saved_meals.append([db_meal, is_for_student])
