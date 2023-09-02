@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'modules',
     'datas',
     'corsheaders',
     # 'logs',
@@ -194,7 +193,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'food.utils.schedulers': {
+        'food.core.schedulers.jobs.crawl_menu': {
             'handlers': ['console', 'file_scheduler'],
             'level': 'DEBUG'
         },

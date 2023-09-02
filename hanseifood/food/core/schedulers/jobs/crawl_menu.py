@@ -2,17 +2,17 @@ import os.path
 from datetime import datetime
 import logging
 
-from food.models import Day, DayMeal, Meal
-from modules.crawler import MenuCrawler
-from modules.excel_parser import ExcelParser
-from ..date_utils import get_dates_in_this_week
+from ....models import Day, DayMeal, Meal
+from ...utils.date_utils import get_dates_in_this_week
+from ..modules.crawler import MenuCrawler
+from ..modules.excel_parser import ExcelParser
 
 logger = logging.getLogger(__name__)
-__all__ = ['save_menu_scheduler_job']  # ~~ import * 로 불러오면 이 함수만 import 됨
+__all__ = ['get_and_save_menus']  # ~~ import * 로 불러오면 이 함수만 import 됨
 
 
 # scheduler에 등록할 함수
-def save_menu_scheduler_job():
+def get_and_save_menus():
     try:
         logger.info('Execute scheduled job / get_menu_data_schedule')
         # clear all datas

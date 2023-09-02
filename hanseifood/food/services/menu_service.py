@@ -1,10 +1,8 @@
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
-from ..utils import date_utils
+from ..core.utils import date_utils
 from ..exceptions.menu_exceptions import EmptyDataError
-from ..exceptions.type_exceptions import NotAbstractModelError
 from ..responses.objs.menu import MenuModel
-from ..responses.model_response import ModelResponse
 
 import logging
 import datetime

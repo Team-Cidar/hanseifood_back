@@ -1,6 +1,6 @@
 import pandas as pd
 import datetime as dt
-from food.utils.date_utils import get_week_number
+from ...utils.date_utils import get_week_number
 
 
 class ExcelParser:
@@ -107,5 +107,6 @@ class ExcelParser:
 if __name__ == "__main__":
     # parse_employee_menu('test1.xlsx')
     # parse_students_menu('test2.xlsx')
-    print(ExcelParser.parse_excel('../datas/test2.xlsx'))
-    print(ExcelParser.parse_excel('../datas/test1.xlsx'))
+    # print(ExcelParser.parse_excel('../../../../datas/test2.xlsx'))
+    # print(ExcelParser.parse_excel('../../../../datas/test1.xlsx'))
+    pass
