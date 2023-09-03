@@ -38,7 +38,7 @@ class MenuService:
 
     def get_this_week_menu(self):
         try:
-            this_week = date_utils.get_dates_in_this_week(today=datetime.datetime(2023, 9, 4))
+            this_week = date_utils.get_dates_in_this_week()
 
             response = MenuModel()
             for date in this_week:
