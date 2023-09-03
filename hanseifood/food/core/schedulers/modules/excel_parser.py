@@ -105,8 +105,4 @@ class ExcelParser:
 
 
 if __name__ == "__main__":
-    # parse_employee_menu('test1.xlsx')
-    # parse_students_menu('test2.xlsx')
-    # print(ExcelParser.parse_excel('../../../../datas/test2.xlsx'))
-    # print(ExcelParser.parse_excel('../../../../datas/test1.xlsx'))
-    pass
+    print('parse_test')

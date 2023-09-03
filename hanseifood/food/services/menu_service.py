@@ -38,7 +38,7 @@ class MenuService:
 
     def get_this_week_menu(self):
         try:
-            this_week = date_utils.get_dates_in_this_week()
+            this_week = date_utils.get_dates_in_this_week(today=datetime.datetime(2023, 9, 4))
 
             response = MenuModel()
             for date in this_week:
@@ -62,20 +62,28 @@ class MenuService:
     def __get_daily_menu(date, today_meals):
         student = []
         employee = []
+        additional = []
         for item in today_meals:
             if item.for_student:
                 student.append(item.meal_name)
+            elif item.is_additional:  # for new template
+                additional.append(item.meal_name)
             else:
                 employee.append(item.meal_name)
 
-        if len(employee) <= 1:
-            employee = student + employee
+        # if len(employee) <= 1:
+        #     employee = student + employee
 
         result = MenuModel()
 
         if len(student) != 0:
             result.student_menu[str(date)] = student
             result.only_employee = False
+
+        if len(additional) != 0:
+            result.has_additional = True
+            result.additional_menu[str(date)] = additional  # for new template
+
         result.employee_menu[str(date)] = employee
 
         return result

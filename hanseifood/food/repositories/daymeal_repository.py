@@ -17,7 +17,7 @@ class DayMealRepository(AbstractRepository):
         return datas
 
     # override
-    def save(self, day_id, meal_id, for_student) -> Model:
-        entity = DayMeal(day_id=day_id, meal_id=meal_id, for_student=for_student)
+    def save(self, day_id, meal_id, for_student, is_additional) -> Model:
+        entity = DayMeal(day_id=day_id, meal_id=meal_id, for_student=for_student, is_additional=is_additional)
         entity.save()
         return entity

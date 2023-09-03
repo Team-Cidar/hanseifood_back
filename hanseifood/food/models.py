@@ -29,12 +29,14 @@ class DayMeal(models.Model):
     day_id = models.ForeignKey(Day, on_delete=models.CASCADE)
     meal_id = models.ForeignKey(Meal, on_delete=models.DO_NOTHING)
     for_student = models.BooleanField()
+    is_additional = models.BooleanField()
 
     def to_dto(self):
         return DayMealDto(
             date=self.day_id.date,
             meal_name=self.meal_id.meal_name,
-            for_student=self.for_student
+            for_student=self.for_student,
+            is_additional=self.is_additional
         )
 
     def __str__(self):
