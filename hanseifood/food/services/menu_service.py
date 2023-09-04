@@ -76,14 +76,18 @@ class MenuService:
 
         result = MenuModel()
 
+        weekday_kor = date_utils.get_weekday_kor(date)
+
+        key = f'{str(date)} ({weekday_kor})'
+
         if len(student) != 0:
-            result.student_menu[str(date)] = student
+            result.student_menu[key] = student
             result.only_employee = False
 
         if len(additional) != 0:
             result.has_additional = True
-            result.additional_menu[str(date)] = additional  # for new template
+            result.additional_menu[key] = additional  # for new template
 
-        result.employee_menu[str(date)] = employee
+        result.employee_menu[key] = employee
 
         return result

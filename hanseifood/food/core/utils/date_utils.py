@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta, date
 import math
 
+from typing import Dict
+
 
 def get_dates_in_this_week(start=0, end=4, today=date.today()):
     """returns all dates of the week. If you don't set start and end parameter, it'll return a list from monday to friday.
@@ -59,3 +61,14 @@ def get_weekday(today_date):
     if day in [5, 6]:  # [sat, sun]
         today_date -= timedelta(days=day - 4)  # get friday
     return today_date
+
+
+def get_weekday_kor(day: datetime):
+    weekday_kor: Dict[int, str] = {
+        0: "월",
+        1: "화",
+        2: "수",
+        3: '목',
+        4: '금'
+    }
+    return weekday_kor[day.weekday()]
