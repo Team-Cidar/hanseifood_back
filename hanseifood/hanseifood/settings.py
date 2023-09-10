@@ -140,11 +140,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False  # True면 models의 datetime에 위 time zone이 반영되지 않음
 
 
 # Static files (CSS, JavaScript, Images)
