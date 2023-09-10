@@ -17,24 +17,7 @@ class MenuService:
 
     def get_one_day_menu(self):
         # return daily menu
-        try:
-            date = date_utils.get_weekday(datetime.date.today())  # to get friday when today is 'sat' or 'sun'
-
-            today = self.__day_repository.findByDate(date)[0]
-            today_meals = self.__day_meal_repository.findByDayId(today)
-
-            today_meals = [item.to_dto() for item in today_meals]
-            today = today.to_dto()
-
-            response = self.__get_daily_menu(today.date, today_meals)
-
-            return response
-        except EmptyDataError as e:
-            logger.error(e)
-            return response
-        except Exception as e:
-            logger.error(e)
-            return response
+        return self.get_target_days_menu(datetime.date.today())
 
     def get_this_week_menu(self):
         try:
@@ -49,6 +32,29 @@ class MenuService:
                 today = today.to_dto()
 
                 response += self.__get_daily_menu(today.date, today_meals)
+
+            return response
+        except EmptyDataError as e:
+            logger.error(e)
+            return response
+        except Exception as e:
+            logger.error(e)
+            return response
+
+    def get_target_days_menu(self, date: datetime):
+        try:
+            date = date_utils.get_weekday(date)  # to get friday when today is 'sat' or 'sun'
+
+            print(date)
+
+            today = self.__day_repository.findByDate(date)[0]
+            today_meals = self.__day_meal_repository.findByDayId(today)
+
+            today_meals = [item.to_dto() for item in today_meals]
+            today = today.to_dto()
+
+            response = self.__get_daily_menu(today.date, today_meals)
+            print(response)
 
             return response
         except EmptyDataError as e:
