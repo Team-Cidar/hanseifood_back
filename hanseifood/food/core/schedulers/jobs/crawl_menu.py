@@ -4,11 +4,11 @@ import logging
 
 from ...utils.date_utils import get_dates_in_this_week
 from ..modules.crawler import MenuCrawler
-from ..modules.excel_parser import ExcelParser
 from ..modules.temp_excel_parser import TempExcelParser
 from ....repositories.day_repository import DayRepository
 from ....repositories.daymeal_repository import DayMealRepository
 from ....repositories.meal_repository import MealRepository
+from ..modules.objs.parse_obj import ParseObject
 
 logger = logging.getLogger(__name__)
 __all__ = ['get_and_save_menus']  # ~~ import * 로 불러오면 이 함수만 import 됨
@@ -46,22 +46,44 @@ def get_and_save_menus():
         path = 'datas/' + file_name + '.xlsx'
         # path = 'datas/test2.xlsx'    # for test
 
-        data = TempExcelParser.parse(path)  # new template temp parser
+        # data: ParseObject = TempExcelParser.parse(path)  # new template parser
+        data: ParseObject = ParseObject()
+        data.keys = [
+            '2023-09-11',
+            '2023-09-12',
+            '2023-09-13',
+            '2023-09-14',
+            '2023-09-15'
+        ]
+        data.students = {
+            '2023-09-11': ['무들꺠국', '매콤콩나물불고기', '찐만두&양념장', '건새우호박볶음', '포기김치'],
+            '2023-09-12': ['맑은콩나물국', '참치김치볶음', '온두부', '미역줄기볶음', '깍두기'],
+            '2023-09-13': ['짜장덮밥/계란실파국', '소세지야채볶음', '만두탕수', '단무지', '포기김치'],
+            '2023-09-14': ['순두부짬뽕탕', '생선까스/타르s', '청경채당면볶음', '얼갈이겉절이', '포기김치'],
+            '2023-09-15': ['돈육김치찌개', '닭살카레볶음', '야채계란찜', '가지나물', '깍두기']
+        }
+        data.employees = {
+            '2023-09-11': ['무들꺠국', '매콤콩나물불고기', '찐만두&양념장', '건새우호박볶음', '포기김치', '채썬쌈무'],
+            '2023-09-12': ['맑은콩나물국', '참치김치볶음', '온두부', '미역줄기볶음', '깍두기', '녹차', '열무김치'],
+            '2023-09-13': ['짜장덮밥/계란실파국', '소세지야채볶음', '만두탕수', '단무지', '포기김치', '숙주나물'],
+            '2023-09-14': ['순두부짬뽕탕', '생선까스/타르s', '청경채당면볶음', '얼갈이겉절이', '포기김치', '요쿠르트'],
+            '2023-09-15': ['돈육김치찌개', '닭살카레볶음', '야채계란찜', '가지나물', '깍두기', '도시락김']
+        }
+        data.additional = {
+            '2023-09-11': ['백미밥', '돈까스&소스', '크림스프', '모닝빵&딸기잼', '단무지', '김치'],
+            '2023-09-12': ['백미밥', '돈까스&소스', '크림스프', '모닝빵&딸기잼', '단무지', '김치'],
+            '2023-09-13': ['백미밥', '돈까스&소스', '크림스프', '모닝빵&딸기잼', '단무지', '김치'],
+            '2023-09-14': ['백미밥', '돈까스&소스', '크림스프', '모닝빵&딸기잼', '단무지', '김치'],
+            '2023-09-15': ['백미밥', '돈까스&소스', '크림스프', '모닝빵&딸기잼', '단무지', '김치']
+        }
         _save_data_temp(data)
-
-        # data, for_both = ExcelParser.parse_excel(path)
-        #
-        # if for_both:
-        #     _save_template1_data(data)  # for both students & employees (during the semester)
-        # else:
-        #     _save_template2_data(data)  # for only employees (during the vacation)
 
         logger.info("save finished!")
     except Exception as e:
         logger.error(e)
 
 
-def _save_data_temp(data):
+def _save_data_temp(data: ParseObject):
     students: dict = data.students
     employees: dict = data.employees
     additional: dict = data.additional
@@ -91,69 +113,3 @@ def _save_to_db(day_model, datas: list, for_students: bool, is_additional: bool)
 
         day_meal_repository.save(day_id=day_model, meal_id=menu_model, for_student=for_students,
                                  is_additional=is_additional)
-
-
-# def _save_template1_data(res):
-#     for day in res.keys():
-#         date = datetime.strptime(day, '%Y-%m-%d')
-#
-#         # check if this day's data exists
-#         db_day = day_repository.findByDate(date)
-#         if db_day.exists():
-#             logger.info(f'{day} is already exists')
-#             continue
-#
-#         db_day = day_repository.save(date)
-#
-#         meals_per_day = []
-#         if type(res[day][0]) is list:  # 메뉴 두개인 날
-#             std, emp = res[day][0], res[day][1]
-#             saved_menus = _save_menus(menus=std, is_for_student=True)  # 학생 식당 메뉴 저장
-#             meals_per_day.extend(saved_menus)  # day_meal table에 data 추가 위한 리스트
-#             saved_menus = _save_menus(menus=emp, is_for_student=False)  # 교직원 식당 메뉴 저장
-#             meals_per_day.extend(saved_menus)
-#         else:  # 메뉴 한개인 날
-#             saved_menus = _save_menus(menus=res[day], is_for_student=True)
-#             meals_per_day.extend(saved_menus)
-#
-#         for menu, for_student in meals_per_day:  # day_meal에 추가
-#             day_meal_repository.save(db_day, menu, for_student)
-#
-#         logger.info(f"success to save {day} menu data.")
-#
-#
-# def _save_template2_data(res):
-#     for day in res.keys():
-#         date = datetime.strptime(day, '%Y-%m-%d')
-#
-#         # check if this day's data exists
-#         db_day = day_repository.findByDate(date)
-#
-#         if db_day.exists():
-#             logger.info(f'{day} is already exists')
-#             continue
-#
-#         db_day = day_repository.save(date)
-#
-#         meals_per_day = []
-#         saved_menus = _save_menus(menus=res[day], is_for_student=False)
-#         meals_per_day.extend(saved_menus)
-#
-#         for menu, for_student in meals_per_day:  # day_meal에 추가
-#             day_meal_repository.save(db_day, menu, for_student)
-#
-#         logger.info(f"success to save {day} menu data.")
-#
-#
-# def _save_menus(menus, is_for_student):
-#     saved_meals = []
-#     for menu in menus:
-#         db_meal = meal_repository.findByMenuName(menu)
-#         if not db_meal.exists():
-#             db_meal = meal_repository.save(meal_name=menu)
-#         else:
-#             db_meal = db_meal[0]
-#         saved_meals.append([db_meal, is_for_student])
-#     if is_for_student and len(saved_meals) > 5:  # 메뉴 6개 이상이면 마지막껀 교직원용 메뉴임
-#         saved_meals[-1][1] = False
-#     return saved_meals

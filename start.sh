@@ -7,4 +7,4 @@
 python hanseifood/manage.py migrate
 
 # run server
-python hanseifood/manage.py runserver 0.0.0.0:8000
+python hanseifood/manage.py runserver --noreload 0:8000

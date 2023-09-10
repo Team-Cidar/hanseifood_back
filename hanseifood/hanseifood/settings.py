@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import pymysql
 from pathlib import Path
-import os
+import os, dotenv
+
+dotenv.load_dotenv()
 
 pymysql.install_as_MySQLdb()
 
@@ -26,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%634mt3)+%$kyzlt%c7_h=b$ot$fa#7=*-&z2s7%45ggis1gf_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if os.getenv("DEBUG", 'False') == 'False' else True
 
 ALLOWED_HOSTS = ['*']
 

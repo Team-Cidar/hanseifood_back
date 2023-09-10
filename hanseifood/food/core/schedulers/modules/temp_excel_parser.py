@@ -1,30 +1,16 @@
 import pandas as pd
 import datetime
 
+from .objs.parse_obj import ParseObject
+
 pd.set_option('max_rows', None)  # print row without collapsing
 pd.set_option('display.width', None)  # print columns without collapsing
 pd.set_option('max_colwidth', None)  # print every cells without collapsing
 
 
-class ParseResult:
-    def __init__(self):
-        self.keys = list()
-        self.students = dict()
-        self.employees = dict()
-        self.additional = dict()
-
-    def to_dict(self):
-        return {
-            'keys': self.keys,
-            'students': self.students,
-            'employee': self.employees,
-            'additional': self.additional
-        }
-
-
 class TempExcelParser:
     @staticmethod
-    def parse(file_path) -> ParseResult:
+    def parse(file_path) -> ParseObject:
         excel: pd.DataFrame = pd.read_excel(file_path, engine='openpyxl')
 
         print(len(excel.columns))
@@ -35,7 +21,7 @@ class TempExcelParser:
         menus: pd.DataFrame = menus_without_target.transpose()
         menus.drop(4, axis=1, inplace=True)  # drop useless column
 
-        res = ParseResult()
+        res = ParseObject()
         cur_year = datetime.datetime.today().year
 
         for daily_menus in menus.values:
