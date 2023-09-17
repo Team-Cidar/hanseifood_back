@@ -5,7 +5,7 @@ pipeline {
         stage("Build") {
             steps {
                 echo 'build docker image'
-                sh 'docker-compose build'
+                sh 'docker compose build'
             }
             post {
                 success {
@@ -19,7 +19,8 @@ pipeline {
         stage('Deploy'){
             steps {
                 echo 'docker container start'
-                sh 'docker-compose up -d'
+                sh 'docker compose down'
+                sh 'docker compose up -d'
             }
             post {
                 success {
