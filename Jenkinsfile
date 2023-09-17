@@ -2,20 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage("Pull") {
-            steps {
-                echo 'git pulling..'
-                sh 'git pull'
-            }
-            post {
-                success {
-                    echo '==========git pull succeed=========='
-                }
-                failure {
-                    echo '==========git pull failed=========='
-                }
-            }
-        }
         stage("Build") {
             steps {
                 echo 'build docker image'
