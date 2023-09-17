@@ -27,6 +27,7 @@ class MenuService:
         return self.get_target_days_menu(datetime.date.today())
 
     def get_this_week_menu(self) -> MenuModel:
+        # return weekly menu
         this_week: List[datetime] = date_utils.get_dates_in_this_week()
 
         response: MenuModel = MenuModel()
