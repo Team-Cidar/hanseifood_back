@@ -5,9 +5,7 @@ pipeline {
         stage("Pull") {
             steps {
                 echo 'git pulling..'
-                dir(path: '~/hanseifood_back') {
-                    sh 'git pull'
-                }
+                sh 'git pull'
             }
             post {
                 success {
@@ -21,9 +19,7 @@ pipeline {
         stage("Build") {
             steps {
                 echo 'build docker image'
-                dir(path: '~/hanseifood_back') {
-                    sh 'docker-compose build'
-                }
+                sh 'docker-compose build'
             }
             post {
                 success {
@@ -37,9 +33,7 @@ pipeline {
         stage('Deploy'){
             steps {
                 echo 'docker container start'
-                dir(path: '~/hanseifood_back') {
-                    sh 'docker-compose up -d'
-                }
+                sh 'docker-compose up -d'
             }
             post {
                 success {
