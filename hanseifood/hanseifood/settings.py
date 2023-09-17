@@ -9,9 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import pymysql
+import dotenv
+import os
 from pathlib import Path
-import os, dotenv
+
+import pymysql
 
 dotenv.load_dotenv()
 
@@ -30,7 +32,7 @@ SECRET_KEY = 'django-insecure-%634mt3)+%$kyzlt%c7_h=b$ot$fa#7=*-&z2s7%45ggis1gf_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False if os.getenv("DEBUG", 'False') == 'False' else True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', 'react-builder', 'hanseifood_ws']
 
 
 # Application definition
@@ -72,8 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'food.middlewares.ip_logging_middleware.IPLoggingMiddleware',
-    'food.middlewares.error_handling_middleware.ErrorHandlingMiddleware'
+    'food.middlewares.ip_logging_middleware.IPLoggingMiddleware'
 ]
 
 ROOT_URLCONF = 'hanseifood.urls'
@@ -106,12 +107,9 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'hansei_food',
-        # 'USER': 'django',
-        # 'PASSWORD': 'django',
-        # 'HOST': 'localhost',
-        'USER': 'hansei',
-        'PASSWORD': 'hansei_food',
-        'HOST': 'mysql_service',
+        'USER': os.getenv("DB_USER", 'hansei'),
+        'PASSWORD': os.getenv("DB_PASSWORD", 'hansei_food'),
+        'HOST': os.getenv("DB_HOST", 'mysql_service'),
         'PORT': '3306',
     }
 }

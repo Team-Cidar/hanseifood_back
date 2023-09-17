@@ -1,13 +1,14 @@
 from django.http import HttpResponse
 
+from .abstract_response import AbstractResponse
 from ..exceptions.type_exceptions import NotAbstractModelError
 from .objs.abstract_model import AbstractModel
 from .objs.menu import MenuModel
 
 
-class ModelResponse:
+class ModelResponse(AbstractResponse):
     @staticmethod
-    def getResponse(data, status_code: int = 200) -> HttpResponse:
+    def response(data: AbstractModel, status_code: int = 200) -> HttpResponse:
         if isinstance(data, AbstractModel):
             response = HttpResponse(data.toJson())
         elif isinstance(data, list) and all(isinstance(item, AbstractModel) for item in data):
