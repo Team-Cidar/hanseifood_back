@@ -1,12 +1,18 @@
 from django.http import HttpResponse
 
 from .abstract_response import AbstractResponse
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 
 class ErrorResponse(AbstractResponse):
     @staticmethod
     def response(data: BaseException, status_code: int = 500) -> HttpResponse:
-        response = HttpResponse(str(data))
-        response.status_code = status_code
+        trace_back: str = traceback.format_exc()
+        logger.error(str(data))
+        logger.error(trace_back)
+        response = HttpResponse(str(data), status=status_code)
 
         return response

@@ -187,6 +187,15 @@ LOGGING = {
             'filename': BASE_DIR / 'logs/server.log',
             'formatter': 'standard'
         },
+        'file_error': {
+            'level': 'INFO',
+            'encoding': 'utf-8',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs/error.log',
+            'formatter': 'standard'
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -208,6 +217,10 @@ LOGGING = {
         },
         'food.utils.views': {
             'handlers': ['console', 'file_request'],
+            'level': 'INFO'
+        },
+        'food.responses.error_response': {
+            'handlers':  ['console', 'file_error'],
             'level': 'INFO'
         }
     }
