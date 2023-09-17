@@ -16,10 +16,23 @@ pipeline {
                 }
             }
         }
+        stage("Stop and remove existing container") {
+            steps {
+                echo 'stop and remove container'
+                sh 'docker compose down'
+            }
+            post {
+                success {
+                    echo '==========stop & remove succeed=========='
+                }
+                failure {
+                    echo '==========stop & remove failed=========='
+                }
+            }
+        }
         stage('Deploy'){
             steps {
                 echo 'docker container start'
-                sh 'docker compose down'
                 sh 'docker compose up -d'
             }
             post {
