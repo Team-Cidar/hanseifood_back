@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-%634mt3)+%$kyzlt%c7_h=b$ot$fa#7=*-&z2s7%45ggis1gf_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False if os.getenv("DEBUG", 'False') == 'False' else True
 
-ALLOWED_HOSTS = ['localhost', 'react-builder', 'hanseifood_ws']
+ALLOWED_HOSTS = ['localhost', 'hanseiweeklymenu.me', 'www.hanseiweeklymenu.me', '218.239.156.31']
 
 
 # Application definition
