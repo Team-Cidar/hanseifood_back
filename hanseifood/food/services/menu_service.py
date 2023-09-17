@@ -55,12 +55,12 @@ class MenuService:
     def __get_day_n_daymeal(self, date: datetime) -> Tuple[List[DayMealDto], DayDto]:
         day_models: QuerySet = self.__day_repository.findByDate(date)
         if day_models.count() == 0:
-            raise EmptyDataError(f"Day model of [{date}] is not exists in database.")
+            raise EmptyDataError(f"Day model of '{date}' is not exists in database.")
         today: Day = day_models[0]
 
         day_meal_models: QuerySet = self.__day_meal_repository.findByDayId(today)
         if day_meal_models.count() == 0:
-            raise EmptyDataError(f"DayMeal model of [{today}] is not exists in database.")
+            raise EmptyDataError(f"DayMeal model of '{today}' is not exists in database.")
 
         day_meal_dtos: List[DayMealDto] = [item.to_dto() for item in day_meal_models]
         today_dto: DayDto = today.to_dto()
