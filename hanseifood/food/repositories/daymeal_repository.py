@@ -1,8 +1,6 @@
-from typing import List
 from django.db.models import Model, QuerySet
 
 from .abstract_repository import AbstractRepository
-from ..exceptions.menu_exceptions import EmptyDataError
 from ..models import DayMeal, Day
 
 
@@ -12,8 +10,6 @@ class DayMealRepository(AbstractRepository):
 
     def findByDayId(self, day_id: Day) -> QuerySet:
         datas: QuerySet = self.model.filter(day_id=day_id)
-        # if not datas.exists():
-        #     raise EmptyDataError(f"{day_id.date}'s meal data is not exists")
         return datas
 
     # override

@@ -1,3 +1,10 @@
+from typing import List, Tuple
+
+from django.db.models import QuerySet
+
+from ..dtos.day_meal import DayMealDto
+from ..dtos.day import DayDto
+from ..models import Day
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..core.utils import date_utils
@@ -15,76 +22,71 @@ class MenuService:
         self.__day_repository = DayRepository()
         self.__day_meal_repository = DayMealRepository()
 
-    def get_one_day_menu(self):
+    def get_one_day_menu(self) -> MenuModel:
         # return daily menu
         return self.get_target_days_menu(datetime.date.today())
 
-    def get_this_week_menu(self):
-        try:
-            this_week = date_utils.get_dates_in_this_week()
+    def get_this_week_menu(self) -> MenuModel:
+        this_week: List[datetime] = date_utils.get_dates_in_this_week()
 
-            response = MenuModel()
-            for date in this_week:
-                today = self.__day_repository.findByDate(date)[0]
-                today_meals = self.__day_meal_repository.findByDayId(today)
+        response: MenuModel = MenuModel()
 
-                today_meals = [item.to_dto() for item in today_meals]
-                today = today.to_dto()
+        date: datetime
+        for date in this_week:
+            day_meal_dtos: List[DayMealDto]
+            today_dto: DayDto
+            day_meal_dtos, today_dto = self.__get_day_n_daymeal(date)
 
-                response += self.__get_daily_menu(today.date, today_meals)
+            response += self.__get_daily_menu(today_dto.date, day_meal_dtos)
 
-            return response
-        except EmptyDataError as e:
-            logger.error(e)
-            return response
-        except Exception as e:
-            logger.error(e)
-            return response
+        return response
 
-    def get_target_days_menu(self, date: datetime):
-        try:
-            date = date_utils.get_weekday(date)  # to get friday when today is 'sat' or 'sun'
+    def get_target_days_menu(self, date: datetime) -> MenuModel:
+        date: datetime = date_utils.get_weekday(date)  # to get friday when today is 'sat' or 'sun'
 
-            print(date)
+        day_meal_dtos: List[DayMealDto]
+        today_dto: DayDto
+        day_meal_dtos, today_dto = self.__get_day_n_daymeal(date)
 
-            today = self.__day_repository.findByDate(date)[0]
-            today_meals = self.__day_meal_repository.findByDayId(today)
+        response = self.__get_daily_menu(today_dto.date, day_meal_dtos)
 
-            today_meals = [item.to_dto() for item in today_meals]
-            today = today.to_dto()
+        return response
 
-            response = self.__get_daily_menu(today.date, today_meals)
-            print(response)
+    def __get_day_n_daymeal(self, date: datetime) -> Tuple[List[DayMealDto], DayDto]:
+        day_models: QuerySet = self.__day_repository.findByDate(date)
+        if day_models.count() == 0:
+            raise EmptyDataError(f"Day model of [{date}] is not exists in database.")
+        today: Day = day_models[0]
 
-            return response
-        except EmptyDataError as e:
-            logger.error(e)
-            return response
-        except Exception as e:
-            logger.error(e)
-            return response
+        day_meal_models: QuerySet = self.__day_meal_repository.findByDayId(today)
+        if day_meal_models.count() == 0:
+            raise EmptyDataError(f"DayMeal model of [{today}] is not exists in database.")
+
+        day_meal_dtos: List[DayMealDto] = [item.to_dto() for item in day_meal_models]
+        today_dto: DayDto = today.to_dto()
+
+        return day_meal_dtos, today_dto
 
     @staticmethod
-    def __get_daily_menu(date, today_meals):
-        student = []
-        employee = []
-        additional = []
+    def __get_daily_menu(date: datetime, today_meals: List[DayMealDto]) -> MenuModel:
+        student: list = []
+        employee: list = []
+        additional: list = []
+
+        item: DayMealDto
         for item in today_meals:
             if item.for_student:
                 student.append(item.meal_name)
-            elif item.is_additional:  # for new template
+            elif item.is_additional:
                 additional.append(item.meal_name)
             else:
                 employee.append(item.meal_name)
 
-        # if len(employee) <= 1:
-        #     employee = student + employee
+        result: MenuModel = MenuModel()
 
-        result = MenuModel()
+        weekday_kor: str = date_utils.get_weekday_kor(date)
 
-        weekday_kor = date_utils.get_weekday_kor(date)
-
-        key = f'{str(date)} ({weekday_kor})'
+        key: str = f'{str(date)} ({weekday_kor})'
 
         if len(student) != 0:
             result.student_menu[key] = student

@@ -2,9 +2,7 @@ from .abstract_model import AbstractModel
 
 
 class MenuModel(AbstractModel):
-    # 여기에 필드 선언하면 static field
     def __init__(self):
-        # 이렇게 선언하면 instance field
         self.only_employee = True
         self.has_additional = False
         self.student_menu = dict()
