@@ -26,7 +26,7 @@ pipeline {
                 sh 'docker ps'
                 sh 'docker compose stop'
                 sh 'docker rm -f ${env.DB_NAME}'
-                sh 'docker rm -f ${emv.WAS_NAME}'
+                sh 'docker rm -f ${env.WAS_NAME}'
                 sh 'docker ps'
             }
             post {
