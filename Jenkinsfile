@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                echo 'build docker image'
+                echo '==========build docker image=========='
                 sh 'docker compose build'
             }
             post {
@@ -22,12 +22,9 @@ pipeline {
         }
         stage("Stop and remove existing container") {
             steps {
-                echo 'stop and remove container'
-                sh 'docker ps'
+                echo '==========stop and remove container=========='
                 sh 'docker compose stop'
-                sh 'docker rm -f ${DB_NAME}'
-                sh 'docker rm -f ${WAS_NAME}'
-                sh 'docker ps'
+                sh 'docker rm -f ${DB_NAME} ${WAS_NAME}'
             }
             post {
                 success {
@@ -40,7 +37,7 @@ pipeline {
         }
         stage('Deploy'){
             steps {
-                echo 'docker container start'
+                echo '==========docker container start=========='
                 sh 'docker compose up -d'
             }
             post {
