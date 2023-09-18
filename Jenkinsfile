@@ -49,6 +49,20 @@ pipeline {
                 }
             }
         }
+        stage("Remove unused docker resources") {
+            steps {
+                echo '==========start wipe datas=========='
+                sh 'docker system prune -f'
+            }
+            post {
+                success {
+                    echo '==========wipe succeed=========='
+                }
+                failure {
+                    echo '==========wipe failed=========='
+                }
+            }
+        }
     }
     post {
         success {
