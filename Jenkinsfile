@@ -19,7 +19,7 @@ pipeline {
         stage("Stop and remove existing container") {
             steps {
                 echo 'stop and remove container'
-                sh 'docker compose down'
+                sh 'docker compose stop'
             }
             post {
                 success {
