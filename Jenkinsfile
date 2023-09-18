@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DB_NAME="mysql_service"
-        WAS_NAME=
+        WAS_NAME="hanseifood_was"
     }
     stages {
         stage("Build") {
