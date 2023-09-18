@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DB_NAME="mysql_service"
+        WAS_NAME=
+    }
     stages {
         stage("Build") {
             steps {
@@ -19,7 +23,11 @@ pipeline {
         stage("Stop and remove existing container") {
             steps {
                 echo 'stop and remove container'
+                sh 'docker ps'
                 sh 'docker compose stop'
+                sh 'docker rm -f ${env.DB_NAME}'
+                sh 'docker rm -f ${emv.WAS_NAME}'
+                sh 'docker ps'
             }
             post {
                 success {
