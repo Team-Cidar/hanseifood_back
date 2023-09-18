@@ -25,8 +25,8 @@ pipeline {
                 echo 'stop and remove container'
                 sh 'docker ps'
                 sh 'docker compose stop'
-                sh 'docker rm -f \${env.DB_NAME}'
-                sh 'docker rm -f \${env.WAS_NAME}'
+                sh 'docker rm -f ${DB_NAME}'
+                sh 'docker rm -f ${WAS_NAME}'
                 sh 'docker ps'
             }
             post {
