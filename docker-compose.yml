@@ -21,6 +21,8 @@ services:
 
   server:
     container_name: hanseifood_was
+    volumes:
+      - server-log-data:/app/src/hanseifood/logs
     build:
       context: .
       dockerfile: ./dockerfile
@@ -39,3 +41,4 @@ networks:
 
 volumes:
   mysql-data:
+  server-log-data:
