@@ -1,7 +1,8 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from django.db.models import QuerySet
 
+from ..core.constants.strings.menu_strings import MENU_NOT_EXISTS
 from ..dtos.day_meal import DayMealDto
 from ..dtos.day import DayDto
 from ..models import Day
@@ -37,6 +38,9 @@ class MenuService:
             day_meal_dtos: List[DayMealDto]
             today_dto: DayDto
             day_meal_dtos, today_dto = self.__get_day_n_daymeal(date)
+            if today_dto is None:
+                response.add_empty_date(date)
+                continue
 
             response += self.__get_daily_menu(today_dto.date, day_meal_dtos)
 
@@ -48,20 +52,25 @@ class MenuService:
         day_meal_dtos: List[DayMealDto]
         today_dto: DayDto
         day_meal_dtos, today_dto = self.__get_day_n_daymeal(date)
-
-        response = self.__get_daily_menu(today_dto.date, day_meal_dtos)
+        if today_dto is None:
+            response: MenuModel = MenuModel()
+            response.add_empty_date(date)
+        else:
+            response = self.__get_daily_menu(today_dto.date, day_meal_dtos)
 
         return response
 
-    def __get_day_n_daymeal(self, date: datetime) -> Tuple[List[DayMealDto], DayDto]:
+    def __get_day_n_daymeal(self, date: datetime) -> Union[Tuple[list, None], Tuple[List[DayMealDto], DayDto]]:
         day_models: QuerySet = self.__day_repository.findByDate(date)
         if day_models.count() == 0:
-            raise EmptyDataError(f"Day model of '{date}' is not exists in database.")
+            # raise EmptyDataError(f"Day model of '{date}' is not exists in database.")
+            return [], None
         today: Day = day_models[0]
 
         day_meal_models: QuerySet = self.__day_meal_repository.findByDayId(today)
         if day_meal_models.count() == 0:
-            raise EmptyDataError(f"DayMeal model of '{today}' is not exists in database.")
+            # raise EmptyDataError(f"DayMeal model of '{today}' is not exists in database.")
+            return [], None
 
         day_meal_dtos: List[DayMealDto] = [item.to_dto() for item in day_meal_models]
         today_dto: DayDto = today.to_dto()
@@ -92,10 +101,14 @@ class MenuService:
         if len(student) != 0:
             result.student_menu[key] = student
             result.only_employee = False
+        else:
+            result.student_menu[key] = [MENU_NOT_EXISTS]
 
         if len(additional) != 0:
             result.has_additional = True
             result.additional_menu[key] = additional  # for new template
+        else:
+            result.additional_menu[key] = [MENU_NOT_EXISTS]
 
         result.employee_menu[key] = employee
 

@@ -1,13 +1,24 @@
+from datetime import datetime
+
+from typing import Dict
+
 from .abstract_model import AbstractModel
+from ...core.constants.strings.menu_strings import MENU_NOT_EXISTS
 
 
 class MenuModel(AbstractModel):
     def __init__(self):
         self.only_employee = True
         self.has_additional = False
-        self.student_menu = dict()
-        self.employee_menu = dict()
-        self.additional_menu = dict()
+        self.student_menu: Dict[str, list] = dict()
+        self.employee_menu: Dict[str, list] = dict()
+        self.additional_menu: Dict[str, list] = dict()
+
+    def add_empty_date(self, date: datetime):
+        date_str = date.strftime('%Y-%m-%d')
+        self.student_menu[date_str] = [MENU_NOT_EXISTS]
+        self.employee_menu[date_str] = [MENU_NOT_EXISTS]
+        self.additional_menu[date_str] = [MENU_NOT_EXISTS]
 
     # override
     def __add__(self, model):
