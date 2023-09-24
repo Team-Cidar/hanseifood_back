@@ -16,7 +16,8 @@ class MenuModel(AbstractModel):
         self.additional_menu: Dict[str, list] = dict()
 
     def add_empty_date(self, date: datetime):
-        weekday_kor: str = date_utils.get_weekday_kor(date)
+        date_str = date.strftime("%Y-%m-%d")
+        weekday_kor: str = date_utils.get_weekday_kor(date_str)
 
         key: str = f'{str(date)} ({weekday_kor})'
         self.student_menu[key] = [MENU_NOT_EXISTS]
