@@ -35,8 +35,9 @@ def get_and_save_menus():
                 return
 
         # crawling
-        crawler = MenuCrawler(driver_path='/app/src/hanseifood/drivers/chromedriver')
+        # crawler = MenuCrawler(driver_path='/app/src/hanseifood/drivers/chromedriver')
         # crawler = MenuCrawler('food/chromedriver')  # for test
+        crawler = MenuCrawler(driver_path=os.getenv("CHROME_DRIVER_PATH", '/app/src/hanseifood/drivers/chromedriver'))
         file_name = crawler.crawl()
 
         logger.info("Crawling job finished!")
@@ -51,21 +52,21 @@ def get_and_save_menus():
         data.keys = [
             '2023-10-04',
             '2023-10-05',
-            '2023-10-06',
+            '2023-10-06'
         ]
         data.students = {
             '2023-10-04': ['미소장국', '참치마요덮밥', '미니핫도그/케찹', '단무지', '배추김치'],
             '2023-10-05': ['사골떡국', '김치제육볶음', '만두튀김', '콩나물무침', '깍두기'],
-            '2023-10-06': ['부대찌개', '치킨가라아게', '옥수수콘샐러드', '요구르트', '깍두기'],
+            '2023-10-06': ['부대찌개', '치킨가라아게', '옥수수콘샐러드', '요구르트', '깍두기']
         }
         data.employees = {
             '2023-10-04': ['닭곰탕', '한식잡채', '매콤새송이두부조림', '모닝빵&딸기잼', '포기김치', '미역줄기들깨볶음'],
             '2023-10-05': ['사골떡국', '김치제육볶음', '만두튀김', '콩나물무침', '열무김치', '건파래자반'],
-            '2023-10-06': ['부대찌개', '치킨가라아게', '옥수수콘샐러드', '요구르트', '깍두기', '감자조림'],
+            '2023-10-06': ['부대찌개', '치킨가라아게', '옥수수콘샐러드', '요구르트', '깍두기', '감자조림']
         }
         data.additional = {
             '2023-10-05': ["돈까스 정식"],
-            '2023-10-06': ["돈까스 정식"],
+            '2023-10-06': ["돈까스 정식"]
         }
         _save_data_temp(data)
 

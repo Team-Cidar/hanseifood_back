@@ -1,9 +1,12 @@
 from django.urls import path
-from . import views
+from .views import base_views, menu_views
 
 urlpatterns = [
-    path("menus/day", views.get_todays_menu, name="daily_menu"),
-    path('menus/week', views.get_weekly_menus, name='weekly_menu'),
-    path('menus/target', views.get_target_days_menu, name='target_menu'),
-    path("", views.index, name="index")
+    # /views/base_views
+    path("", base_views.index, name="index"),
+
+    # /views/menu_views
+    path("menus/day", menu_views.get_todays_menu, name="daily_menu"),
+    path('menus/week', menu_views.get_weekly_menus, name='weekly_menu'),
+    path('menus/target', menu_views.get_target_days_menu, name='target_menu'),
 ]

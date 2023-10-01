@@ -1,18 +1,14 @@
-from django.http import HttpResponse, HttpRequest
-
-from .exceptions.menu_exceptions import EmptyDataError
-from .exceptions.type_exceptions import NotAbstractModelError
-from .responses.error_response import ErrorResponse
-from .responses.model_response import ModelResponse
-from .services.menu_service import MenuService
-
+from django.http import HttpRequest
 import datetime
 
+from ..exceptions.menu_exceptions import EmptyDataError
+from ..exceptions.type_exceptions import NotAbstractModelError
+from ..responses.error_response import ErrorResponse
+from ..responses.model_response import ModelResponse
+from ..services.menu_service import MenuService
+
+
 menu_service = MenuService()
-
-
-def index(request):
-    return HttpResponse("Hello world!")
 
 
 # /menus/day GET
