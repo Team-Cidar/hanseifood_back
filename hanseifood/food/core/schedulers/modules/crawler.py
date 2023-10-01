@@ -22,7 +22,7 @@ class MenuCrawler:
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument(
             "user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
-        options.add_experimental_option("prefs", {'intl.accept_languages': 'ko',  # driver language setting
+        options.add_experimental_option("prefs", {'intl.accept_languages': 'ko',  # drivers language setting
                                                   "download.default_directory": os.getcwd() + "/datas",  # set download path
                                                   })
 
