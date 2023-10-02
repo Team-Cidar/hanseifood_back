@@ -35,9 +35,7 @@ def get_and_save_menus():
                 return
 
         # crawling
-        # crawler = MenuCrawler(driver_path='/app/src/hanseifood/drivers/chromedriver')
-        # crawler = MenuCrawler('food/chromedriver')  # for test
-        crawler = MenuCrawler(driver_path=os.getenv("CHROME_DRIVER_PATH", '/app/src/hanseifood/drivers/chromedriver'))
+        crawler = MenuCrawler(driver_path=os.getenv("CHROME_DRIVER_PATH"))
         file_name = crawler.crawl()
 
         logger.info("Crawling job finished!")
@@ -45,7 +43,6 @@ def get_and_save_menus():
 
         # parse
         path = 'datas/' + file_name + '.xlsx'
-        # path = 'datas/test2.xlsx'    # for test
 
         # data: ParseObject = TempExcelParser.parse(path)  # new template parser
         data: ParseObject = ParseObject()

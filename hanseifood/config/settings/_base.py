@@ -9,34 +9,22 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import dotenv
 import os
 from pathlib import Path
-
 import pymysql
-
-dotenv.load_dotenv()
 
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%634mt3)+%$kyzlt%c7_h=b$ot$fa#7=*-&z2s7%45ggis1gf_'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if os.getenv("DEBUG", 'False') == 'False' else True
-
-ALLOWED_HOSTS = ['localhost', 'hanseiweeklymenu.me', 'www.hanseiweeklymenu.me', '218.239.156.31']
-
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # Application definition
-
 INSTALLED_APPS = [
     # django
     'django.contrib.admin',
@@ -94,26 +82,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hansei_food',
-        'USER': os.getenv("DB_USER", 'hansei'),
-        'PASSWORD': os.getenv("DB_PASSWORD", 'hansei_food'),
-        'HOST': os.getenv("DB_HOST", 'mysql_service'),
-        'PORT': '3306',
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -155,9 +123,25 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hansei_food',
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT"),
+    }
+}
+
 # Logger settings
-if not os.path.exists(BASE_DIR / 'logs'):
-    os.mkdir(BASE_DIR / 'logs')
+LOG_DIR = BASE_DIR.parent / "logs"
+if not os.path.exists(LOG_DIR):
+    os.mkdir(LOG_DIR)
 
 LOGGING = {
     'version': 1,
@@ -174,7 +158,7 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5,
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs/scheduler.log',
+            'filename': LOG_DIR / 'scheduler.log',
             'formatter': 'standard'
         },
         'file_request': {
@@ -183,7 +167,7 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5,
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs/server.log',
+            'filename': LOG_DIR / 'server.log',
             'formatter': 'standard'
         },
         'file_error': {
@@ -192,7 +176,7 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5,
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs/error.log',
+            'filename': LOG_DIR / 'error.log',
             'formatter': 'standard'
         },
         'console': {

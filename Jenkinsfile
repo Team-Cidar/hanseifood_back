@@ -6,6 +6,20 @@ pipeline {
         WAS_NAME="hanseifood_was"
     }
     stages {
+        stage("Set environment") {
+            steps {
+                echo '==========set environment=========='
+                sh 'sudo cp /home/joey/hanseifood_was/.env /var/lib/jenkins/workspace/hanseifood_was'
+            }
+            post {
+                success {
+                    echo '==========environment setting succeed=========='
+                }
+                failure {
+                    echo '==========environment setting failed=========='
+                }
+            }
+        }
         stage("Build") {
             steps {
                 echo '==========build docker image=========='
