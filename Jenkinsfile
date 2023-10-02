@@ -9,7 +9,7 @@ pipeline {
         stage("Set environment") {
             steps {
                 echo '==========set environment=========='
-                sh 'sudo cp /home/joey/hanseifood_was/.env /var/lib/jenkins/workspace/hanseifood_was'
+                sh 'sudo cp /home/joey/hanseifood_back/.env /var/lib/jenkins/workspace/hanseifood_was'
             }
             post {
                 success {
