@@ -90,9 +90,13 @@ def _save_data_temp(data: ParseObject):
             continue
         day_model = day_repository.save(date)
 
-        _save_to_db(day_model, students[day], for_students=True, is_additional=False)
-        _save_to_db(day_model, employees[day], for_students=False, is_additional=False)
-        _save_to_db(day_model, additional[day], for_students=False, is_additional=True)
+        try:
+            _save_to_db(day_model, students[day], for_students=True, is_additional=False)
+            _save_to_db(day_model, employees[day], for_students=False, is_additional=False)
+            _save_to_db(day_model, additional[day], for_students=False, is_additional=True)
+        except KeyError:
+            # 메뉴가 student, employee, additinal 모두 존재하지 않는 날은 dict key에러가 나서 그냥 넘어가도록 처리
+            pass
 
 
 def _save_to_db(day_model, datas: list, for_students: bool, is_additional: bool):
