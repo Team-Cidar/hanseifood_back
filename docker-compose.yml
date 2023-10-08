@@ -5,6 +5,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     environment:
+      TZ: Asia/Seoul
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: hansei_food
       MYSQL_USER: hansei
