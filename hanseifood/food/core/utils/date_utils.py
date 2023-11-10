@@ -4,7 +4,7 @@ import math
 from typing import Dict, List
 
 
-def get_dates_in_this_week(start=0, end=4, today=datetime.today()) -> List[datetime]:
+def get_dates_in_this_week(today: datetime, start=0, end=4) -> List[datetime]:
     """returns all dates of the week. If you don't set start and end parameter, it'll return a list from monday to friday.
 
     Parameters

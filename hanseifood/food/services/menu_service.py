@@ -9,7 +9,7 @@ from ..models import Day
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..core.utils import date_utils
-from ..exceptions.menu_exceptions import EmptyDataError
+from ..exceptions.data_exceptions import EmptyDataError
 from ..responses.objs.menu import MenuModel
 
 import logging
@@ -29,7 +29,7 @@ class MenuService:
 
     def get_this_week_menu(self) -> MenuModel:
         # return weekly menu
-        this_week: List[datetime] = date_utils.get_dates_in_this_week()
+        this_week: List[datetime] = date_utils.get_dates_in_this_week(today=datetime.datetime.today())
 
         response: MenuModel = MenuModel()
 
