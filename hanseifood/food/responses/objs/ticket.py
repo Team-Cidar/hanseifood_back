@@ -8,12 +8,14 @@ class TicketModel(AbstractModel):
     def __init__(self, ticket_id: str):
         self.ticket_id: str = ticket_id
         self.owner_name: str = ''
+        self.ticket_type: str = ''
 
     # override
     def _serialize(self) -> dict:
         return {
             'ticket_id': self.ticket_id,
             'owner_name': self.owner_name,
+            'ticket_type': self.ticket_type
         }
 
 
@@ -21,13 +23,11 @@ class TicketValidationModel(TicketModel):
     def __init__(self, ticket_id: str):
         super().__init__(ticket_id)
         self.is_valid: bool = False
-        self.is_used: bool = False
 
     # override
     def _serialize(self) -> dict:
         res: dict = super()._serialize()
         res.update({
             'is_valid': self.is_valid,
-            'is_used': self.is_used
         })
         return res
