@@ -27,7 +27,5 @@ class TicketValidationModel(TicketModel):
     # override
     def _serialize(self) -> dict:
         res: dict = super()._serialize()
-        res.update({
-            'is_valid': self.is_valid,
-        })
+        res['is_valid'] = self.is_valid
         return res
