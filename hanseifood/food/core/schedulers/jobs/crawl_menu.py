@@ -1,10 +1,6 @@
-import os.path
 from datetime import datetime
 import logging
 
-from ...utils.date_utils import get_dates_in_this_week
-from ..modules.crawler import MenuCrawler
-from ..modules.temp_excel_parser import TempExcelParser
 from ....repositories.day_repository import DayRepository
 from ....repositories.daymeal_repository import DayMealRepository
 from ....repositories.meal_repository import MealRepository
@@ -21,28 +17,28 @@ day_meal_repository = DayMealRepository()
 # scheduler에 등록할 함수
 def get_and_save_menus():
     try:
-        logger.info('Execute scheduled job / get_menu_data_schedule')
+        # logger.info('Execute scheduled job / get_menu_data_schedule')
         # clear all datas
         # day_repository.clearAll()
         # meal_repository.clearAll()
         # day_meal_repository.clearAll()
 
         # check if already did crawling
-        for date in get_dates_in_this_week(today=datetime.today(), end=6):
-            date_str = date.strftime('%Y%m%d')
-            if os.path.exists(f'datas/{date_str}.xlsx'):
-                logger.info("This week's menu data is already saved")
-                return
-
-        # crawling
-        crawler = MenuCrawler(driver_path=os.getenv("CHROME_DRIVER_PATH"))
-        file_name = crawler.crawl()
-
-        logger.info("Crawling job finished!")
+        # for date in get_dates_in_this_week(today=datetime.today(), end=6):
+        #     date_str = date.strftime('%Y%m%d')
+        #     if os.path.exists(f'datas/{date_str}.xlsx'):
+        #         logger.info("This week's menu data is already saved")
+        #         return
+        #
+        # # crawling
+        # crawler = MenuCrawler(driver_path=os.getenv("CHROME_DRIVER_PATH"))
+        # file_name = crawler.crawl()
+        #
+        # logger.info("Crawling job finished!")
         logger.info("Start saving datas to database")
 
         # parse
-        path = 'datas/' + file_name + '.xlsx'
+        # path = 'datas/' + file_name + '.xlsx'
 
         # data: ParseObject = TempExcelParser.parse(path)  # new template parser
         data: ParseObject = ParseObject()
