@@ -22,4 +22,5 @@ class TicketService:
         ticket_model.is_valid = True
         ticket_model.owner_name = 'Jeremy'
         ticket_model.ticket_type = '추가 메뉴'
+        print(ticket_model)
         return ticket_model
