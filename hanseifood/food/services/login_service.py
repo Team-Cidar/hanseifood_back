@@ -97,17 +97,4 @@ class LoginService:
 
         return LoginModel(user_id = id, user_nickname=nickname, is_exists=True, customnickname=request, access_token=access_token)
 
-    # @method_decorator(csrf_exempt, name='dispatch')
-    # def logout(self, request):
-    #
-    #     if request.method == "POST":
-    #
-    #         print(token)
-    #         response = requests.get(
-    #             'https://kauth.kakao.com/oauth/logout?client_id=c8300aee5549fc7db67a25a714144789&logout_redirect_uri=http://localhost:8080')
-    #         if response.status_code == 200:
-    #             return HttpResponse('로그아웃되었습니다.', status=200)
-    #         else:
-    #             return HttpResponse('로그아웃에 실패했습니다.', status=response.status_code)
-    #
-    #     return HttpResponse('잘못된 요청입니다.', status=400)
+
