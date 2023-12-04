@@ -13,12 +13,6 @@ import os
 from pathlib import Path
 import pymysql
 from datetime import timedelta
-from dotenv import load_dotenv
-
-load_dotenv()
-
-
-
 
 pymysql.install_as_MySQLdb()
 
@@ -76,11 +70,10 @@ MIDDLEWARE = [
 
 ]
 
-
 SIMPLE_JWT = {
-	# Access 토큰 유효 시간 설정하기
+    # Access 토큰 유효 시간 설정하기
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-	# Refresh 토큰 유효 시간 설정하기
+    # Refresh 토큰 유효 시간 설정하기
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 
     'ROTATE_REFRESH_TOKENS': False,
@@ -100,7 +93,7 @@ SIMPLE_JWT = {
     'USER_ID_FIELD': 'username',
     'USER_ID_CLAIM': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
-    'IS_STAFF_CLAIM' : 'IS_STAFF',
+    'IS_STAFF_CLAIM': 'IS_STAFF',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
     'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
@@ -111,8 +104,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
-
-
 
 ROOT_URLCONF = 'config.urls'
 
@@ -137,7 +128,6 @@ TEMPLATES = [
 
 AUTH_USER_MODEL = 'food.CustomUser'
 
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -153,7 +143,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -165,7 +154,6 @@ USE_I18N = True
 
 USE_TZ = False  # True면 models의 datetime에 위 time zone이 반영되지 않음
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -175,7 +163,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 WSGI_APPLICATION = 'Kakao.wsgi.application'
 # Database
@@ -256,7 +243,7 @@ LOGGING = {
             'level': 'INFO'
         },
         'food.responses.error_response': {
-            'handlers':  ['console', 'file_error'],
+            'handlers': ['console', 'file_error'],
             'level': 'INFO'
         }
     }
@@ -293,6 +280,5 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
     'AccessToken'
 )
-
 
 APPEND_SLASH = False
