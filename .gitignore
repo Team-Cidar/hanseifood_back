@@ -2,7 +2,7 @@
 env/
 hanseifood/.idea/
 hanseifood/logs
-.env
+hanseifood/.env
 
 *.pyc
 __pycache__/

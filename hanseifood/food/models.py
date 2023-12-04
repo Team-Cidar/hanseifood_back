@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from .dtos.day import DayDto
 from .dtos.meal import MealDto
 from .dtos.day_meal import DayMealDto
@@ -41,6 +42,7 @@ class DayMeal(models.Model):
 
     def __str__(self):
         return str(self.day_id) + '/' + str(self.meal_id)
+
 
 
 class User(models.Model):
@@ -94,3 +96,15 @@ class UserTicket(models.Model):
 
     def __str__(self):
         return f"[{self.user_id} / {self.ticket_id} / {self.pay_id}]"
+
+# class MyUser(models.Model):
+#     kakaonickname = models.CharField(max_length=30,unique=True)
+#     nickname = models.CharField(max_length=30,unique=True)
+#     userid = models.BigIntegerField(unique=True)
+
+class CustomUser(AbstractUser):
+    kakaonickname = models.CharField(max_length=30)
+    nickname = models.CharField(max_length=30, unique=True)
+    def __str__(self):
+        return str(self.nickname)
+
