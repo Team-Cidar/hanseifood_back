@@ -1,8 +1,6 @@
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
 import json
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotAbstractModelError
@@ -16,7 +14,6 @@ login_service = LoginService()
 def try_login(request) -> HttpResponse:
     try:
         code = json.loads(request.body).get("code")
-        print(code)
         response = login_service.do_login(code)
         return ModelResponse.response(response)
     except EmptyDataError as e:
@@ -30,7 +27,6 @@ def try_login(request) -> HttpResponse:
 def set_nickname(request) -> HttpResponse:
     try:
         custom_nickname = json.loads(request.body).get("nickname")
-        print(custom_nickname)
         response = login_service.set_user_nickname(custom_nickname)
         return ModelResponse.response(response)
     except EmptyDataError as e:
@@ -39,16 +35,3 @@ def set_nickname(request) -> HttpResponse:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
-
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-        @classmethod
-        def get_token(cls, user):
-            token = super().get_token(user)
-            token['is_staff'] = user.is_staff  # 확장
-            token['is_superuser'] = user.is_superuser  # 확장
-            token['nickname'] = user.nickname
-            return token
-
-class MyTokenObtainPairView(TokenObtainPairView):
-        serializer_class = MyTokenObtainPairSerializer
