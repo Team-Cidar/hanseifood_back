@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponse
 import json
 import requests
-
+from ..core.constants.strings.login_string import TOKEN_NOT_EXISTS, NICKNAME_NOT_EXISTS
 from ..responses.objs.login import UserModel
 
 id = None
