@@ -57,9 +57,9 @@ class LoginService:
             user, created = CustomUser.objects.get_or_create(username=id, kakaonickname=nickname)
             user.set_password(nickname)
             user.save()
-            return UserModel(user_id=id, user_nickname=nickname, is_exists=False,customnickname="생성전" , access_token="없음")
+            return UserModel(user_id=id, user_nickname=nickname, is_exists=False,customnickname=NICKNAME_NOT_EXISTS , access_token=TOKEN_NOT_EXISTS)
         elif existing_user2:
-            return UserModel(user_id=id, user_nickname=nickname, is_exists=False, customnickname="생성전" , access_token="없음")
+            return UserModel(user_id=id, user_nickname=nickname, is_exists=False, customnickname=NICKNAME_NOT_EXISTS , access_token=TOKEN_NOT_EXISTS)
         else:
             body = {
                 "username": id,
