@@ -11,7 +11,7 @@ class TokenValidationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if not (request.path.startswith('/login') or request.path.startswith('/api/token') or request.path.startswith('/nickname') or request.path.startswith('/admin')):
+        if not (request.path.startswith('/login') or request.path.startswith('/api/token') or request.path.startswith('/nickname') or request.path.startswith('/admin') or request.path.startswith('/menus')):
             AccessToken = request.headers.get("AccessToken")
 
             if AccessToken is not None:
