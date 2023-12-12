@@ -7,7 +7,7 @@ from django.http import JsonResponse, HttpResponse
 import json
 import requests
 
-from ..responses.objs.login import LoginModel
+from ..responses.objs.login import UserModel
 
 id = None
 nickname = None
@@ -16,7 +16,7 @@ token = None
 class LoginService:
 
     @method_decorator(csrf_exempt, name='dispatch')
-    def do_login(self, request) -> LoginModel:
+    def do_login(self, request) -> UserModel:
         global token
         global id
         global nickname
@@ -57,9 +57,9 @@ class LoginService:
             user, created = CustomUser.objects.get_or_create(username=id, kakaonickname=nickname)
             user.set_password(nickname)
             user.save()
-            return LoginModel(user_id=id, user_nickname=nickname, is_exists=False,customnickname="생성전" , access_token="없음")
+            return UserModel(user_id=id, user_nickname=nickname, is_exists=False,customnickname="생성전" , access_token="없음")
         elif existing_user2:
-            return LoginModel(user_id=id, user_nickname=nickname, is_exists=False, customnickname="생성전" , access_token="없음")
+            return UserModel(user_id=id, user_nickname=nickname, is_exists=False, customnickname="생성전" , access_token="없음")
         else:
             body = {
                 "username": id,
@@ -71,10 +71,10 @@ class LoginService:
             token_data = token_response.json()
             access_token = token_data.get("access")
             print(access_token)
-            return LoginModel(user_id=id, user_nickname=nickname, is_exists=True, customnickname=existing_user.nickname, access_token=access_token)
+            return UserModel(user_id=id, user_nickname=nickname, is_exists=True, customnickname=existing_user.nickname, access_token=access_token)
 
     @method_decorator(csrf_exempt, name='dispatch')
-    def set_user_nickname(self, request) -> LoginModel:
+    def set_user_nickname(self, request) -> UserModel:
 
         print(id)
         print(request)
@@ -95,6 +95,6 @@ class LoginService:
         access_token = token_data.get("access")
         print(access_token)
 
-        return LoginModel(user_id = id, user_nickname=nickname, is_exists=True, customnickname=request, access_token=access_token)
+        return UserModel(user_id = id, user_nickname=nickname, is_exists=True, customnickname=request, access_token=access_token)
 
 
