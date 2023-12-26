@@ -6,7 +6,7 @@ from ..models import DayMeal, Day
 
 class DayMealRepository(AbstractRepository):
     def __init__(self):
-        super().__init__(DayMeal.objects)
+        super(DayMealRepository, self).__init__(DayMeal.objects)
 
     def findByDayId(self, day_id: Day) -> QuerySet:
         datas: QuerySet = self.model.filter(day_id=day_id)

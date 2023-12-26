@@ -6,7 +6,7 @@ from ..repositories.abstract_repository import AbstractRepository
 
 class MealRepository(AbstractRepository):
     def __init__(self):
-        super().__init__(Meal.objects)
+        super(MealRepository, self).__init__(Meal.objects)
 
     def findByMenuName(self, menu_name) -> QuerySet:
         datas: QuerySet = self.model.filter(meal_name=menu_name)

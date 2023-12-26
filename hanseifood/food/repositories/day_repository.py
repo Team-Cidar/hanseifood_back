@@ -7,7 +7,7 @@ from ..repositories.abstract_repository import AbstractRepository
 
 class DayRepository(AbstractRepository):
     def __init__(self):
-        super().__init__(Day.objects)
+        super(DayRepository, self).__init__(Day.objects)
 
     def findByDate(self, date: datetime.datetime) -> QuerySet:
         datas: QuerySet = self.model.filter(date=date)
