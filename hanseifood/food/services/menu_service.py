@@ -1,6 +1,8 @@
 from typing import List, Tuple, Union
 
 from django.db.models import QuerySet
+import logging
+import datetime
 
 from ..core.constants.strings.menu_strings import MENU_NOT_EXISTS
 from ..dtos.day_meal import DayMealDto
@@ -9,16 +11,13 @@ from ..models import Day
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..core.utils import date_utils
-from ..exceptions.data_exceptions import EmptyDataError
 from ..responses.objs.menu import MenuModel
-
-import logging
-import datetime
+from .abstract_service import AbstractService
 
 logger = logging.getLogger(__name__)
 
 
-class MenuService:
+class MenuService(AbstractService):
     def __init__(self):
         self.__day_repository = DayRepository()
         self.__day_meal_repository = DayMealRepository()
@@ -63,13 +62,11 @@ class MenuService:
     def __get_day_n_daymeal(self, date: datetime) -> Union[Tuple[list, None], Tuple[List[DayMealDto], DayDto]]:
         day_models: QuerySet = self.__day_repository.findByDate(date)
         if day_models.count() == 0:
-            # raise EmptyDataError(f"Day model of '{date}' is not exists in database.")
             return [], None
         today: Day = day_models[0]
 
         day_meal_models: QuerySet = self.__day_meal_repository.findByDayId(today)
         if day_meal_models.count() == 0:
-            # raise EmptyDataError(f"DayMeal model of '{today}' is not exists in database.")
             return [], None
 
         day_meal_dtos: List[DayMealDto] = [item.to_dto() for item in day_meal_models]
@@ -77,8 +74,7 @@ class MenuService:
 
         return day_meal_dtos, today_dto
 
-    @staticmethod
-    def __get_daily_menu(date: datetime, today_meals: List[DayMealDto]) -> MenuModel:
+    def __get_daily_menu(self, date: datetime, today_meals: List[DayMealDto]) -> MenuModel:
         student: list = []
         employee: list = []
         additional: list = []

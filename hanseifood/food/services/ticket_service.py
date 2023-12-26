@@ -1,11 +1,12 @@
-from ..responses.objs.ticket import TicketModel, TicketValidationModel
-
 import logging
+
+from ..responses.objs.ticket import TicketModel, TicketValidationModel
+from .abstract_service import AbstractService
 
 logger = logging.getLogger(__name__)
 
 
-class TicketService:
+class TicketService(AbstractService):
     def __init__(self):
         # add repository instance variables
         pass
