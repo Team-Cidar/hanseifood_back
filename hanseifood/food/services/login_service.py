@@ -9,17 +9,11 @@ import requests
 from ..core.constants.strings.login_string import TOKEN_NOT_EXISTS, NICKNAME_NOT_EXISTS
 from ..responses.objs.login import UserModel
 
-id = None
-nickname = None
-token = None
 
 class LoginService:
 
     @method_decorator(csrf_exempt, name='dispatch')
     def do_login(self, request) -> UserModel:
-        global token
-        global id
-        global nickname
 
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -76,25 +70,22 @@ class LoginService:
     @method_decorator(csrf_exempt, name='dispatch')
     def set_user_nickname(self, request) -> UserModel:
 
-        print(id)
-        print(request)
+        new_user = CustomUser.objects.filter(username=request['id']).first()
 
-        new_user = CustomUser.objects.filter(username=id).first()
-
-        new_user.nickname = request
+        new_user.nickname = request['nickname']
         new_user.save()
 
         body = {
-        "username": id,
-        "password": nickname,
+        "username": request['id'],
+        "password": request['kakaonickname'],
         }
-
+        print(body)
         token_response = requests.post('http://localhost:8000/api/token', data=body)
 
         token_data = token_response.json()
         access_token = token_data.get("access")
         print(access_token)
 
-        return UserModel(user_id = id, user_nickname=nickname, is_exists=True, customnickname=request, access_token=access_token)
+        return UserModel(user_id=request['id'], user_nickname=request['kakaonickname'], is_exists=True, customnickname=request['nickname'], access_token=access_token)
 
 

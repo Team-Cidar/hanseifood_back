@@ -27,7 +27,12 @@ def try_login(request) -> HttpResponse:
 def set_nickname(request) -> HttpResponse:
     try:
         custom_nickname = json.loads(request.body).get("nickname")
-        response = login_service.set_user_nickname(custom_nickname)
+        kakaonickname = json.loads(request.body).get("kakaonickname")
+        id = json.loads(request.body).get("id")
+        data = {"nickname": custom_nickname,
+                "kakaonickname": kakaonickname,
+                "id": id}
+        response = login_service.set_user_nickname(data)
         return ModelResponse.response(response)
     except EmptyDataError as e:
         return ErrorResponse.response(e, 404)
