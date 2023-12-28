@@ -10,6 +10,7 @@ from ..services.login_service import LoginService
 
 login_service = LoginService()
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 def try_login(request) -> HttpResponse:
     try:
@@ -23,15 +24,16 @@ def try_login(request) -> HttpResponse:
     except Exception as e:
         return ErrorResponse.response(e, 500)
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 def set_nickname(request) -> HttpResponse:
     try:
         custom_nickname = json.loads(request.body).get("nickname")
-        kakaonickname = json.loads(request.body).get("kakaonickname")
-        id = json.loads(request.body).get("id")
+        kakao_nickname = json.loads(request.body).get("kakaonickname")
+        user_id = json.loads(request.body).get("id")
         data = {"nickname": custom_nickname,
-                "kakaonickname": kakaonickname,
-                "id": id}
+                "kakaonickname": kakao_nickname,
+                "id": user_id}
         response = login_service.set_user_nickname(data)
         return ModelResponse.response(response)
     except EmptyDataError as e:

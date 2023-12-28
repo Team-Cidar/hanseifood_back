@@ -44,7 +44,6 @@ class DayMeal(models.Model):
         return str(self.day_id) + '/' + str(self.meal_id)
 
 
-
 class User(models.Model):
     email = models.TextField()
     password = models.TextField()
@@ -97,14 +96,10 @@ class UserTicket(models.Model):
     def __str__(self):
         return f"[{self.user_id} / {self.ticket_id} / {self.pay_id}]"
 
-# class MyUser(models.Model):
-#     kakaonickname = models.CharField(max_length=30,unique=True)
-#     nickname = models.CharField(max_length=30,unique=True)
-#     userid = models.BigIntegerField(unique=True)
 
 class CustomUser(AbstractUser):
     kakaonickname = models.CharField(max_length=30)
     nickname = models.CharField(max_length=30, unique=True)
+
     def __str__(self):
         return str(self.nickname)
-
