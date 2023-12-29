@@ -1,4 +1,5 @@
 from django.http import HttpRequest, HttpResponse
+from rest_framework.decorators import api_view
 
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotAbstractModelError
@@ -6,11 +7,11 @@ from ..responses.error_response import ErrorResponse
 from ..responses.model_response import ModelResponse
 from ..services.ticket_service import TicketService
 
-
 ticket_service = TicketService()
 
 
 # /tickets/validate/<str:ticket_id> GET
+@api_view(['GET'])
 def get_ticket_validation(request: HttpRequest, ticket_id: str) -> HttpResponse:
     try:
         response = ticket_service.validate_ticket(ticket_id)

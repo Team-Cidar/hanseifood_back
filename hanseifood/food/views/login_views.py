@@ -1,7 +1,8 @@
 from django.http import HttpResponse
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 import json
+
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..responses.error_response import ErrorResponse
@@ -11,7 +12,8 @@ from ..services.login_service import LoginService
 login_service = LoginService()
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@api_view(['POST'])
+@csrf_exempt
 def try_login(request) -> HttpResponse:
     try:
         code = json.loads(request.body).get("code")
@@ -25,7 +27,8 @@ def try_login(request) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@api_view(['POST'])
+@csrf_exempt
 def set_nickname(request) -> HttpResponse:
     try:
         custom_nickname = json.loads(request.body).get("nickname")

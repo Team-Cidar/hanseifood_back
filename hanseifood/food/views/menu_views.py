@@ -1,4 +1,5 @@
 from django.http import HttpRequest, HttpResponse
+from rest_framework.decorators import api_view
 import datetime
 
 from ..exceptions.data_exceptions import EmptyDataError
@@ -12,6 +13,7 @@ menu_service = MenuService()
 
 
 # /menus/day GET
+@api_view(['GET'])
 def get_todays_menu(request) -> HttpResponse:
     try:
         response = menu_service.get_one_day_menu()
@@ -25,6 +27,7 @@ def get_todays_menu(request) -> HttpResponse:
 
 
 # /menus/week GET
+@api_view(['GET'])
 def get_weekly_menus(request) -> HttpResponse:
     try:
         response = menu_service.get_this_week_menu()
@@ -38,6 +41,7 @@ def get_weekly_menus(request) -> HttpResponse:
 
 
 # /menus/target? GET
+@api_view(['GET'])
 def get_target_days_menu(request: HttpRequest) -> HttpResponse:
     try:
         date = request.GET.get('date', None)

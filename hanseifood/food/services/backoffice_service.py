@@ -11,4 +11,4 @@ class BackOfficeService(AbstractService):
         pass
 
     def add_menus(self):
-        ...
+        pass
