@@ -67,7 +67,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'food.middlewares.token_middleware.TokenValidationMiddleware',
     'food.middlewares.ip_logging_middleware.IPLoggingMiddleware',
-
 ]
 
 SIMPLE_JWT = {

@@ -1,8 +1,6 @@
 from django.urls import path
-from django.contrib import admin
 from .views import base_views, menu_views, ticket_views, login_views, backoffice_views
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView, TokenVerifyView,
 )
 from .core.jwt import jwt
@@ -28,5 +26,6 @@ urlpatterns = [
     path('tickets/validate/<str:ticket_id>', ticket_views.get_ticket_validation, name='validate_ticket'),
 
     # /views/backoffice_views
-    path('back/menu', backoffice_views.add_menu, name='add_menu')
+    path('back/menu', backoffice_views.add_menu, name='add_menu'),
+    path('back/excel', backoffice_views.get_excel_file, name='get_excel_file')
 ]

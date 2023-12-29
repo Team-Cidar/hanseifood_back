@@ -3,11 +3,14 @@ from ..core.patterns.singleton_cls import Singleton
 
 
 class AbstractRepository(metaclass=Singleton):
-    def __init__(self, model):
-        self.model = model
+    def __init__(self, model: Model.objects):
+        self.model: Model.objects = model
 
     def clearAll(self):
         self.model.all().delete()
+
+    def delete(self, entity: Model):
+        entity.delete()
 
     # abstract method
     def save(self, *args, **kwargs) -> Model:

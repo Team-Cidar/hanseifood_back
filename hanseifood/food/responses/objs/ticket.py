@@ -1,5 +1,4 @@
 from .abstract_model import AbstractModel
-from ...core.constants.strings.exception_strings import MISSING_ARG_ERROR
 
 
 # 기본적인 티켓 정보 리턴 dto

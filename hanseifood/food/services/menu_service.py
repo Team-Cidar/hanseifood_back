@@ -5,11 +5,13 @@ import logging
 import datetime
 
 from ..core.constants.strings.menu_strings import MENU_NOT_EXISTS
+from ..dtos.daily_menu import DailyMenuDto
 from ..dtos.day_meal import DayMealDto
 from ..dtos.day import DayDto
 from ..models import Day
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
+from ..repositories.meal_repository import MealRepository
 from ..core.utils import date_utils
 from ..responses.objs.menu import MenuModel
 from .abstract_service import AbstractService
@@ -21,6 +23,7 @@ class MenuService(AbstractService):
     def __init__(self):
         self.__day_repository = DayRepository()
         self.__day_meal_repository = DayMealRepository()
+        self.__meal_repository = MealRepository()
 
     def get_one_day_menu(self) -> MenuModel:
         # return daily menu
@@ -58,6 +61,28 @@ class MenuService(AbstractService):
             response = self.__get_daily_menu(today_dto.date, day_meal_dtos)
 
         return response
+
+    def save_daily_menu(self, data: DailyMenuDto) -> None:
+        students: list = data.student
+        employees: list = data.employee
+        additional: list = data.additional
+
+        day_model = self.__day_repository.save(data.date)
+
+        self.save_to_db(day_model=day_model, datas=students, for_students=True, is_additional=False)
+        self.save_to_db(day_model=day_model, datas=employees, for_students=False, is_additional=False)
+        self.save_to_db(day_model=day_model, datas=additional, for_students=False, is_additional=True)
+
+    def save_to_db(self, day_model, datas: list, for_students: bool, is_additional: bool):
+        for menu in datas:
+            menu_model = self.__meal_repository.findByMenuName(menu)
+            if not menu_model.exists():
+                menu_model = self.__meal_repository.save(menu)
+            else:
+                menu_model = menu_model[0]
+
+            self.__day_meal_repository.save(day_id=day_model, meal_id=menu_model, for_student=for_students,
+                                            is_additional=is_additional)
 
     def __get_day_n_daymeal(self, date: datetime) -> Union[Tuple[list, None], Tuple[List[DayMealDto], DayDto]]:
         day_models: QuerySet = self.__day_repository.findByDate(date)
