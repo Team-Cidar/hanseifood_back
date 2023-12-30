@@ -1,12 +1,10 @@
 from django.db.models import QuerySet
 from datetime import datetime
 import logging
-from typing import List, Tuple, Union
+from typing import List
 
 from ..core.constants.strings.menu_strings import MENU_NOT_EXISTS
 from ..dtos.daily_menu import DailyMenuDto
-from ..dtos.day_meal import DayMealDto
-from ..dtos.day import DayDto
 from ..models import Day
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository

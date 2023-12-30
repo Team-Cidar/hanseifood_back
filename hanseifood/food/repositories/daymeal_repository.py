@@ -1,5 +1,5 @@
 from django.db.models import QuerySet
-from typing import Tuple, Union
+from typing import Tuple
 
 from .abstract_repository import AbstractRepository
 from ..models import DayMeal, Day
