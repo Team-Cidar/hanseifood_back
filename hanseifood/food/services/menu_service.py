@@ -2,7 +2,7 @@ from typing import List, Tuple, Union
 
 from django.db.models import QuerySet
 import logging
-import datetime
+from datetime import datetime
 
 from ..core.constants.strings.menu_strings import MENU_NOT_EXISTS
 from ..dtos.daily_menu import DailyMenuDto
@@ -27,11 +27,11 @@ class MenuService(AbstractService):
 
     def get_one_day_menu(self) -> MenuModel:
         # return daily menu
-        return self.get_target_days_menu(datetime.date.today())
+        return self.get_target_days_menu(datetime.today())
 
-    def get_this_week_menu(self) -> MenuModel:
+    def get_weekly_menu(self, date: datetime = datetime.today()) -> MenuModel:
         # return weekly menu
-        this_week: List[datetime] = date_utils.get_dates_in_this_week(today=datetime.datetime.today())
+        this_week: List[datetime] = date_utils.get_dates_in_this_week(today=date)
 
         response: MenuModel = MenuModel()
 
@@ -118,6 +118,8 @@ class MenuService(AbstractService):
         weekday_kor: str = date_utils.get_weekday_kor(date)
 
         key: str = f'{str(date)} ({weekday_kor})'
+
+        result.keys.append(key)
 
         if len(student) != 0:
             result.student_menu[key] = student

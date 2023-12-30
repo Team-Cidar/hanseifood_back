@@ -30,7 +30,7 @@ def get_todays_menu(request) -> HttpResponse:
 @api_view(['GET'])
 def get_weekly_menus(request) -> HttpResponse:
     try:
-        response = menu_service.get_this_week_menu()
+        response = menu_service.get_weekly_menu()
         return ModelResponse.response(response)
     except EmptyDataError as e:
         return ErrorResponse.response(e, 404)

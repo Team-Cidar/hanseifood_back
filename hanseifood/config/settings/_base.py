@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'datas',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'rest_framework',
@@ -42,6 +41,8 @@ INSTALLED_APPS = [
 
     # my apps
     'food',
+    'datas',
+    'assets',
 
     # scheduler
     'django_apscheduler',

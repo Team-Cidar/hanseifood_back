@@ -11,6 +11,7 @@ class MenuModel(AbstractModel):
     def __init__(self):
         self.only_employee: bool = True
         self.has_additional: bool = False
+        self.keys: list = []
         self.student_menu: Dict[str, list] = dict()
         self.employee_menu: Dict[str, list] = dict()
         self.additional_menu: Dict[str, list] = dict()
@@ -20,12 +21,14 @@ class MenuModel(AbstractModel):
         weekday_kor: str = date_utils.get_weekday_kor(date)
 
         key: str = f'{str(date_str)} ({weekday_kor})'
+        self.keys.append(key)
         self.student_menu[key] = [MENU_NOT_EXISTS]
         self.employee_menu[key] = [MENU_NOT_EXISTS]
         self.additional_menu[key] = [MENU_NOT_EXISTS]
 
     # override
     def __add__(self, model):
+        self.keys.extend(model.keys)
         self.student_menu.update(model.student_menu)
         self.employee_menu.update(model.employee_menu)
         self.additional_menu.update(model.additional_menu)
@@ -38,6 +41,7 @@ class MenuModel(AbstractModel):
         return {
             'only_employee': self.only_employee,
             'has_additional': self.has_additional,
+            'keys': self.keys,
             'student_menu': self.student_menu,
             'employee_menu': self.employee_menu,
             'additional_menu': self.additional_menu
