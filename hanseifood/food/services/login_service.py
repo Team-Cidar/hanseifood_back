@@ -1,10 +1,9 @@
 import os
 import requests
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
 from ..models import CustomUser
 from ..core.constants.strings.login_string import TOKEN_NOT_EXISTS, NICKNAME_NOT_EXISTS
+from ..core.constants.strings import env_strings as env
 from ..responses.objs.login import UserModel
 from .abstract_service import AbstractService
 
@@ -21,12 +20,12 @@ class LoginService(AbstractService):
 
         body = {
             'grant_type': 'authorization_code',
-            'client_id': os.getenv("KAKAO_REST_API_KEY"),
+            'client_id': env.KAKAO_REST_API_KEY,
             'redirect_uri': 'http://localhost:8080/login/confirm',
             'code': request,
         }
 
-        response = requests.post(os.getenv("kakao_token_api"), headers=headers, data=body)
+        response = requests.post(env.KAKAO_TOKEN_API_URL, headers=headers, data=body)
 
         data = response.json()
         token = data.get('access_token')

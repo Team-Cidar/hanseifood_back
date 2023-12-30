@@ -1,8 +1,6 @@
 import os
-import dotenv
 
 
-dotenv.load_dotenv()
 SETTINGS_MODULE = os.environ.get("DJANGO_SETTINGS_MODULE")
 
 if SETTINGS_MODULE == 'config.settings.prod':

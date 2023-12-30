@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import pymysql
 from datetime import timedelta
+import food.core.constants.strings.env_strings as env
 
 pymysql.install_as_MySQLdb()
 
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = env.SECRET_KEY
 
 # Application definition
 INSTALLED_APPS = [
@@ -66,7 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'food.middlewares.token_middleware.TokenValidationMiddleware',
+    # 'food.middlewares.token_middleware.TokenValidationMiddleware',
     'food.middlewares.ip_logging_middleware.IPLoggingMiddleware',
 ]
 
@@ -171,10 +172,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'hansei_food',
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT"),
+        'USER': env.DB_USER,
+        'PASSWORD': env.DB_PASSWORD,
+        'HOST': env.DB_HOST,
+        'PORT': env.DB_PORT,
     }
 }
 
