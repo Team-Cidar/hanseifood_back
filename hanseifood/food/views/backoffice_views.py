@@ -6,6 +6,7 @@ from ..core.constants.strings.exception_strings import MISSING_REQUEST_FIELD_ERR
 from ..exceptions.request_exceptions import MissingFieldError
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..responses.error_response import ErrorResponse
+from ..responses.file_response import FileResponse
 from ..responses.model_response import ModelResponse
 from ..responses.objs.menu_modification import MenuModificationModel
 from ..services.backoffice_service import BackOfficeService
@@ -43,10 +44,7 @@ def get_excel_file(request: HttpRequest) -> HttpResponse:
     try:
         data: dict = request.GET
         file_name = backoffice_service.get_excel_file(data=data)
-        with open(file_name, 'rb') as excel:
-            response = HttpResponse(content=excel.read(), content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = f'attachment; filename={file_name.split("/")[1]}'
-            return response
+        return FileResponse.response(file_path=file_name, content_type="application/vnd.ms-excel")
     except KeyError:
         return ErrorResponse.response(MissingFieldError(MISSING_REQUEST_FIELD_ERROR.field_name(['date'])), status_code=400)
     except NotAbstractModelError as e:
