@@ -3,15 +3,15 @@ from datetime import datetime
 import logging
 from typing import List
 
+from .abstract_service import AbstractService
 from ..core.constants.strings.menu_strings import MENU_NOT_EXISTS
+from ..core.utils import date_utils
 from ..dtos.daily_menu import DailyMenuDto
-from ..models import Day
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.meal_repository import MealRepository
-from ..core.utils import date_utils
 from ..responses.objs.menu import MenuModel
-from .abstract_service import AbstractService
+from ..models import Day
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +23,9 @@ class MenuService(AbstractService):
         self.__meal_repository = MealRepository()
 
     def get_one_day_menu(self) -> MenuModel:
-        # return daily menu
         return self.get_target_days_menu(datetime.today())
 
     def get_weekly_menu(self, date: datetime = datetime.today()) -> MenuModel:
-        # return weekly menu
         this_week: List[datetime] = date_utils.get_dates_in_this_week(today=date)
 
         response: MenuModel = MenuModel()
@@ -39,7 +37,7 @@ class MenuService(AbstractService):
         return response
 
     def get_target_days_menu(self, date: datetime) -> MenuModel:
-        date: datetime = date_utils.get_weekday(date)  # to get friday when today is 'sat' or 'sun'
+        date = date_utils.get_weekday(date)  # to get friday when today is 'sat' or 'sun'
 
         response: MenuModel = self.__get_daily_menus(date=date)
 

@@ -1,7 +1,8 @@
 from django.http import HttpRequest, HttpResponse
 from rest_framework.decorators import api_view
-import datetime
+from datetime import datetime
 
+from ..core.utils.request_utils import extract_request_datas
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..responses.error_response import ErrorResponse
@@ -43,8 +44,8 @@ def get_weekly_menus(request) -> HttpResponse:
 @api_view(['GET'])
 def get_target_days_menu(request: HttpRequest) -> HttpResponse:
     try:
-        date = request.GET.get('date', None)
-        date = datetime.datetime.strptime(date, '%Y%m%d')
+        date = extract_request_datas(request.GET, ['date'])
+        date = datetime.strptime(date, '%Y%m%d')
         response = menu_service.get_target_days_menu(date)
         return ModelResponse.response(response)
     except EmptyDataError as e:

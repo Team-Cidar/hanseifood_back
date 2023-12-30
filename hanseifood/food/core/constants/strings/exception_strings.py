@@ -4,7 +4,7 @@ from typing import List
 class MISSING_ARG_ERROR:
     @staticmethod
     def arg_name(argument_name: str) -> str:
-        return f"Required argument named {argument_name} is not provided."
+        return f"Required arguments named {argument_name} is not provided."
 
     # override
     def __str__(self):
@@ -14,7 +14,7 @@ class MISSING_ARG_ERROR:
 class MISSING_REQUEST_FIELD_ERROR:
     @staticmethod
     def field_name(names: List[str]) -> str:
-        return f"Required argument named {names} is not provided."
+        return f"Required arguments named {names} is not provided."
 
     # override
     def __str__(self):

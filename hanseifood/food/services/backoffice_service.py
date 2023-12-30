@@ -4,35 +4,36 @@ import openpyxl
 from openpyxl.styles import Alignment
 from openpyxl.workbook.workbook import Worksheet, Workbook
 import logging
-from typing import Dict, Union, List, Tuple
+from typing import List, Tuple
 
 from .abstract_service import AbstractService
+from .menu_service import MenuService
 from ..core.utils import date_utils, os_utils
+from ..core.utils.string_utils import parse_str_to_list
+from ..repositories.daymeal_repository import DayMealRepository
+from ..repositories.day_repository import DayRepository
+from ..responses.objs.menu_modification import MenuModificationModel
+from ..responses.objs.menu import MenuModel
 from ..dtos.daily_menu import DailyMenuDto
 from ..models import Day
-from ..repositories.day_repository import DayRepository
-from ..repositories.daymeal_repository import DayMealRepository
-from .menu_service import MenuService
-from ..responses.objs.menu import MenuModel
-from ..responses.objs.menu_modification import MenuModificationModel
-from ..core.utils.string_utils import parse_str_to_list
 
 logger = logging.getLogger(__name__)
 
 
 class BackOfficeService(AbstractService):
     def __init__(self):
-        # add repository instance variables
         self.__day_repository = DayRepository()
         self.__day_meal_repository = DayMealRepository()
         self.__menu_service = MenuService()
 
-    def add_menus(self, data: Dict[str, Union[str, bool]]) -> MenuModificationModel:
-        employee: List[str] = parse_str_to_list(data['employee'])
-        student: List[str] = parse_str_to_list(data['student'])
-        additional: List[str] = parse_str_to_list(data['additional'])
+    def add_menus(self, data: tuple) -> MenuModificationModel:
+        employee, student, additional, date = data
 
-        date: datetime = datetime.strptime(data['datetime'], "%Y-%m-%d")
+        employee = parse_str_to_list(employee)
+        student = parse_str_to_list(student)
+        additional = parse_str_to_list(additional)
+        date = datetime.strptime(date, '%Y-%m-%d')
+
         day_model: QuerySet = self.__day_repository.findByDate(date=date)
         if not day_model.exists():  # first add
             daily_menu: DailyMenuDto = DailyMenuDto(date=date, student=student, employee=employee,
@@ -55,15 +56,16 @@ class BackOfficeService(AbstractService):
             daymeal_models: QuerySet = self.__day_meal_repository.findEmployeeByDayId(day_id=day_model)
             self.__menu_service.delete_daily_menus(daymeal_models=daymeal_models)
 
-        daily_menu: DailyMenuDto = DailyMenuDto(date=day_model, student=student, employee=employee, additional=additional)
+        daily_menu: DailyMenuDto = DailyMenuDto(date=day_model, student=student, employee=employee,
+                                                additional=additional)
         self.__menu_service.save_daily_menu(data=daily_menu, is_update=True)
 
         self.__delete_excel_file(date=date)
 
         return MenuModificationModel(is_new=False)
 
-    def get_excel_file(self, data: dict):
-        date: datetime = datetime.strptime(data['date'], "%Y%m%d")
+    def get_excel_file(self, date_str: str):
+        date: datetime = datetime.strptime(date_str, "%Y%m%d")
 
         weekly_menu: MenuModel = self.__menu_service.get_weekly_menu(date=date)
         file_name, exists = self.__check_excel_exists(date=date)
