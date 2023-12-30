@@ -36,28 +36,14 @@ class MenuService(AbstractService):
 
         date: datetime
         for date in this_week:
-            day_meal_dtos: List[DayMealDto]
-            today_dto: DayDto
-            day_meal_dtos, today_dto = self.__get_day_n_daymeal(date)
-            if today_dto is None:
-                response.add_empty_date(date)
-                continue
-
-            response += self.__get_daily_menu(today_dto.date, day_meal_dtos)
+            response += self.__get_daily_menus(date=date)
 
         return response
 
     def get_target_days_menu(self, date: datetime) -> MenuModel:
         date: datetime = date_utils.get_weekday(date)  # to get friday when today is 'sat' or 'sun'
 
-        day_meal_dtos: List[DayMealDto]
-        today_dto: DayDto
-        day_meal_dtos, today_dto = self.__get_day_n_daymeal(date)
-        if today_dto is None:
-            response: MenuModel = MenuModel()
-            response.add_empty_date(date)
-        else:
-            response = self.__get_daily_menu(today_dto.date, day_meal_dtos)
+        response: MenuModel = self.__get_daily_menus(date=date)
 
         return response
 
@@ -91,55 +77,37 @@ class MenuService(AbstractService):
             self.__day_meal_repository.save(day_id=day_model, meal_id=menu_model, for_student=for_students,
                                             is_additional=is_additional)
 
-    def __get_day_n_daymeal(self, date: datetime) -> Union[Tuple[list, None], Tuple[List[DayMealDto], DayDto]]:
-        day_models: QuerySet = self.__day_repository.findByDate(date)
-        if day_models.count() == 0:
-            return [], None
-        today: Day = day_models[0]
-
-        day_meal_models: QuerySet = self.__day_meal_repository.findByDayId(today)
-        if day_meal_models.count() == 0:
-            return [], None
-
-        day_meal_dtos: List[DayMealDto] = [item.to_dto() for item in day_meal_models]
-        today_dto: DayDto = today.to_dto()
-
-        return day_meal_dtos, today_dto
-
-    def __get_daily_menu(self, date: datetime, today_meals: List[DayMealDto]) -> MenuModel:
-        student: list = []
-        employee: list = []
-        additional: list = []
-
-        item: DayMealDto
-        for item in today_meals:
-            if item.for_student:
-                student.append(item.meal_name)
-            elif item.is_additional:
-                additional.append(item.meal_name)
-            else:
-                employee.append(item.meal_name)
-
+    def __get_daily_menus(self, date: datetime) -> MenuModel:
         result: MenuModel = MenuModel()
+        day_model: QuerySet = self.__day_repository.findByDate(date=date)
+        if not day_model.exists():
+            result.add_empty_date(date=date)
+            return result
 
         weekday_kor: str = date_utils.get_weekday_kor(date)
-
-        key: str = f'{str(date)} ({weekday_kor})'
-
+        key: str = f'{date.strftime("%Y-%m-%d")} ({weekday_kor})'
         result.keys.append(key)
 
-        if len(student) != 0:
-            result.student_menu[key] = student
+        day_model: Day = day_model[0]
+
+        exists, employee_menu = self.__day_meal_repository.existEmployeeByDayId(day_id=day_model)
+        if exists:
+            result.employee_menu[key] = [item.to_dto().meal_name for item in employee_menu]
+        else:
+            result.employee_menu[key] = [MENU_NOT_EXISTS]
+
+        exists, students_menu = self.__day_meal_repository.existStudentByDayId(day_id=day_model)
+        if exists:
+            result.student_menu[key] = [item.to_dto().meal_name for item in students_menu]
             result.only_employee = False
         else:
             result.student_menu[key] = [MENU_NOT_EXISTS]
 
-        if len(additional) != 0:
+        exists, additional_menu = self.__day_meal_repository.existAdditionalByDayId(day_id=day_model)
+        if exists:
+            result.additional_menu[key] = [item.to_dto().meal_name for item in additional_menu]
             result.has_additional = True
-            result.additional_menu[key] = additional  # for new template
         else:
             result.additional_menu[key] = [MENU_NOT_EXISTS]
-
-        result.employee_menu[key] = employee
 
         return result
