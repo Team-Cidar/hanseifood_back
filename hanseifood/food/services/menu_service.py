@@ -62,18 +62,26 @@ class MenuService(AbstractService):
 
         return response
 
-    def save_daily_menu(self, data: DailyMenuDto) -> None:
+    def save_daily_menu(self, data: DailyMenuDto, is_update: bool = False) -> None:
         students: list = data.student
         employees: list = data.employee
         additional: list = data.additional
 
-        day_model = self.__day_repository.save(data.date)
+        day_model: Day
+        if not is_update:
+            day_model = self.__day_repository.save(data.date)
+        else:
+            day_model = data.date
 
-        self.save_to_db(day_model=day_model, datas=students, for_students=True, is_additional=False)
-        self.save_to_db(day_model=day_model, datas=employees, for_students=False, is_additional=False)
-        self.save_to_db(day_model=day_model, datas=additional, for_students=False, is_additional=True)
+        self.__save_daily_menus_to_db(day_model=day_model, datas=students, for_students=True, is_additional=False)
+        self.__save_daily_menus_to_db(day_model=day_model, datas=employees, for_students=False, is_additional=False)
+        self.__save_daily_menus_to_db(day_model=day_model, datas=additional, for_students=False, is_additional=True)
 
-    def save_to_db(self, day_model, datas: list, for_students: bool, is_additional: bool):
+    def delete_daily_menus(self, daymeal_models: QuerySet):
+        for model in daymeal_models:
+            self.__day_meal_repository.delete(target_model=model)
+
+    def __save_daily_menus_to_db(self, day_model, datas: list, for_students: bool, is_additional: bool):
         for menu in datas:
             menu_model = self.__meal_repository.findByMenuName(menu)
             if not menu_model.exists():

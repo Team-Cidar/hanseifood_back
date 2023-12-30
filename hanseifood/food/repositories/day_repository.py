@@ -14,7 +14,7 @@ class DayRepository(AbstractRepository):
         return datas
 
     # override
-    def save(self, date: datetime.datetime) -> Model:
+    def save(self, date: datetime.datetime) -> Day:
         entity = Day(date=date)
         entity.save()
         return entity

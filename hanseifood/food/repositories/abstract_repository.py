@@ -9,8 +9,8 @@ class AbstractRepository(metaclass=Singleton):
     def clearAll(self):
         self.model.all().delete()
 
-    def delete(self, entity: Model):
-        entity.delete()
+    def delete(self, target_model: Model):
+        target_model.delete()
 
     # abstract method
     def save(self, *args, **kwargs) -> Model:

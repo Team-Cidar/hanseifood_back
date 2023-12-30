@@ -13,7 +13,7 @@ class MealRepository(AbstractRepository):
         return datas
 
     # override
-    def save(self, meal_name) -> Model:
+    def save(self, meal_name) -> Meal:
         entity = Meal(meal_name=meal_name)
         entity.save()
         return entity
