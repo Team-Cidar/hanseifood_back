@@ -1,4 +1,4 @@
-from django.db.models import Model, QuerySet
+from django.db.models import QuerySet
 
 from .abstract_repository import AbstractRepository
 from ..models import DayMeal, Day

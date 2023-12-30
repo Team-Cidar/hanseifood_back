@@ -1,8 +1,8 @@
 from django.http import HttpResponse
-
-from .abstract_response import AbstractResponse
 import logging
 import traceback
+
+from .abstract_response import AbstractResponse
 
 logger = logging.getLogger(__name__)
 

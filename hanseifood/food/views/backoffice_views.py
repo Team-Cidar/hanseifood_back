@@ -11,8 +11,6 @@ from ..responses.model_response import ModelResponse
 from ..responses.objs.menu_modification import MenuModificationModel
 from ..services.backoffice_service import BackOfficeService
 
-import openpyxl
-
 backoffice_service: BackOfficeService = BackOfficeService()
 
 

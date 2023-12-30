@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from typing import Dict
 
 from .abstract_model import AbstractModel

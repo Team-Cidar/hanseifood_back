@@ -1,5 +1,4 @@
 from abc import *
-
 from django.http import JsonResponse
 
 

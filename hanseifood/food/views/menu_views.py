@@ -8,7 +8,6 @@ from ..responses.error_response import ErrorResponse
 from ..responses.model_response import ModelResponse
 from ..services.menu_service import MenuService
 
-
 menu_service = MenuService()
 
 

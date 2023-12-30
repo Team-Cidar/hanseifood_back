@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import pymysql
 from datetime import timedelta
+
 import food.core.constants.strings.env_strings as env
 
 pymysql.install_as_MySQLdb()

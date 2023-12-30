@@ -1,4 +1,5 @@
-import os, glob
+import os
+import glob
 
 
 def check_file_exists(path: str, file_name: str) -> bool:
