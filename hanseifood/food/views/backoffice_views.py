@@ -14,7 +14,7 @@ from ..responses.file_response import FileResponse
 backoffice_service: BackOfficeService = BackOfficeService()
 
 
-# /back/menu POST
+# /back/menus POST
 @api_view(['POST'])
 @csrf_exempt
 def add_menu(request: HttpRequest) -> HttpResponse:
@@ -32,7 +32,7 @@ def add_menu(request: HttpRequest) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
-# /back/excel? GET
+# /back/menus/excel? GET
 @api_view(['GET'])
 def get_excel_file(request: HttpRequest) -> HttpResponse:
     try:

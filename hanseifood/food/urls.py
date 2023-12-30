@@ -26,6 +26,6 @@ urlpatterns = [
     path('tickets/validate/<str:ticket_id>', ticket_views.get_ticket_validation, name='validate_ticket'),
 
     # /views/backoffice_views
-    path('back/menu', backoffice_views.add_menu, name='add_menu'),
-    path('back/excel', backoffice_views.get_excel_file, name='get_excel_file')
+    path('back/menus', backoffice_views.add_menu, name='add_menu'),
+    path('back/menus/excel', backoffice_views.get_excel_file, name='get_excel_file')
 ]
