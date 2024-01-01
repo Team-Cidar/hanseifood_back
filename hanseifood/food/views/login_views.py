@@ -3,7 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 import json
 
-from ..exceptions.data_exceptions import EmptyDataError
+from ..core.utils.request_utils import extract_request_datas
+from ..exceptions.request_exceptions import MissingFieldError
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..responses.error_response import ErrorResponse
 from ..responses.model_response import ModelResponse
@@ -16,11 +17,11 @@ login_service = LoginService()
 @csrf_exempt
 def try_login(request) -> HttpResponse:
     try:
-        code = json.loads(request.body).get("code")
+        code = extract_request_datas(request.body, ['code'])
         response = login_service.do_login(code)
         return ModelResponse.response(response)
-    except EmptyDataError as e:
-        return ErrorResponse.response(e, 404)
+    except MissingFieldError as e:
+        return ErrorResponse.response(e, 400)
     except NotAbstractModelError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:
@@ -39,8 +40,8 @@ def set_nickname(request) -> HttpResponse:
                 "id": user_id}
         response = login_service.set_user_nickname(data)
         return ModelResponse.response(response)
-    except EmptyDataError as e:
-        return ErrorResponse.response(e, 404)
+    except MissingFieldError as e:
+        return ErrorResponse.response(e, 400)
     except NotAbstractModelError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:
