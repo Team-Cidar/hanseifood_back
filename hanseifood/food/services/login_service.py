@@ -1,11 +1,15 @@
 import requests
+from datetime import datetime
 from django.db.models import QuerySet
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenVerifySerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .abstract_service import AbstractService
+from ..core.jwt.serializers import MyTokenObtainPairSerializer
 from ..models import User
 from ..core.constants.strings.login_string import TOKEN_NOT_EXISTS, NICKNAME_NOT_EXISTS
 from ..core.constants.strings import env_strings as env
-from ..responses.objs.login import UserModel
+from ..responses.objs.login import UserModel, UserLoginModel
 from ..repositories.user_respository import UserRepository
 
 
@@ -15,7 +19,7 @@ class LoginService(AbstractService):
         self.__user_repository = UserRepository()
         pass
 
-    def do_login(self, code: str) -> UserModel:
+    def do_login(self, code: str) -> UserLoginModel:
         header: dict = dict()
         body: dict = dict()
 
@@ -30,57 +34,67 @@ class LoginService(AbstractService):
 
         header['Authorization'] = f'Bearer ${token_data["access_token"]}'
 
-        response = requests.post("https://kapi.kakao.com/v2/user/me", headers=header)
+        kakao_response = requests.post("https://kapi.kakao.com/v2/user/me", headers=header)
 
-        user_data: dict = response.json()
+        user_data: dict = kakao_response.json()
         user_properties: dict = user_data['properties']
-        user_id: str = user_data['id']
-        nickname: str = user_properties['nickname']
+        kakao_id: str = str(user_data['id'])
+        kakao_nickname: str = user_properties['nickname']
 
-        exist, user_model = self.__user_repository.existsByUsername(username=user_id)
-
-        if exist:
-            # 존재하면 토큰발행, response로 유저객체 넘겨주기, success true
-            pass
-
-        # 없으면 카카오 OAuth2 정보 넘겨주기, success false
-
-        existing_user = CustomUser.objects.filter(username=user_id).first()
-        existing_user2 = CustomUser.objects.filter(username=user_id, nickname="").first()
-
-        if existing_user is None:
-            user: CustomUser
-            user, created = CustomUser.objects.get_or_create(username=user_id, kakaonickname=nickname)
-            user.set_password(nickname)
+        user_models: QuerySet = User.objects.filter(kakao_id=kakao_id)
+        response: UserLoginModel
+        if user_models.exists():
+            # send token, return user response with success is true
+            # token must have user id, is admin field
+            user: User = user_models[0]
+            user.last_login = datetime.today()
             user.save()
-            return UserModel(user_id=user_id, user_nickname=nickname, is_exists=False,customnickname=NICKNAME_NOT_EXISTS , access_token=TOKEN_NOT_EXISTS)
-        elif existing_user2:
-            return UserModel(user_id=user_id, user_nickname=nickname, is_exists=False, customnickname=NICKNAME_NOT_EXISTS , access_token=TOKEN_NOT_EXISTS)
-        else:
-            body = {
-                "username": user_id,
-                "password": nickname,
-            }
+            token = MyTokenObtainPairSerializer.get_token(user)
+            refresh_token = str(token)
+            access_token = str(token.access_token)
+            # token
+            return UserLoginModel.from_user_model(
+                status=True,
+                refresh_token=refresh_token,
+                access_token=access_token,
+                user_model=user.to_dto()
+            )
 
-            token_response = requests.post('http://localhost:8000/api/token', data=body)
+        response = UserLoginModel(
+            status=False,
+            kakao_id=kakao_id,
+            password='',
+            email='',
+            kakao_name=kakao_nickname,
+            is_admin=False,
+            nickname=''
+        )
+        # client must get user nickname from user, and send user response with the user selected nickname to create user.
+        return response
 
-            token_data = token_response.json()
-            access_token = token_data.get("access")
-            return UserModel(user_id=user_id, user_nickname=nickname, is_exists=True, customnickname=existing_user.nickname, access_token=access_token)
+    def create_user(self, data: tuple) -> UserModel:
+        kakao_id, email, kakao_name, nickname = data
 
-    def set_user_nickname(self, request) -> UserModel:
-        new_user = CustomUser.objects.filter(username=request['id']).first()
+        user: User = User.objects.create_user(email=email, nickname=nickname, kakao_name=kakao_name, kakao_id=kakao_id)
+        user.last_login = datetime.today()
+        user.save()
 
-        new_user.nickname = request['nickname']
-        new_user.save()
+        token = MyTokenObtainPairSerializer.get_token(user)
+        # 이렇게 하면 토큰 생성되는 듯 하고
+        # JWTAuthentication.authenticate(request) 하면 토큰 뽑아와서 인증처리 해서 토큰 데이터 뽑아주는 듯함
+        # 토큰 유효성 검사 쪽은 Serializer 상속받아서 그 메서드에서 구현해서 가져다가 쓰거나 다른 방법 있는지 확인하면 될것 같고
+        # 다 끝내고 코드 리팩터링 하자
 
-        body = {
-        "username": request['id'],
-        "password": request['kakaonickname'],
-        }
-        token_response = requests.post('http://localhost:8000/api/token', data=body)
+        refresh_token = str(token)
+        access_token = str(token.access_token)
+        user_dto: UserModel = user.to_dto()
 
-        token_data = token_response.json()
-        access_token = token_data.get("access")
+        return UserLoginModel.from_user_model(
+            status=True,
+            refresh_token=refresh_token,
+            access_token=access_token,
+            user_model=user_dto
+        )
 
-        return UserModel(user_id=request['id'], user_nickname=request['kakaonickname'], is_exists=True, customnickname=request['nickname'], access_token=access_token)
+
+

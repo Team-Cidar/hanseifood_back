@@ -1,9 +1,8 @@
 from django.urls import path
 from .views import base_views, menu_views, ticket_views, login_views, backoffice_views
 from rest_framework_simplejwt.views import (
-    TokenRefreshView, TokenVerifyView,
+    TokenRefreshView, TokenVerifyView, TokenObtainPairView,
 )
-from .core.jwt import jwt
 
 
 urlpatterns = [
@@ -17,10 +16,10 @@ urlpatterns = [
 
     # /view/login_views
     path("login", login_views.try_login, name='try_login'),
-    path("nickname", login_views.set_nickname, name="set_nickname"),
-    path('api/token', jwt.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/verify', TokenVerifyView.as_view(), name='token_verify'),
-    path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+    path("nickname", login_views.create_user, name="create_user"),
+    # path('api/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/token/verify', TokenVerifyView.as_view(), name='token_verify'),
+    # path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
 
     # /views/ticket_views
     path('tickets/validate/<str:ticket_id>', ticket_views.get_ticket_validation, name='validate_ticket'),

@@ -4,20 +4,21 @@ from ..exceptions.data_exceptions import DBFieldError
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email: str, nickname: str, kakao_name: str):
-        if not email:
-            raise DBFieldError("Email field is required but not given.")
+    def create_user(self, email: str, nickname: str, kakao_name: str, kakao_id: str):
+        if not kakao_id:
+            raise DBFieldError("Kakao Id field is required but not given.")
 
-        user = self.model(email=self.normalize_email(email), nickname=nickname, kakao_name=kakao_name)
-        user.set_password(self.make_random_password())
+        user = self.model(email=self.normalize_email(email), nickname=nickname, kakao_name=kakao_name, kakao_id=kakao_id)
+        user.set_password(kakao_id)
         user.save()
         return user
 
-    def create_superuser(self, email: str, nickname: str, kakao_name: str):
+    def create_superuser(self, email: str, nickname: str, kakao_name: str, kakao_id: str):
         user = self.create_user(
             email=email,
             nickname=nickname,
-            kakao_name=kakao_name
+            kakao_name=kakao_name,
+            kakao_id=kakao_id
         )
         user.is_admin = True
         user.save()

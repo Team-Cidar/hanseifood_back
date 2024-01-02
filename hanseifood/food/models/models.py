@@ -1,13 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser
 
 from .managers import CustomUserManager
 from ..dtos.day import DayDto
 from ..dtos.meal import MealDto
 from ..dtos.day_meal import DayMealDto
+from ..responses.objs.login import UserModel
 
 
-# Create your models here.
 class Day(models.Model):
     date = models.DateField(null=False)
 
@@ -57,15 +57,23 @@ class DayMeal(models.Model):
 
 class User(AbstractBaseUser):
     # PROVIDED FIELD : password, is_active, last_login
-    email = models.EmailField(max_length=255, unique=True)
+    kakao_id = models.CharField(max_length=255, unique=True)
+    email = models.EmailField(null=True)
     kakao_name = models.TextField()
     nickname = models.TextField()
     is_admin = models.BooleanField(default=False)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
-    def to_dto(self):
-        pass
+    def to_dto(self) -> UserModel:
+        return UserModel(
+            kakao_id=str(self.kakao_id),
+            password=str(self.password),
+            email=str(self.email),
+            kakao_name=str(self.kakao_name),
+            nickname=str(self.nickname),
+            is_admin=bool(self.is_admin)
+        )
 
     def __str__(self):
         return f"[{self.kakao_name}/{self.nickname}] -> {self.email}"
@@ -74,7 +82,7 @@ class User(AbstractBaseUser):
         db_table = 'user'
 
     objects = CustomUserManager()  # ManagerClass()
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'kakao_id'
     REQUIRED_FIELDS = ['nickname']
 
 

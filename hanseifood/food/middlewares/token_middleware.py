@@ -1,5 +1,7 @@
 import requests
 from django.http import HttpResponse
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenVerifyView
 
 
 class TokenValidationMiddleware:
@@ -9,24 +11,32 @@ class TokenValidationMiddleware:
     def __call__(self, request):
         if not (request.path.startswith('/login') or request.path.startswith('/api/token') or request.path.startswith(
                 '/nickname') or request.path.startswith('/admin') or request.path.startswith('/menus')):
-            AccessToken = request.headers.get("AccessToken")
+            jwt_auth = JWTAuthentication()
+            res = jwt_auth.authenticate(request)
+            if res is not None:
+                user, token = res
+                # 인가 처리
 
-            if AccessToken is not None:
-                verify_token_url = 'http://127.0.0.1:8000/api/token/verify'
+                #
 
-                try:
-                    response = requests.post(verify_token_url, {
-                        "token": AccessToken
-                    })
-
-                    if response.status_code != 200:
-                        return HttpResponse('토큰이 유효하지 않습니다.', status=500)
-
-                except Exception as e:
-
-                    return HttpResponse(f'오류 발생: {str(e)}', status=500)
-
-            else:
-                return HttpResponse('토큰이 존재하지 않습니다.', status=500)
+            # AccessToken = request.headers.get("AccessToken")
+            #
+            # if AccessToken is not None:
+            #     verify_token_url = 'http://127.0.0.1:8000/api/token/verify'
+            #
+            #     try:
+            #         response = requests.post(verify_token_url, {
+            #             "token": AccessToken
+            #         })
+            #
+            #         if response.status_code != 200:
+            #             return HttpResponse('토큰이 유효하지 않습니다.', status=500)
+            #
+            #     except Exception as e:
+            #
+            #         return HttpResponse(f'오류 발생: {str(e)}', status=500)
+            #
+            # else:
+            #     return HttpResponse('토큰이 존재하지 않습니다.', status=500)
 
         return self.get_response(request)

@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-import json
 
 from ..core.utils.request_utils import extract_request_datas
 from ..exceptions.request_exceptions import MissingFieldError
@@ -17,7 +16,7 @@ login_service = LoginService()
 @csrf_exempt
 def try_login(request) -> HttpResponse:
     try:
-        code = extract_request_datas(request.body, ['code'])
+        code = extract_request_datas(request.data, ['code'])
         response = login_service.do_login(code)
         return ModelResponse.response(response)
     except MissingFieldError as e:
@@ -30,16 +29,11 @@ def try_login(request) -> HttpResponse:
 
 @api_view(['POST'])
 @csrf_exempt
-def set_nickname(request) -> HttpResponse:
+def create_user(request) -> HttpResponse:
     try:
-        custom_nickname = json.loads(request.body).get("nickname")
-        kakao_nickname = json.loads(request.body).get("kakaonickname")
-        user_id = json.loads(request.body).get("id")
-        data = {"nickname": custom_nickname,
-                "kakaonickname": kakao_nickname,
-                "id": user_id}
-        response = login_service.set_user_nickname(data)
-        return ModelResponse.response(response)
+        data = extract_request_datas(request.data, ['kakao_id', 'email', 'kakao_name', 'nickname'])
+        response = login_service.create_user(data)
+        return ModelResponse.response(response, status_code=201)
     except MissingFieldError as e:
         return ErrorResponse.response(e, 400)
     except NotAbstractModelError as e:
