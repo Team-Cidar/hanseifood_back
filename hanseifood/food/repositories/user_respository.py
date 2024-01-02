@@ -2,12 +2,12 @@ from django.db.models import QuerySet
 from typing import Tuple
 
 from .abstract_repository import AbstractRepository
-from ..models import CustomUser
+from ..models import User
 
 
 class UserRepository(AbstractRepository):
     def __init__(self):
-        super(UserRepository, self).__init__(CustomUser.objects)
+        super(UserRepository, self).__init__(User.objects)
 
     def findByUsername(self, username: str) -> QuerySet:
         datas: QuerySet = self.model.filter(username=username)
@@ -18,8 +18,8 @@ class UserRepository(AbstractRepository):
         return datas.exists(), datas
 
     # override
-    def save(self, ) -> CustomUser:
+    def save(self, ) -> User:
         # entity = DayMeal(day_id=day_id, meal_id=meal_id, for_student=for_student, is_additional=is_additional)
-        entity = CustomUser()
+        entity = User()
         entity.save()
         return entity

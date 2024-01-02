@@ -128,7 +128,7 @@ TEMPLATES = [
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = 'food.CustomUser'
+AUTH_USER_MODEL = 'food.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

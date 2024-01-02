@@ -2,7 +2,7 @@ import requests
 from django.db.models import QuerySet
 
 from .abstract_service import AbstractService
-from ..models import CustomUser
+from ..models import User
 from ..core.constants.strings.login_string import TOKEN_NOT_EXISTS, NICKNAME_NOT_EXISTS
 from ..core.constants.strings import env_strings as env
 from ..responses.objs.login import UserModel
@@ -45,28 +45,28 @@ class LoginService(AbstractService):
 
         # 없으면 카카오 OAuth2 정보 넘겨주기, success false
 
+        existing_user = CustomUser.objects.filter(username=user_id).first()
+        existing_user2 = CustomUser.objects.filter(username=user_id, nickname="").first()
 
-        # existing_user = CustomUser.objects.filter(username=user_id).first()
-        # existing_user2 = CustomUser.objects.filter(username=user_id, nickname="").first()
-        #
-        # if existing_user is None:
-        #     user, created = CustomUser.objects.get_or_create(username=user_id, kakaonickname=nickname)
-        #     user.set_password(nickname)
-        #     user.save()
-        #     return UserModel(user_id=user_id, user_nickname=nickname, is_exists=False,customnickname=NICKNAME_NOT_EXISTS , access_token=TOKEN_NOT_EXISTS)
-        # elif existing_user2:
-        #     return UserModel(user_id=user_id, user_nickname=nickname, is_exists=False, customnickname=NICKNAME_NOT_EXISTS , access_token=TOKEN_NOT_EXISTS)
-        # else:
-        #     body = {
-        #         "username": user_id,
-        #         "password": nickname,
-        #     }
-        #
-        #     token_response = requests.post('http://localhost:8000/api/token', data=body)
-        #
-        #     token_data = token_response.json()
-        #     access_token = token_data.get("access")
-        #     return UserModel(user_id=user_id, user_nickname=nickname, is_exists=True, customnickname=existing_user.nickname, access_token=access_token)
+        if existing_user is None:
+            user: CustomUser
+            user, created = CustomUser.objects.get_or_create(username=user_id, kakaonickname=nickname)
+            user.set_password(nickname)
+            user.save()
+            return UserModel(user_id=user_id, user_nickname=nickname, is_exists=False,customnickname=NICKNAME_NOT_EXISTS , access_token=TOKEN_NOT_EXISTS)
+        elif existing_user2:
+            return UserModel(user_id=user_id, user_nickname=nickname, is_exists=False, customnickname=NICKNAME_NOT_EXISTS , access_token=TOKEN_NOT_EXISTS)
+        else:
+            body = {
+                "username": user_id,
+                "password": nickname,
+            }
+
+            token_response = requests.post('http://localhost:8000/api/token', data=body)
+
+            token_data = token_response.json()
+            access_token = token_data.get("access")
+            return UserModel(user_id=user_id, user_nickname=nickname, is_exists=True, customnickname=existing_user.nickname, access_token=access_token)
 
     def set_user_nickname(self, request) -> UserModel:
         new_user = CustomUser.objects.filter(username=request['id']).first()
