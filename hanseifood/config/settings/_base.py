@@ -28,6 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env.SECRET_KEY
 
 # Application definition
+EXCEL_DATA_DIR = BASE_DIR.parent / "datas"
+if not os.path.exists(EXCEL_DATA_DIR):
+    os.mkdir(EXCEL_DATA_DIR)
 INSTALLED_APPS = [
     # django
     'django.contrib.admin',
