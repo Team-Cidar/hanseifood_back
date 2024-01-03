@@ -11,5 +11,5 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token['is_admin'] = user.is_admin
+        token['role'] = str(user.role)
         return token

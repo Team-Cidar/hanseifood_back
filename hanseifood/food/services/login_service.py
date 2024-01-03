@@ -5,9 +5,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, Toke
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .abstract_service import AbstractService
+from ..core.enums.role_enums import UserRole
 from ..core.jwt.serializers import MyTokenObtainPairSerializer
 from ..models import User
-from ..core.constants.strings.login_string import TOKEN_NOT_EXISTS, NICKNAME_NOT_EXISTS
 from ..core.constants.strings import env_strings as env
 from ..responses.objs.login import UserModel, UserLoginModel
 from ..repositories.user_respository import UserRepository
@@ -67,7 +67,8 @@ class LoginService(AbstractService):
             email='',
             kakao_name=kakao_nickname,
             is_admin=False,
-            nickname=''
+            nickname='',
+            role=UserRole.U
         )
         # client must get user nickname from user, and send user response with the user selected nickname to create user.
         return response
@@ -75,7 +76,7 @@ class LoginService(AbstractService):
     def create_user(self, data: tuple) -> UserModel:
         kakao_id, email, kakao_name, nickname = data
 
-        user: User = User.objects.create_user(email=email, nickname=nickname, kakao_name=kakao_name, kakao_id=kakao_id)
+        user: User = User.objects.create_user(email=email, nickname=nickname, kakao_name=kakao_name, kakao_id=kakao_id, role=UserRole.U)
         user.last_login = datetime.today()
         user.save()
 

@@ -16,10 +16,8 @@ urlpatterns = [
 
     # /view/login_views
     path("login", login_views.try_login, name='try_login'),
-    path("nickname", login_views.create_user, name="create_user"),
-    # path('api/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    # path('api/token/verify', TokenVerifyView.as_view(), name='token_verify'),
-    # path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+    path("signup", login_views.create_user, name="create_user"),
+    path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
 
     # /views/ticket_views
     path('tickets/validate/<str:ticket_id>', ticket_views.get_ticket_validation, name='validate_ticket'),

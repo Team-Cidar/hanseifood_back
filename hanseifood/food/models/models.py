@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
 from .managers import CustomUserManager
+from ..core.enums.role_enums import UserRole
 from ..dtos.day import DayDto
 from ..dtos.meal import MealDto
 from ..dtos.day_meal import DayMealDto
@@ -62,6 +63,7 @@ class User(AbstractBaseUser):
     kakao_name = models.TextField()
     nickname = models.TextField()
     is_admin = models.BooleanField(default=False)
+    role = models.CharField(max_length=1)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
@@ -72,7 +74,8 @@ class User(AbstractBaseUser):
             email=str(self.email),
             kakao_name=str(self.kakao_name),
             nickname=str(self.nickname),
-            is_admin=bool(self.is_admin)
+            is_admin=bool(self.is_admin),
+            role=UserRole.from_name(str(self.role))
         )
 
     def __str__(self):
