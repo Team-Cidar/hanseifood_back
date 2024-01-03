@@ -249,7 +249,6 @@ CORS_ORIGIN_WHITELIST = [
     'http://hanseiweeklymenu.me',
     'http://localhost:8080',
     'http://localhost:80',
-    'http://localhost:8000',
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = (
@@ -263,14 +262,13 @@ CORS_ALLOW_METHODS = (
 CORS_ALLOW_HEADERS = (
     'accept',
     'accept-encoding',
-    'authorization',
+    'Authorization',
     'content-type',
     'dnt',
     'origin',
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
-    'AccessToken'
 )
 
 APPEND_SLASH = False
