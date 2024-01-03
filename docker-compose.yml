@@ -24,6 +24,7 @@ services:
     container_name: hanseifood_was
     volumes:
       - server-log-data:/app/src/hanseifood/logs
+      - excel-data:/app/src/hanseifood/datas
     build:
       context: .
       dockerfile: ./dockerfile
@@ -42,4 +43,5 @@ networks:
 
 volumes:
   mysql-data:
+  excel-data:
   server-log-data:

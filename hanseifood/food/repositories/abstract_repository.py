@@ -1,9 +1,11 @@
 from django.db.models import Model
+from django.db.models.manager import BaseManager
+
 from ..core.patterns.singleton_cls import Singleton
 
 
 class AbstractRepository(metaclass=Singleton):
-    def __init__(self, model: Model.objects):
+    def __init__(self, model: BaseManager):
         self.model: Model.objects = model
 
     def clearAll(self):
