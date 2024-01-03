@@ -31,6 +31,7 @@ def try_login(request) -> HttpResponse:
 @csrf_exempt
 def create_user(request) -> HttpResponse:
     try:
+        # handle user already exists error
         data = extract_request_datas(request.data, ['kakao_id', 'email', 'kakao_name', 'nickname'])
         response = login_service.create_user(data)
         return ModelResponse.response(response, status_code=201)

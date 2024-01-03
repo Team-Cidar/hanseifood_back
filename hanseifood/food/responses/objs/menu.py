@@ -36,7 +36,7 @@ class MenuModel(AbstractModel):
         return self
 
     # override
-    def _serialize(self) -> dict:  # 추상 메서드가 private면 재정의 할 때 _추상클래스__method() 이런식으로 해줘야함, 지금은 protected 이므로 그냥 메서드명 사용해서 재정의함
+    def _serialize(self) -> dict:
         return {
             'only_employee': self.only_employee,
             'has_additional': self.has_additional,

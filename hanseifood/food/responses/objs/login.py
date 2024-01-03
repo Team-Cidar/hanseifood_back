@@ -1,11 +1,16 @@
 from .abstract_model import AbstractModel
-from ...core.enums.role_enums import UserRole
+from ...enums.role_enums import UserRole
 
 
 class UserModel(AbstractModel):
-    def __init__(self, kakao_id: str, password: str, email: str, kakao_name: str, is_admin: bool, nickname: str, role: UserRole):
+    def __init__(self,
+                 kakao_id: str,
+                 email: str,
+                 kakao_name: str,
+                 is_admin: bool = False,
+                 nickname: str = '',
+                 role: UserRole = None):
         self.kakao_id: str = kakao_id
-        self.password: str = password
         self.email: str = email
         self.kakao_name: str = kakao_name
         self.is_admin: bool = is_admin
@@ -27,15 +32,19 @@ class UserLoginModel(UserModel):
     def __init__(self,
                  status: bool,
                  kakao_id: str,
-                 password: str,
                  email: str,
                  kakao_name: str,
-                 is_admin: bool,
-                 nickname: str,
-                 role: UserRole,
+                 is_admin: bool = False,
+                 nickname: str = '',
+                 role: UserRole = None,
                  refresh_token: str = '',
                  access_token: str = ''):
-        super(UserLoginModel, self).__init__(kakao_id, password, email, kakao_name, is_admin, nickname, role)
+        super().__init__(kakao_id=kakao_id,
+                         email=email,
+                         kakao_name=kakao_name,
+                         is_admin=is_admin,
+                         nickname=nickname,
+                         role=role)
         self.status: bool = status
         self.refresh_token: str = refresh_token
         self.access_token: str = access_token
@@ -47,7 +56,6 @@ class UserLoginModel(UserModel):
             refresh_token=refresh_token,
             access_token=access_token,
             kakao_id=user_model.kakao_id,
-            password=user_model.password,
             email=user_model.email,
             kakao_name=user_model.kakao_name,
             is_admin=user_model.is_admin,
@@ -60,5 +68,5 @@ class UserLoginModel(UserModel):
             "status": self.status,
             "refresh_token": self.refresh_token,
             "access_token": self.access_token,
-            "user": super(UserLoginModel, self)._serialize()
+            "user": super()._serialize()
         }

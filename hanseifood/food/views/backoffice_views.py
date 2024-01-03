@@ -2,7 +2,9 @@ from django.http import HttpRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 
+from ..core.decorators.authentication_decorator import require_auth
 from ..core.utils.request_utils import extract_request_datas
+from ..enums.role_enums import UserRole
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..exceptions.request_exceptions import MissingFieldError
 from ..services.backoffice_service import BackOfficeService
@@ -17,6 +19,7 @@ backoffice_service: BackOfficeService = BackOfficeService()
 # /back/menus POST
 @api_view(['POST'])
 @csrf_exempt
+@require_auth([UserRole.A])
 def add_menu(request: HttpRequest) -> HttpResponse:
     try:
         data: tuple = extract_request_datas(request.data, ['employee', 'student', 'additional', 'datetime'])
@@ -34,6 +37,7 @@ def add_menu(request: HttpRequest) -> HttpResponse:
 
 # /back/menus/excel? GET
 @api_view(['GET'])
+@require_auth([UserRole.A])
 def get_excel_file(request: HttpRequest) -> HttpResponse:
     try:
         date: str = extract_request_datas(request.GET, ['date'])

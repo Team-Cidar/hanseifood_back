@@ -73,7 +73,8 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # Check access token in every request. We don't need it. We use decorator to authentication & authorization
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
 

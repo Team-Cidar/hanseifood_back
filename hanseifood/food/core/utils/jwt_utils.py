@@ -3,15 +3,16 @@ from rest_framework.request import Request
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.serializers import TokenVerifySerializer
-from rest_framework_simplejwt.tokens import AccessToken, Token
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from ..jwt.serializers import MyTokenObtainPairSerializer
 from ...exceptions.jwt_exceptions import InvalidTokenError, TokenNotProvidedError
 from ...models import User
 
 
-def get_token(user: User) -> Token:
-    return MyTokenObtainPairSerializer.get_token(user)
+def get_token(user: User) -> Tuple[str, str]:
+    token: RefreshToken = MyTokenObtainPairSerializer.get_token(user)
+    return str(token), str(token.access_token)
 
 
 def jwt_authenticate(request: Request) -> Tuple[User, AccessToken]:
@@ -42,7 +43,9 @@ def jwt_authenticate(request: Request) -> Tuple[User, AccessToken]:
 
 
 def verify_token(token: str) -> bool:
-    # not used. jwt_authentication() does this work
-    # use when only verification of token is needed
-    token_verifier = TokenVerifySerializer(data={'token': str(token)})
+    """
+    not used. jwt_authentication() does this work
+    use when only verification of token is needed
+    """
+    token_verifier = TokenVerifySerializer(data={'token': token})
     return token_verifier.is_valid(raise_exception=True)

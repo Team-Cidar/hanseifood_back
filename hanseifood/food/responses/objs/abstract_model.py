@@ -13,6 +13,7 @@ class AbstractModel(metaclass=ABCMeta):
     @staticmethod
     def listToJson(datas):
         serialized_list = []
+        data: AbstractModel
         for data in datas:
             serialized_list.append(data._serialize())
         return JsonResponse(serialized_list, json_dumps_params={'ensure_ascii': False}, safe=False)

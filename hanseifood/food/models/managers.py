@@ -1,6 +1,6 @@
 from django.contrib.auth.models import BaseUserManager
 
-from ..core.enums.role_enums import UserRole
+from ..enums.role_enums import UserRole
 from ..exceptions.data_exceptions import DBFieldError
 
 

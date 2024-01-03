@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
 from .managers import CustomUserManager
-from ..core.enums.role_enums import UserRole
+from ..enums.role_enums import UserRole
 from ..dtos.day import DayDto
 from ..dtos.meal import MealDto
 from ..dtos.day_meal import DayMealDto
@@ -70,7 +70,6 @@ class User(AbstractBaseUser):
     def to_dto(self) -> UserModel:
         return UserModel(
             kakao_id=str(self.kakao_id),
-            password=str(self.password),
             email=str(self.email),
             kakao_name=str(self.kakao_name),
             nickname=str(self.nickname),
