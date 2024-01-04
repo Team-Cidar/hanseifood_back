@@ -47,8 +47,6 @@ INSTALLED_APPS = [
 
     # my apps
     'food',
-    'datas',
-    'assets',
 
     # scheduler
     'django_apscheduler',
