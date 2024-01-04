@@ -5,4 +5,5 @@ RUN apt-get -y update && apt-get install -y default-libmysqlclient-dev build-ess
 RUN pip install -r requirements.txt
 RUN chmod +x ./start.sh
 EXPOSE 8000
+WORKDIR /app/src/hanseifood/
 ENTRYPOINT ["/bin/bash","./start.sh"]

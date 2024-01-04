@@ -71,7 +71,7 @@ class BackOfficeService(AbstractService):
         weekly_menu: MenuModel = self.__menu_service.get_weekly_menu(date=date)
         file_name, exists = self.__check_excel_exists(date=date)
         if not exists:
-            template: Workbook = openpyxl.load_workbook(os.getcwd() + "/assets/templates/excel_template.xlsx")
+            template: Workbook = openpyxl.load_workbook("assets/templates/excel_template.xlsx")
             sheet: Worksheet = template.active
 
             for idx, key in enumerate(weekly_menu.keys):
@@ -86,18 +86,18 @@ class BackOfficeService(AbstractService):
                 sheet[f"{col}12"].alignment = cell_format
                 sheet[f"{col}17"].alignment = cell_format
 
-            template.save(os.getcwd() + f"/datas/{file_name}")
+            template.save(f"datas/{file_name}")
 
             template.close()
 
-        return os.getcwd() + f"/datas/{file_name}"
+        return f"datas/{file_name}"
 
     def __check_excel_exists(self, date: datetime) -> Tuple[str, bool]:
         dates: List[str] = [item.strftime("%Y%m%d") for item in date_utils.get_dates_in_this_week(today=date)]
         file_name: str = f"{dates[0]}-{dates[-1]}.xlsx"
-        return file_name, os_utils.check_file_exists(path=os.getcwd() + "/datas", file_name=file_name)
+        return file_name, os_utils.check_file_exists(path="datas", file_name=file_name)
 
     def __delete_excel_file(self, date: datetime):
         file_name, exists = self.__check_excel_exists(date=date)
         if exists:
-            os_utils.delete_file(os.getcwd() + f"/datas/{file_name}")
+            os_utils.delete_file(f"datas/{file_name}")
