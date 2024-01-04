@@ -19,7 +19,7 @@ import food.core.constants.strings.env_strings as env
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -28,9 +28,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env.SECRET_KEY
 
 # Application definition
-EXCEL_DATA_DIR = BASE_DIR.parent / "datas"
-if not os.path.exists(EXCEL_DATA_DIR):
-    os.mkdir(EXCEL_DATA_DIR)
 INSTALLED_APPS = [
     # django
     'django.contrib.admin',
@@ -174,7 +171,7 @@ DATABASES = {
 }
 
 # Logger settings
-LOG_DIR = BASE_DIR.parent / "logs"
+LOG_DIR = BASE_DIR / "logs"
 if not os.path.exists(LOG_DIR):
     os.mkdir(LOG_DIR)
 
