@@ -250,7 +250,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://www.hanseiweeklymenu.me',
     'http://hanseiweeklymenu.me',
     'http://localhost:8080',
-    # 'http://localhost:80',
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = (
