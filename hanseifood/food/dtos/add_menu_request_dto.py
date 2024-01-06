@@ -1,7 +1,7 @@
-from .abstract_request_dto import RequestDto
+from .abstract_dto import Dto
 
 
-class AddMenuRequestDto(RequestDto):
+class AddMenuRequestDto(Dto):
     datetime: str
     student: str
     employee: str

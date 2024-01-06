@@ -6,7 +6,7 @@ from ..exceptions.type_exceptions import DtoFieldTypeError, RequestDataConversio
     DynamicTypeError
 
 
-class RequestDto:
+class Dto:
     @classmethod
     def deserialize(cls, data: dict) -> Any:
         """
@@ -47,7 +47,7 @@ class RequestDto:
     @classmethod
     def __deserialize_field(cls, field_type, data):
         deserialized_field: field_type
-        if issubclass(field_type, RequestDto):  # field: RequestDto
+        if issubclass(field_type, Dto):  # field: RequestDto
             deserialized_field = field_type.deserialize(data)
         elif issubclass(field_type, Enum):  # field: Enum
             deserialized_field = field_type[data]

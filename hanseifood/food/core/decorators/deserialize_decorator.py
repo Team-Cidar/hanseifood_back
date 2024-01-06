@@ -3,7 +3,7 @@ from django.http import QueryDict
 from rest_framework.request import Request
 
 from ..utils.decorator_utils import get_request_from_args
-from ...dtos.abstract_request_dto import RequestDto
+from ...dtos.abstract_dto import Dto
 from ...exceptions.request_exceptions import MissingFieldError
 from ...exceptions.type_exceptions import (
     DeserializeDataTypeError, RequestDataConversionError, DynamicTypeError, DtoFieldTypeError
@@ -26,9 +26,9 @@ def deserialize(view_method):
         data.update(_get_raw_query_params(request.query_params))
         return data
 
-    def _get_target_datatype_pair() -> Tuple[str, Type[RequestDto]]:
+    def _get_target_datatype_pair() -> Tuple[str, Type[Dto]]:
         for arg in view_method.__annotations__.items():
-            if issubclass(arg[1], RequestDto):
+            if issubclass(arg[1], Dto):
                 return arg
 
     def pass_deserialized_obj(*args, **kwargs):
@@ -38,7 +38,7 @@ def deserialize(view_method):
             request: Request = get_request_from_args(*args)
             data: dict = _get_req_data(request)
 
-            deserialized_obj: RequestDto = _type.deserialize(data)
+            deserialized_obj: Dto = _type.deserialize(data)
 
             kwargs[key] = deserialized_obj
             return view_method(*args, **kwargs)
