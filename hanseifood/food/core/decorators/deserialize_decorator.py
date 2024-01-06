@@ -43,15 +43,15 @@ def deserialize(view_method):
             kwargs[key] = deserialized_obj
             return view_method(*args, **kwargs)
         except MissingFieldError as e:
-            return ErrorResponse.response(e, status_code=400)
+            return ErrorResponse.response(e, 400)
         except RequestDataConversionError as e:
-            return ErrorResponse.response(e, status_code=400)
+            return ErrorResponse.response(e, 400)
         except DynamicTypeError as e:
-            return ErrorResponse.response(e, status_code=500)
+            return ErrorResponse.response(e, 500)
         except DtoFieldTypeError as e:
-            return ErrorResponse.response(e, status_code=500)
+            return ErrorResponse.response(e, 500)
         except DeserializeDataTypeError as e:
-            return ErrorResponse.response(e, status_code=500)
+            return ErrorResponse.response(e, 500)
         except Exception as e:
-            return ErrorResponse.response(e, status_code=500)
+            return ErrorResponse.response(e, 500)
     return pass_deserialized_obj

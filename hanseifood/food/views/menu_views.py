@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from datetime import datetime
 
 from ..core.decorators.deserialize_decorator import deserialize
-from ..dtos.get_target_menu_request_dto import GetTargetMenuRequestDto
+from ..dtos.requests.get_target_menu_request_dto import GetTargetMenuRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..responses.error_response import ErrorResponse

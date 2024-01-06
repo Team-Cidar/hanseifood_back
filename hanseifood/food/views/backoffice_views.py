@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view
 
 from ..core.decorators.authentication_decorator import require_auth
 from ..core.decorators.deserialize_decorator import deserialize
-from ..core.utils.request_utils import extract_request_datas
-from ..dtos.add_menu_request_dto import AddMenuRequestDto
+from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
+from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
 from ..enums.role_enums import UserRole
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..exceptions.request_exceptions import MissingFieldError
@@ -25,7 +25,6 @@ backoffice_service: BackOfficeService = BackOfficeService()
 @deserialize
 def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
     try:
-        data: tuple = extract_request_datas(request.data, ['employee', 'student', 'additional', 'datetime'])
         response: MenuModificationModel = backoffice_service.add_menus(data)
         if response.is_new:
             return ModelResponse.response(response, 201)
@@ -41,10 +40,10 @@ def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
 # /back/menus/excel? GET
 @api_view(['GET'])
 @require_auth([UserRole.A])
-def get_excel_file(request: HttpRequest) -> HttpResponse:
+@deserialize
+def get_excel_file(request: HttpRequest, data: GetExcelFileRequestDto) -> HttpResponse:
     try:
-        date: str = extract_request_datas(request.GET, ['date'])
-        file_name = backoffice_service.get_excel_file(date)
+        file_name = backoffice_service.get_excel_file(data)
         return FileResponse.response(file_path=file_name, content_type="application/vnd.ms-excel")
     except MissingFieldError as e:
         return ErrorResponse.response(e, 400)

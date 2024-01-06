@@ -31,14 +31,14 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
                 authorize(token)
                 return view_method(*args, **kwargs)
             except TokenNotProvidedError as e:
-                return ErrorResponse.response(e, status_code=401)
+                return ErrorResponse.response(e, 401)
             except InvalidTokenError as e:
-                return ErrorResponse.response(e, status_code=401)
+                return ErrorResponse.response(e, 401)
             except AuthenticationFailed as e:
-                return ErrorResponse.response(e, status_code=403)
+                return ErrorResponse.response(e, 403)
             except PermissionDeniedError as e:
-                return ErrorResponse.response(e, status_code=403)
+                return ErrorResponse.response(e, 403)
             except Exception as e:
-                return ErrorResponse.response(e, status_code=500)
+                return ErrorResponse.response(e, 500)
         return check_token
     return decorator

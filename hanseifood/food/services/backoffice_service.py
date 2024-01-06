@@ -2,15 +2,17 @@ from django.db.models import QuerySet
 from datetime import datetime
 import openpyxl
 from openpyxl.styles import Alignment
-from openpyxl.workbook.workbook import Worksheet, Workbook
+from openpyxl.workbook.workbook import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
 from typing import List, Tuple
 import logging
-import os
 
 from .abstract_service import AbstractService
 from .menu_service import MenuService
 from ..core.utils import date_utils, os_utils
 from ..core.utils.string_utils import parse_str_to_list
+from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
+from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
 from ..responses.objs.menu_modification import MenuModificationModel
@@ -27,13 +29,11 @@ class BackOfficeService(AbstractService):
         self.__day_meal_repository = DayMealRepository()
         self.__menu_service = MenuService()
 
-    def add_menus(self, data: tuple) -> MenuModificationModel:
-        employee, student, additional, date = data
-
-        employee = parse_str_to_list(employee)
-        student = parse_str_to_list(student)
-        additional = parse_str_to_list(additional)
-        date = datetime.strptime(date, '%Y-%m-%d')
+    def add_menus(self, data: AddMenuRequestDto) -> MenuModificationModel:
+        employee = parse_str_to_list(data.employee)
+        student = parse_str_to_list(data.student)
+        additional = parse_str_to_list(data.additional)
+        date = datetime.strptime(data.datetime, '%Y-%m-%d')
 
         day_model: QuerySet = self.__day_repository.findByDate(date=date)
         if not day_model.exists():  # first add
@@ -65,8 +65,8 @@ class BackOfficeService(AbstractService):
 
         return MenuModificationModel(is_new=False)
 
-    def get_excel_file(self, date_str: str):
-        date: datetime = datetime.strptime(date_str, "%Y%m%d")
+    def get_excel_file(self, data: GetExcelFileRequestDto):
+        date: datetime = datetime.strptime(data.date, "%Y%m%d")
 
         weekly_menu: MenuModel = self.__menu_service.get_weekly_menu(date=date)
         file_name, exists = self.__check_excel_exists(date=date)

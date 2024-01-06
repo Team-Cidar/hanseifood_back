@@ -1,4 +1,4 @@
-from .abstract_dto import Dto
+from ..abstract_dto import Dto
 
 
 class AddMenuRequestDto(Dto):
