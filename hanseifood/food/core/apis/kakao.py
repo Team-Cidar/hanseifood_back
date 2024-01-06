@@ -1,5 +1,6 @@
 import requests
 
+from .request_methods import APIRequests
 from ..constants.strings import env_strings as env
 
 
@@ -16,7 +17,7 @@ class KakaoApi:
             'code': authorization_code
         }
 
-        token_response = requests.post(env.KAKAO_TOKEN_API_URL, headers=headers, data=body)
+        token_response = APIRequests.post(env.KAKAO_TOKEN_API_URL, headers=headers, body=body)
         token_data: dict = token_response.json()
         # refresh_token = token_data['refresh_token']  # kakao refresh token 필요시 사용
         return token_data["access_token"]
@@ -28,7 +29,7 @@ class KakaoApi:
             'Authorization': f'Bearer {kakao_access_token}'
         }
 
-        user_info_response = requests.post(env.KAKAO_USERINFO_API_URL, headers=headers)
+        user_info_response = APIRequests.post(env.KAKAO_USERINFO_API_URL, headers=headers)
 
         user_data: dict = user_info_response.json()
         user_properties: dict = user_data['properties']

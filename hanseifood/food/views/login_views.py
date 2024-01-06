@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from requests import HTTPError
 from rest_framework.decorators import api_view
 
 from ..core.decorators.deserialize_decorator import deserialize
@@ -24,6 +25,8 @@ def try_login(request, data: KakaoLoginRequestDto) -> HttpResponse:
         return ModelResponse.response(response)
     except MissingFieldError as e:
         return ErrorResponse.response(e, 400)
+    except HTTPError as e:
+        return ErrorResponse.response(e, e.response.status_code)
     except NotAbstractModelError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:
