@@ -4,6 +4,10 @@ from rest_framework.request import Request
 
 from ..utils.decorator_utils import get_request_from_args
 from ...dtos.abstract_request_dto import RequestDto
+from ...exceptions.request_exceptions import MissingFieldError
+from ...exceptions.type_exceptions import (
+    DeserializeDataTypeError, RequestDataConversionError, DynamicTypeError, DtoFieldTypeError
+)
 from ...responses.error_response import ErrorResponse
 
 
@@ -38,6 +42,16 @@ def deserialize(view_method):
 
             kwargs[key] = deserialized_obj
             return view_method(*args, **kwargs)
+        except MissingFieldError as e:
+            return ErrorResponse.response(e, status_code=400)
+        except RequestDataConversionError as e:
+            return ErrorResponse.response(e, status_code=400)
+        except DynamicTypeError as e:
+            return ErrorResponse.response(e, status_code=500)
+        except DtoFieldTypeError as e:
+            return ErrorResponse.response(e, status_code=500)
+        except DeserializeDataTypeError as e:
+            return ErrorResponse.response(e, status_code=500)
         except Exception as e:
             return ErrorResponse.response(e, status_code=500)
     return pass_deserialized_obj
