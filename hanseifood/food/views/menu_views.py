@@ -2,7 +2,9 @@ from django.http import HttpRequest, HttpResponse
 from rest_framework.decorators import api_view
 from datetime import datetime
 
+from ..core.decorators.deserialize_decorator import deserialization
 from ..core.utils.request_utils import extract_request_datas
+from ..dtos.get_target_menu_request_dto import GetTargetMenuRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotAbstractModelError
 from ..responses.error_response import ErrorResponse
@@ -28,6 +30,7 @@ def get_todays_menu(request) -> HttpResponse:
 
 # /menus/week GET
 @api_view(['GET'])
+@deserialization(MenuService)
 def get_weekly_menus(request) -> HttpResponse:
     try:
         response = menu_service.get_weekly_menu()
@@ -42,10 +45,10 @@ def get_weekly_menus(request) -> HttpResponse:
 
 # /menus/target? GET
 @api_view(['GET'])
-def get_target_days_menu(request: HttpRequest) -> HttpResponse:
+@deserialization(GetTargetMenuRequestDto)
+def get_target_days_menu(request: HttpRequest, data: GetTargetMenuRequestDto) -> HttpResponse:
     try:
-        date = extract_request_datas(request.GET, ['date'])
-        date = datetime.strptime(date, '%Y%m%d')
+        date = datetime.strptime(data.date, '%Y%m%d')
         response = menu_service.get_target_days_menu(date)
         return ModelResponse.response(response)
     except EmptyDataError as e:

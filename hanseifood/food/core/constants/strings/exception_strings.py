@@ -14,7 +14,7 @@ class MISSING_ARG_ERROR:
 class MISSING_REQUEST_FIELD_ERROR:
     @staticmethod
     def field_name(names: List[str]) -> str:
-        return f"Required arguments named {names} is not provided."
+        return f"Required arguments named {names} are not provided."
 
     # override
     def __str__(self):

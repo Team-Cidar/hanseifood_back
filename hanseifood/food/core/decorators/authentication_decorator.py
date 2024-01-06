@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.request import Request
 
 from ..utils.jwt_utils import jwt_authenticate
+from ..utils.decorator_utils import get_request_from_args
 from ...enums.role_enums import UserRole
 from ...models import User
 from ...exceptions.jwt_exceptions import InvalidTokenError, PermissionDeniedError, TokenNotProvidedError
@@ -23,14 +24,9 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
             if role not in roles:
                 raise PermissionDeniedError(f"User's role is '{role}'. But this api required {[str(item) for item in roles]}")
 
-        def get_request(*args):
-            for param in args:
-                if isinstance(param, Request):
-                    return param
-
         def check_token(*args, **kwargs):
             try:
-                request: Request = get_request(*args)
+                request: Request = get_request_from_args(*args)
                 _, token = authenticate(request)
                 authorize(token)
                 return view_method(*args, **kwargs)
