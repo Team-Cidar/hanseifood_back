@@ -1,5 +1,5 @@
-from .abstract_dto import Dto
+from .abstract_request_dto import RequestDto
 
 
-class GetTargetMenuRequestDto(Dto):
+class GetTargetMenuRequestDto(RequestDto):
     date: str

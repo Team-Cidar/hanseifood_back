@@ -1,7 +1,7 @@
-from .abstract_enum import AbstractEnum
+from enum import Enum
 
 
-class UserRole(AbstractEnum):
+class UserRole(Enum):
     A = 'admin'
     U = 'user'
 
@@ -12,3 +12,10 @@ class UserRole(AbstractEnum):
     @classmethod
     def get_all(cls):
         return [cls.A, cls.U]
+
+    @classmethod
+    def from_name(cls, name: str):
+        return cls[name]
+
+    def __str__(self):
+        return self.name

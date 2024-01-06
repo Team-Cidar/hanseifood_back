@@ -3,13 +3,8 @@ class NotAbstractModelError(Exception):
         super().__init__(msg)
 
 
-class NotRequestDtoError(Exception):
-    def __init__(self, _type: type, msg="Request data class must be a sub class of Dto. But {} is not."):
-        super(NotRequestDtoError, self).__init__(msg.format(_type.__name__))
-
-
 class DtoFieldTypeError(Exception):
-    def __init__(self, _type: object, msg="Dto fields must be one of the python's data type or Dto. But '{}' is not."):
+    def __init__(self, _type: object, msg="Dto field type '{}' is not deserializable. Please check type annotation."):
         super(DtoFieldTypeError, self).__init__(msg.format(_type.__name__))
 
 
@@ -21,3 +16,12 @@ class RequestDataConversionError(Exception):
 class DeserializeDataTypeError(Exception):
     def __init__(self, data, msg="Deserialize data type must be a dictionary, but '{}' is type of '{}'"):
         super(DeserializeDataTypeError, self).__init__(msg.format(data, type(data)))
+
+
+class DynamicTypeError(Exception):
+    def __init__(self, field, field_type, msg="TypeError raised while deserializing '{}'<{}>\n"
+                                         "check dto field types\n\n"
+                                         "Predictable mistakes\n"
+                                         "1. set unhashable type as dict key\n"
+                                         "2. set Union types"):
+        super(DynamicTypeError, self).__init__(msg.format(field, field_type))

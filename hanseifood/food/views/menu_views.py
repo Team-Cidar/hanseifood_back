@@ -2,8 +2,7 @@ from django.http import HttpRequest, HttpResponse
 from rest_framework.decorators import api_view
 from datetime import datetime
 
-from ..core.decorators.deserialize_decorator import deserialization
-from ..core.utils.request_utils import extract_request_datas
+from ..core.decorators.deserialize_decorator import deserialize
 from ..dtos.get_target_menu_request_dto import GetTargetMenuRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotAbstractModelError
@@ -30,7 +29,6 @@ def get_todays_menu(request) -> HttpResponse:
 
 # /menus/week GET
 @api_view(['GET'])
-@deserialization(MenuService)
 def get_weekly_menus(request) -> HttpResponse:
     try:
         response = menu_service.get_weekly_menu()
@@ -45,7 +43,7 @@ def get_weekly_menus(request) -> HttpResponse:
 
 # /menus/target? GET
 @api_view(['GET'])
-@deserialization(GetTargetMenuRequestDto)
+@deserialize
 def get_target_days_menu(request: HttpRequest, data: GetTargetMenuRequestDto) -> HttpResponse:
     try:
         date = datetime.strptime(data.date, '%Y%m%d')

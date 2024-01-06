@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 
 from ..core.decorators.authentication_decorator import require_auth
-from ..core.decorators.deserialize_decorator import deserialization
+from ..core.decorators.deserialize_decorator import deserialize
 from ..core.utils.request_utils import extract_request_datas
 from ..dtos.add_menu_request_dto import AddMenuRequestDto
 from ..enums.role_enums import UserRole
@@ -22,8 +22,8 @@ backoffice_service: BackOfficeService = BackOfficeService()
 @api_view(['POST'])
 @csrf_exempt
 @require_auth([UserRole.A])
-@deserialization(AddMenuRequestDto)
-def add_menu(request: HttpRequest) -> HttpResponse:
+@deserialize
+def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
     try:
         data: tuple = extract_request_datas(request.data, ['employee', 'student', 'additional', 'datetime'])
         response: MenuModificationModel = backoffice_service.add_menus(data)
