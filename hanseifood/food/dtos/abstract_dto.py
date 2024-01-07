@@ -12,18 +12,8 @@ class Dto:
         """
         Deserialize datas to specific type object.
 
-        Parameters
-        ----------
-        data: dict
-
-        Returns
-        -------
-        Any subclass of RequestDto
-
-        See Also
-        -------
         Allowed field types are
-        int, float, bool, list, tuple, str, dict, Enum, RequestDto, List[T], Tuple[T], Dict[KT, VT]
+        int, float, bool, list, tuple, str, dict, Enum, Dto, List[T], Tuple[T], Dict[KT, VT]
 
 
         """
@@ -46,24 +36,44 @@ class Dto:
 
     @classmethod
     def __deserialize_field(cls, field_type, data):
-        deserialized_field: field_type
-        if issubclass(field_type, Dto):  # field: RequestDto
-            deserialized_field = field_type.deserialize(data)
+        if issubclass(field_type, Dto):  # field: Dto
+            return field_type.deserialize(data)
         elif issubclass(field_type, Enum):  # field: Enum
-            deserialized_field = field_type[data]
+            return field_type[data]
         elif issubclass(field_type, (List, Tuple)):  # field: List[T] | field: Tuple[T]
             subtype: type = field_type.__args__[0]  # T
-            deserialized_field = field_type.__base__.__base__(
+            return field_type.__base__.__base__(
                 [cls.__deserialize_field(subtype, element) for element in data]
             )
         elif issubclass(field_type, Dict):  # field: Dict[KT, VT]
             key_type: type = field_type.__args__[0]  # KT
             value_type: type = field_type.__args__[1]  # VT
-            deserialized_field = {
+            return {
                 key_type(key): cls.__deserialize_field(value_type, value) for key, value in data.items()
             }
         elif field_type in (int, float, bool, list, tuple, str, dict):  # field: type
-            deserialized_field = field_type(data)
+            return field_type(data)
         else:
             raise DtoFieldTypeError(_type=field_type)
-        return deserialized_field
+
+    def serialize(self) -> dict:
+        fields: dict = self.__dict__
+
+        try:
+            return {key: self.__serialize_field(value) for key, value in fields.items()}
+        except Exception as e:
+            raise Exception("something")
+
+    def __serialize_field(self, data):
+        if isinstance(data, Dto):
+            return data.serialize()
+        elif isinstance(data, Enum):
+            return data.name
+        elif isinstance(data, (list, tuple)):
+            return [self.__serialize_field(elem) for elem in data]
+        elif isinstance(data, dict):
+            return {key: self.__serialize_field(value) for key, value in data.items()}
+        elif isinstance(data, (int, float, bool, str)):
+            return data
+        else:
+            raise Exception("{} is not serializable")
