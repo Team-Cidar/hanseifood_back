@@ -8,9 +8,9 @@ from ..dtos.requests.kakao_login_request_dto import KakaoLoginRequestDto
 from ..dtos.requests.kakao_signup_request_dto import KakaoSignupRequestDto
 from ..exceptions.data_exceptions import AlreadyExistsError
 from ..exceptions.request_exceptions import MissingFieldError
-from ..exceptions.type_exceptions import NotAbstractModelError
+from ..exceptions.type_exceptions import NotDtoClassError
 from ..responses.error_response import ErrorResponse
-from ..responses.model_response import ModelResponse
+from ..responses.dto_response import DtoResponse
 from ..services.login_service import LoginService
 
 login_service = LoginService()
@@ -22,12 +22,12 @@ login_service = LoginService()
 def try_login(request, data: KakaoLoginRequestDto) -> HttpResponse:
     try:
         response = login_service.do_login(data)
-        return ModelResponse.response(response)
+        return DtoResponse.response(response)
     except MissingFieldError as e:
         return ErrorResponse.response(e, 400)
     except HTTPError as e:
         return ErrorResponse.response(e, e.response.status_code)
-    except NotAbstractModelError as e:
+    except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
@@ -39,12 +39,12 @@ def try_login(request, data: KakaoLoginRequestDto) -> HttpResponse:
 def create_user(request, data: KakaoSignupRequestDto) -> HttpResponse:
     try:
         response = login_service.create_user(data)
-        return ModelResponse.response(response, 201)
+        return DtoResponse.response(response, 201)
     except MissingFieldError as e:
         return ErrorResponse.response(e, 400)
     except AlreadyExistsError as e:
         return ErrorResponse.response(e, 400)
-    except NotAbstractModelError as e:
+    except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)

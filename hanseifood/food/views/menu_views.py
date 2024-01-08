@@ -5,9 +5,9 @@ from datetime import datetime
 from ..core.decorators.deserialize_decorator import deserialize
 from ..dtos.requests.get_target_menu_request_dto import GetTargetMenuRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
-from ..exceptions.type_exceptions import NotAbstractModelError
+from ..exceptions.type_exceptions import NotDtoClassError
 from ..responses.error_response import ErrorResponse
-from ..responses.model_response import ModelResponse
+from ..responses.dto_response import DtoResponse
 from ..services.menu_service import MenuService
 
 menu_service = MenuService()
@@ -15,13 +15,13 @@ menu_service = MenuService()
 
 # /menus/day GET
 @api_view(['GET'])
-def get_todays_menu(request) -> HttpResponse:
+def get_today_menu(request) -> HttpResponse:
     try:
-        response = menu_service.get_one_day_menu()
-        return ModelResponse.response(response)
+        response = menu_service.get_today_menu()
+        return DtoResponse.response(response)
     except EmptyDataError as e:
         return ErrorResponse.response(e, 404)
-    except NotAbstractModelError as e:
+    except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
@@ -32,10 +32,10 @@ def get_todays_menu(request) -> HttpResponse:
 def get_weekly_menus(request) -> HttpResponse:
     try:
         response = menu_service.get_weekly_menu()
-        return ModelResponse.response(response)
+        return DtoResponse.response(response)
     except EmptyDataError as e:
         return ErrorResponse.response(e, 404)
-    except NotAbstractModelError as e:
+    except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
@@ -48,10 +48,10 @@ def get_target_days_menu(request: HttpRequest, data: GetTargetMenuRequestDto) ->
     try:
         date = datetime.strptime(data.date, '%Y%m%d')
         response = menu_service.get_target_days_menu(date)
-        return ModelResponse.response(response)
+        return DtoResponse.response(response)
     except EmptyDataError as e:
         return ErrorResponse.response(e, 404)
-    except NotAbstractModelError as e:
+    except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)

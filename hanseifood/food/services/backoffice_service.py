@@ -13,10 +13,10 @@ from ..core.utils import date_utils, os_utils
 from ..core.utils.string_utils import parse_str_to_list
 from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
+from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
+from ..dtos.responses.menu_response_dto import MenuResponseDto
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
-from ..responses.objs.menu_modification import MenuModificationModel
-from ..responses.objs.menu import MenuModel
 from ..dtos.daily_menu import DailyMenuDto
 from ..models import Day
 
@@ -29,7 +29,7 @@ class BackOfficeService(AbstractService):
         self.__day_meal_repository = DayMealRepository()
         self.__menu_service = MenuService()
 
-    def add_menus(self, data: AddMenuRequestDto) -> MenuModificationModel:
+    def add_menus(self, data: AddMenuRequestDto) -> MenuModificationResponseDto:
         employee = parse_str_to_list(data.employee)
         student = parse_str_to_list(data.student)
         additional = parse_str_to_list(data.additional)
@@ -40,7 +40,7 @@ class BackOfficeService(AbstractService):
             daily_menu: DailyMenuDto = DailyMenuDto(date=date, student=student, employee=employee,
                                                     additional=additional)
             self.__menu_service.save_daily_menu(data=daily_menu)
-            return MenuModificationModel(is_new=True)
+            return MenuModificationResponseDto(is_new=True)
 
         # modify menus
         day_model: Day = day_model[0]
@@ -63,12 +63,12 @@ class BackOfficeService(AbstractService):
 
         self.__delete_excel_file(date=date)
 
-        return MenuModificationModel(is_new=False)
+        return MenuModificationResponseDto(is_new=False)
 
     def get_excel_file(self, data: GetExcelFileRequestDto):
         date: datetime = datetime.strptime(data.date, "%Y%m%d")
 
-        weekly_menu: MenuModel = self.__menu_service.get_weekly_menu(date=date)
+        weekly_menu: MenuResponseDto = self.__menu_service.get_weekly_menu(date=date)
         file_name, exists = self.__check_excel_exists(date=date)
         if not exists:
             template: Workbook = openpyxl.load_workbook("assets/templates/excel_template.xlsx")
@@ -77,9 +77,9 @@ class BackOfficeService(AbstractService):
             for idx, key in enumerate(weekly_menu.keys):
                 col: str = chr(66 + idx)  # starts at B (B ~ F)
                 sheet[f"{col}5"] = key
-                sheet[f"{col}7"] = ',\n'.join(weekly_menu.employee_menu[key])
-                sheet[f"{col}12"] = ',\n'.join(weekly_menu.student_menu[key])
-                sheet[f"{col}17"] = ', '.join(weekly_menu.additional_menu[key])
+                sheet[f"{col}7"] = ',\n'.join(weekly_menu.employee_menu.get_menus(key))
+                sheet[f"{col}12"] = ',\n'.join(weekly_menu.student_menu.get_menus(key))
+                sheet[f"{col}17"] = ', '.join(weekly_menu.additional_menu.get_menus(key))
 
                 cell_format: Alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
                 sheet[f"{col}7"].alignment = cell_format

@@ -1,6 +1,6 @@
-class NotAbstractModelError(Exception):
-    def __init__(self, msg="It's not a child of AbstractModel"):
-        super().__init__(msg)
+class NotDtoClassError(Exception):
+    def __init__(self, _type: type, msg="DtoResponse only allows for the data types of 'Dto' or 'Iter[Dto]'. But '{}' is not."):
+        super(NotDtoClassError, self).__init__(msg.format(_type.__name__))
 
 
 class DtoFieldTypeError(Exception):

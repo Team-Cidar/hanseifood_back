@@ -35,6 +35,10 @@ class Dto:
         return deserialized_obj
 
     def serialize(self) -> dict:
+        """
+        Serialize instance of Dto class.
+        Instance of Dto -> serialized data can be dumped into json
+        """
         fields: dict = self.__dict__
         return {key: self.__serialize_field(value) for key, value in fields.items()}
 

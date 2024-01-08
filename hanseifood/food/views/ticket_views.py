@@ -2,9 +2,9 @@ from django.http import HttpRequest, HttpResponse
 from rest_framework.decorators import api_view
 
 from ..exceptions.data_exceptions import EmptyDataError
-from ..exceptions.type_exceptions import NotAbstractModelError
+from ..exceptions.type_exceptions import NotDtoClassError
 from ..responses.error_response import ErrorResponse
-from ..responses.model_response import ModelResponse
+from ..responses.dto_response import DtoResponse
 from ..services.ticket_service import TicketService
 
 ticket_service = TicketService()
@@ -15,10 +15,10 @@ ticket_service = TicketService()
 def get_ticket_validation(request: HttpRequest, ticket_id: str) -> HttpResponse:
     try:
         response = ticket_service.validate_ticket(ticket_id)
-        return ModelResponse.response(response)
+        return DtoResponse.response(response)
     except EmptyDataError as e:
         return ErrorResponse.response(e, 404)
-    except NotAbstractModelError as e:
+    except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
     except ValueError as e:
         return ErrorResponse.response(e, 500)

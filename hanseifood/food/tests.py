@@ -28,6 +28,19 @@ class LoginDto(Dto):
     access_token: str
     user: UserDto
 
+class MenuResponseDto(Dto):
+    def __init__(self, exists: bool, menus: List[str] = None):
+        if not exists:
+            menus = list()
+        self.exists: bool = exists
+        self.menus: List[str] = menus
+class DailyMenuResponseDto(Dto):
+    def __init__(self):
+        self.date: str = '20231201'
+        self.employee: MenuResponseDto = MenuResponseDto(True, ['a', 'b', 'c', 'd'])
+        self.student: MenuResponseDto = MenuResponseDto(True, ['e', 'f', 'g', 'h'])
+        self.additional: MenuResponseDto = MenuResponseDto(False)
+
 class DtoTestClass(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -58,7 +71,32 @@ class DtoTestClass(TestCase):
                 ]
             },
         }
+        cls.menu_data = {
+            'date': '20231201',
+            'employee': {
+                'exists': True,
+                'menus': ['a', 'b', 'c', 'd']
+            },
+            'student': {
+                'exists': True,
+                'menus': ['e', 'f', 'g', 'h']
+            },
+            'additional': {
+                'exists': False,
+                'menus': []
+            },
+        }
+        cls.daily_menu_data = {
+            'only_employee': ''
+        }
 
     def test_deserializer_serializer(self):
+        print('test serializer/deserializer')
         deserialized: LoginDto = LoginDto.deserialize(self.data)
         self.assertEqual(deserialized.serialize(), self.data, 'something wrong')
+
+    def test_response_dto_serialization(self):
+        print('test serializer with response dto')
+        menus: DailyMenuResponseDto = DailyMenuResponseDto()
+        print(menus.serialize())
+        self.assertEqual(menus.serialize(), self.menu_data, 'different between serialized data and original data')
