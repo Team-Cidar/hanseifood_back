@@ -1,5 +1,5 @@
 from ..abstract_dto import Dto
-from ..common.user_ticket_dto import UserTicketDto
+from ..model_mapped.user_ticket_dto import UserTicketDto
 
 
 class TicketValidationResponseDto(Dto):

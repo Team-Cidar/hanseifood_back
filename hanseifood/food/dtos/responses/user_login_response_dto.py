@@ -1,5 +1,5 @@
 from ..abstract_dto import Dto
-from ..common.user_dto import UserDto
+from ..model_mapped.user_dto import UserDto
 
 
 class UserLoginResponseDto(Dto):

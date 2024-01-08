@@ -1,9 +1,9 @@
 import logging
 
-from ..dtos.common.pay_info_dto import PayInfoDto
-from ..dtos.common.ticket_dto import TicketDto
-from ..dtos.common.user_dto import UserDto
-from ..dtos.common.user_ticket_dto import UserTicketDto
+from ..dtos.model_mapped.pay_info_dto import PayInfoDto
+from ..dtos.model_mapped.ticket_dto import TicketDto
+from ..dtos.model_mapped.user_dto import UserDto
+from ..dtos.model_mapped.user_ticket_dto import UserTicketDto
 from ..dtos.responses.ticket_response_dto import TicketValidationResponseDto
 from .abstract_service import AbstractService
 

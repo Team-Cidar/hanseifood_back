@@ -5,8 +5,8 @@ from typing import List
 
 from .abstract_service import AbstractService
 from ..core.utils import date_utils
-from ..dtos.common.day_meal_dto import DayMealDto
-from ..dtos.daily_menu import DailyMenuDto
+from ..dtos.model_mapped.day_meal_dto import DayMealDto
+from ..dtos.general.daily_menu import DailyMenuDto
 from ..dtos.responses.menu_response_dto import MenuResponseDto
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository

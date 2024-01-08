@@ -15,9 +15,9 @@ from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
 from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
 from ..dtos.responses.menu_response_dto import MenuResponseDto
+from ..dtos.general.daily_menu import DailyMenuDto
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
-from ..dtos.daily_menu import DailyMenuDto
 from ..models import Day
 
 logger = logging.getLogger(__name__)

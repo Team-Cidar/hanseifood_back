@@ -1,7 +1,7 @@
 from .abstract_service import AbstractService
 from ..core.apis.kakao import KakaoApi
 from ..core.utils import jwt_utils as jwt
-from ..dtos.common.user_dto import UserDto
+from ..dtos.model_mapped.user_dto import UserDto
 from ..dtos.requests.kakao_login_request_dto import KakaoLoginRequestDto
 from ..dtos.requests.kakao_signup_request_dto import KakaoSignupRequestDto
 from ..dtos.responses.user_login_response_dto import UserLoginResponseDto

@@ -1,6 +1,7 @@
 from typing import List, Union
 from datetime import datetime
-from ..models import Day
+
+from ...models import Day
 
 
 class DailyMenuDto:
