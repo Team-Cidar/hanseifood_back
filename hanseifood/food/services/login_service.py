@@ -34,7 +34,8 @@ class LoginService(AbstractService):
         )
 
     def create_user(self, data: KakaoSignupRequestDto) -> UserLoginResponseDto:
-        if self.__user_repository.existsByKakaoId(kakao_id=data.kakao_id):
+        exists, _ = self.__user_repository.existsByKakaoId(kakao_id=data.kakao_id)
+        if exists:
             raise AlreadyExistsError(data.kakao_id)
 
         user: User = self.__user_repository.save(
