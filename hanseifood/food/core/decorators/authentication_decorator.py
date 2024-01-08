@@ -3,7 +3,7 @@ from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.request import Request
 
-from ..utils.jwt_utils import jwt_authenticate
+from ..utils import jwt_utils as jwt
 from ..utils.decorator_utils import get_request_from_args
 from ...enums.role_enums import UserRole
 from ...models import User
@@ -14,7 +14,7 @@ from ...responses.error_response import ErrorResponse
 def require_auth(roles: List[UserRole] = UserRole.get_all()):
     def decorator(view_method):
         def authenticate(request: Request) -> Tuple[User, AccessToken]:
-            return jwt_authenticate(request)
+            return jwt.jwt_authenticate(request)
 
         def authorize(token: AccessToken):
             if len(roles) == 0:
