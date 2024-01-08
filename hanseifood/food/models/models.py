@@ -5,7 +5,7 @@ from .managers import CustomUserManager
 
 
 class Day(models.Model):
-    date = models.DateField(null=False)
+    date = models.DateField()  # unique로 되어있음
 
     def __str__(self):
         return str(self.date)
@@ -15,7 +15,7 @@ class Day(models.Model):
 
 
 class Meal(models.Model):
-    meal_name = models.CharField(unique=True, max_length=100)
+    meal_name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.meal_name
@@ -74,7 +74,7 @@ class Ticket(models.Model):
 
 class PayInfo(models.Model):
     pay_type = models.TextField()
-    order_id = models.TextField()
+    order_id = models.CharField(max_length=255, unique=True)
     order_date = models.DateTimeField()
     create_at = models.DateTimeField()
 
