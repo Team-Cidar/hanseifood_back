@@ -9,7 +9,7 @@ class MealRepository(AbstractRepository):
         super(MealRepository, self).__init__(Meal.objects)
 
     def findByMenuName(self, menu_name) -> QuerySet:
-        datas: QuerySet = self.model.filter(meal_name=menu_name)
+        datas: QuerySet = self.manager.filter(meal_name=menu_name)
         return datas
 
     # override

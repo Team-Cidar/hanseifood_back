@@ -12,7 +12,7 @@ class UserRepository(AbstractRepository):
         super(UserRepository, self).__init__(User.objects)
 
     def findByKakaoId(self, kakao_id: str) -> QuerySet:
-        datas: QuerySet = self.model.filter(kakao_id=kakao_id)
+        datas: QuerySet = self.manager.filter(kakao_id=kakao_id)
         return datas
 
     def existsByKakaoId(self, kakao_id: str) -> Tuple[bool, QuerySet]:
@@ -26,7 +26,7 @@ class UserRepository(AbstractRepository):
 
     # override
     def save(self, email: str, nickname: str, kakao_name: str, kakao_id: str, role: UserRole) -> User:
-        entity: User = self.model.create_user(
+        entity: User = self.manager.create_user(
             email=email,
             nickname=nickname,
             kakao_name=kakao_name,

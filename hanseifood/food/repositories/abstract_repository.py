@@ -5,11 +5,11 @@ from ..core.patterns.singleton_cls import Singleton
 
 
 class AbstractRepository(metaclass=Singleton):
-    def __init__(self, model: BaseManager):
-        self.model: Model.objects = model
+    def __init__(self, manager: BaseManager):
+        self.manager: BaseManager = manager
 
     def clearAll(self):
-        self.model.all().delete()
+        self.manager.all().delete()
 
     def delete(self, target_model: Model):
         target_model.delete()

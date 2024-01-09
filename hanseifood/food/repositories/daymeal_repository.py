@@ -10,19 +10,19 @@ class DayMealRepository(AbstractRepository):
         super(DayMealRepository, self).__init__(DayMeal.objects)
 
     def findByDayId(self, day_id: Day) -> QuerySet:
-        datas: QuerySet = self.model.filter(day_id=day_id)
+        datas: QuerySet = self.manager.filter(day_id=day_id)
         return datas
 
     def findStudentByDayId(self, day_id: Day) -> QuerySet:
-        datas: QuerySet = self.model.filter(day_id=day_id, for_student=True, is_additional=False)
+        datas: QuerySet = self.manager.filter(day_id=day_id, for_student=True, is_additional=False)
         return datas
 
     def findEmployeeByDayId(self, day_id: Day) -> QuerySet:
-        datas: QuerySet = self.model.filter(day_id=day_id, for_student=False, is_additional=False)
+        datas: QuerySet = self.manager.filter(day_id=day_id, for_student=False, is_additional=False)
         return datas
 
     def findAdditionalByDayId(self, day_id: Day) -> QuerySet:
-        datas: QuerySet = self.model.filter(day_id=day_id, for_student=False, is_additional=True)
+        datas: QuerySet = self.manager.filter(day_id=day_id, for_student=False, is_additional=True)
         return datas
 
     def existStudentByDayId(self, day_id: Day) -> Tuple[bool, QuerySet]:

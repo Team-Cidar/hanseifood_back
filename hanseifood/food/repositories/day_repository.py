@@ -10,7 +10,7 @@ class DayRepository(AbstractRepository):
         super(DayRepository, self).__init__(Day.objects)
 
     def findByDate(self, date: datetime.datetime) -> QuerySet:
-        datas: QuerySet = self.model.filter(date=date)
+        datas: QuerySet = self.manager.filter(date=date)
         return datas
 
     # override
