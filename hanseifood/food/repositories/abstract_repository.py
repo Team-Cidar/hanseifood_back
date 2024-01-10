@@ -1,12 +1,11 @@
-from django.db.models import Model
-from django.db.models.manager import BaseManager
+from django.db.models import Model, Manager
 
 from ..core.patterns.singleton_cls import Singleton
 
 
 class AbstractRepository(metaclass=Singleton):
-    def __init__(self, manager: BaseManager):
-        self.manager: BaseManager = manager
+    def __init__(self, manager: Manager):
+        self.manager: Manager = manager
 
     def clearAll(self):
         self.manager.all().delete()
