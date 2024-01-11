@@ -21,7 +21,7 @@ backoffice_service: BackOfficeService = BackOfficeService()
 # /back/menus POST
 @api_view(['POST'])
 @csrf_exempt
-@require_auth([UserRole.A])
+@require_auth([UserRole.ADMIN])
 @deserialize
 def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
     try:
@@ -39,7 +39,7 @@ def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
 
 # /back/menus/excel? GET
 @api_view(['GET'])
-@require_auth([UserRole.A])
+@require_auth([UserRole.ADMIN])
 @deserialize
 def get_excel_file(request: HttpRequest, data: GetExcelFileRequestDto) -> HttpResponse:
     try:

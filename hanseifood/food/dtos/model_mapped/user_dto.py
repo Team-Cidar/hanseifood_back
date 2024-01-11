@@ -20,7 +20,7 @@ class UserDto(Dto):
         user.kakao_name = user_model.kakao_name
         user.nickname = user_model.nickname
         user.is_admin = user_model.is_admin
-        user.role = UserRole.from_name(user_model.role)
+        user.role = UserRole.from_value(user_model.role)
         return user
 
     @classmethod

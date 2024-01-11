@@ -51,7 +51,7 @@ class Dto:
         if issubclass(field_type, Dto):  # field: Dto
             return field_type.deserialize(data)
         elif issubclass(field_type, Enum):  # field: Enum
-            return field_type[data]
+            return field_type(data)
         elif issubclass(field_type, (List, Tuple)):  # field: List[T] | field: Tuple[T]
             subtype: type = field_type.__args__[0]  # T
             base_type: type = field_type.__base__.__base__  # list | tuple
@@ -69,7 +69,7 @@ class Dto:
         if isinstance(data, Dto):
             return data.serialize()
         elif isinstance(data, Enum):
-            return data.name
+            return data.value
         elif isinstance(data, (list, tuple)):
             return [self.__serialize_field(elem) for elem in data]
         elif isinstance(data, dict):

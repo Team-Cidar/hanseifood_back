@@ -21,7 +21,7 @@ class CustomUserManager(BaseUserManager):
             nickname=nickname,
             kakao_name=kakao_name,
             kakao_id=kakao_id,
-            role=UserRole.A
+            role=UserRole.ADMIN
         )
         user.is_admin = True
         user.save()

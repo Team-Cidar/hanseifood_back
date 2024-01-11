@@ -2,20 +2,20 @@ from enum import Enum
 
 
 class UserRole(Enum):
-    A = 'admin'
-    U = 'user'
+    ADMIN = 'A'
+    USER = 'U'
 
     @classmethod
     def get_default_role(cls):
-        return cls.U
+        return cls.USER
 
     @classmethod
     def get_all(cls):
-        return [cls.A, cls.U]
+        return [cls.ADMIN, cls.USER]
 
     @classmethod
-    def from_name(cls, name: str):
-        return cls[name]
+    def from_value(cls, value: str):
+        return cls(value)
 
     def __str__(self):
-        return self.name
+        return self.value

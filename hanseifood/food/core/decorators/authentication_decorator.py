@@ -20,7 +20,7 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
             if len(roles) == 0:
                 return
             payload: dict = token.payload
-            role: UserRole = UserRole.from_name(payload['role'])
+            role: UserRole = UserRole.from_value(payload['role'])
             if role not in roles:
                 raise PermissionDeniedError(f"User's role is '{role}'. But this api required {[str(item) for item in roles]}")
 

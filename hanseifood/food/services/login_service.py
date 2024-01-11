@@ -25,7 +25,7 @@ class LoginService(AbstractService):
         exist, user_models = self.__user_repository.existsByKakaoId(kakao_id=kakao_user_info['kakao_id'])
 
         if exist:
-            return self._allow_login(user_models[0])
+            return self.__allow_login(user_models[0])
 
         return UserLoginResponseDto(
             user=UserDto.get_dummy_kakao_user(
@@ -44,9 +44,9 @@ class LoginService(AbstractService):
             kakao_name=data.kakao_name,
             kakao_id=data.kakao_id,
             role=UserRole.get_default_role())
-        return self._allow_login(user)
+        return self.__allow_login(user)
 
-    def _allow_login(self, user: User) -> UserLoginResponseDto:
+    def __allow_login(self, user: User) -> UserLoginResponseDto:
         user = self.__user_repository.modifyLastLoginByUser(user)
         refresh_token, access_token = jwt.get_token(user)
 
