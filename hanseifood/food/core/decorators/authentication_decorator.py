@@ -35,7 +35,7 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
             except InvalidTokenError as e:
                 return ErrorResponse.response(e, 401)
             except AuthenticationFailed as e:
-                return ErrorResponse.response(e, 403)
+                return ErrorResponse.response(e, 401)
             except PermissionDeniedError as e:
                 return ErrorResponse.response(e, 403)
             except Exception as e:

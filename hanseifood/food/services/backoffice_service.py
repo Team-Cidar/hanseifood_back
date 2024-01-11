@@ -16,6 +16,7 @@ from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
 from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
 from ..dtos.responses.menu_response_dto import MenuResponseDto
 from ..dtos.general.daily_menu import DailyMenuDto
+from ..exceptions.request_exceptions import WeekendDateError
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
 from ..models import Day
@@ -34,6 +35,9 @@ class BackOfficeService(AbstractService):
         student = parse_str_to_list(data.student)
         additional = parse_str_to_list(data.additional)
         date = datetime.strptime(data.datetime, '%Y-%m-%d')
+
+        if date_utils.is_weekend(date):
+            raise WeekendDateError(date=date)
 
         day_model: QuerySet = self.__day_repository.findByDate(date=date)
         if not day_model.exists():  # first add

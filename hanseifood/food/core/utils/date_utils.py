@@ -72,3 +72,7 @@ def get_weekday_kor(day: datetime) -> str:
         4: '금'
     }
     return weekday_kor[day.weekday()]
+
+
+def is_weekend(date: datetime) -> bool:
+    return date.weekday() in [5, 6]
