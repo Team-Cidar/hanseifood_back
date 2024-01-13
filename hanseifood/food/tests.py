@@ -13,7 +13,7 @@ class FriendDto(Dto):
     role: UserRole
 
 
-class UserDto(Dto):
+class TestUserDto(Dto):
     name: str
     nickname: str
     age: int
@@ -25,7 +25,7 @@ class UserDto(Dto):
 class LoginDto(Dto):
     status: bool
     access_token: str
-    user: UserDto
+    user: TestUserDto
 
 class MenuResponseDto(Dto):
     def __init__(self, exists: bool, menus: List[str] = None):

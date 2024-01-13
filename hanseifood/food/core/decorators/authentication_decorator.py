@@ -5,6 +5,7 @@ from rest_framework.request import Request
 
 from ..utils import jwt_utils as jwt
 from ..utils.decorator_utils import get_request_from_args
+from ...dtos.model_mapped.user_dto import UserDto
 from ...enums.role_enums import UserRole
 from ...models import User
 from ...exceptions.jwt_exceptions import InvalidTokenError, PermissionDeniedError, TokenNotProvidedError
@@ -27,8 +28,10 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
         def check_token(*args, **kwargs):
             try:
                 request: Request = get_request_from_args(*args)
-                _, token = authenticate(request)
+                user, token = authenticate(request)
                 authorize(token)
+
+                kwargs['user'] = UserDto.from_model(user)  # allow access to user info in token by using 'user' keyword in view method
                 return view_method(*args, **kwargs)
             except TokenNotProvidedError as e:
                 return ErrorResponse.response(e, 401)
