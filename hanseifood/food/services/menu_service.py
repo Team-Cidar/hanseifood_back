@@ -1,6 +1,6 @@
-from django.db.models import QuerySet
 from datetime import datetime
 import logging
+
 from typing import List
 
 from .abstract_service import AbstractService
@@ -8,6 +8,7 @@ from ..core.utils import date_utils
 from ..dtos.model_mapped.day_meal_dto import DayMealDto
 from ..dtos.general.daily_menu import DailyMenuDto
 from ..dtos.responses.menu_response_dto import MenuResponseDto
+from ..enums.menu_enums import MenuType
 from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.meal_repository import MealRepository
@@ -40,35 +41,10 @@ class MenuService(AbstractService):
         date = date_utils.get_weekday(date)  # to get friday when today is 'sat' or 'sun'
         return self.__get_daily_menus(date=date)
 
-    def save_daily_menu(self, data: DailyMenuDto, is_update: bool = False) -> None:
-        students: list = data.student
-        employees: list = data.employee
-        additional: list = data.additional
-
-        day_model: Day
-        if not is_update:
-            day_model = self.__day_repository.save(data.date)
-        else:
-            day_model = data.date
-
-        self.__save_daily_menus_to_db(day_model=day_model, datas=students, for_students=True, is_additional=False)
-        self.__save_daily_menus_to_db(day_model=day_model, datas=employees, for_students=False, is_additional=False)
-        self.__save_daily_menus_to_db(day_model=day_model, datas=additional, for_students=False, is_additional=True)
-
-    def delete_daily_menus(self, daymeal_models: QuerySet):
-        for model in daymeal_models:
-            self.__day_meal_repository.delete(target_model=model)
-
-    def __save_daily_menus_to_db(self, day_model, datas: list, for_students: bool, is_additional: bool):
-        for menu in datas:
-            menu_model = self.__meal_repository.findByMenuName(menu)
-            if not menu_model.exists():
-                menu_model = self.__meal_repository.save(menu)
-            else:
-                menu_model = menu_model[0]
-
-            self.__day_meal_repository.save(day_id=day_model, meal_id=menu_model, for_student=for_students,
-                                            is_additional=is_additional)
+    def save_daily_menu(self, data: DailyMenuDto) -> None:
+        self.__save_daily_menus_to_db(day_model=data.date, datas=data.student, menu_type=MenuType.STUDENT)
+        self.__save_daily_menus_to_db(day_model=data.date, datas=data.employee, menu_type=MenuType.EMPLOYEE)
+        self.__save_daily_menus_to_db(day_model=data.date, datas=data.additional, menu_type=MenuType.ADDITIONAL)
 
     def __get_daily_menus(self, date: datetime) -> MenuResponseDto:
         weekday_kor: str = date_utils.get_weekday_kor(date)
@@ -76,22 +52,27 @@ class MenuService(AbstractService):
 
         result: MenuResponseDto = MenuResponseDto(key)
 
-        day_model: QuerySet = self.__day_repository.findByDate(date=date)
-        if not day_model.exists():
+        exists, day_queries = self.__day_repository.existByDate(date=date)
+        if not exists:
             return result
 
-        day_model: Day = day_model[0]
+        day_model: Day = day_queries[0]
 
-        exists, employee_menu = self.__day_meal_repository.existEmployeeByDayId(day_id=day_model)
-        if exists:
-            result.add_employee(key, [DayMealDto.from_model(item).meal_name for item in employee_menu])
-
-        exists, students_menu = self.__day_meal_repository.existStudentByDayId(day_id=day_model)
-        if exists:
-            result.add_student(key, [DayMealDto.from_model(item).meal_name for item in students_menu])
-
-        exists, additional_menu = self.__day_meal_repository.existAdditionalByDayId(day_id=day_model)
-        if exists:
-            result.add_additional(key, [DayMealDto.from_model(item).meal_name for item in additional_menu])
+        for menu_type in MenuType.get_all_except_default():
+            exists, menu_queries = self.__day_meal_repository.existByDayIdAndMenuType(day_id=day_model, menu_type=menu_type)
+            if not exists:
+                continue
+            menu_values: List[str] = [DayMealDto.from_model(item).meal_name for item in menu_queries]
+            result.add_menus_by_type(_type=menu_type, date_key=key, value=menu_values)
 
         return result
+
+    def __save_daily_menus_to_db(self, day_model, datas: list, menu_type: MenuType):
+        for menu in datas:
+            menu_model = self.__meal_repository.findByMenuName(menu)
+            if not menu_model.exists():
+                menu_model = self.__meal_repository.save(menu)
+            else:
+                menu_model = menu_model[0]
+
+            self.__day_meal_repository.save(day_id=day_model, meal_id=menu_model, menu_type=menu_type)

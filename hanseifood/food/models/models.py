@@ -5,7 +5,7 @@ from .managers import CustomUserManager
 
 
 class Day(models.Model):
-    date = models.DateField()  # unique로 되어있음
+    date = models.DateField(unique_for_date=True)
 
     def __str__(self):
         return str(self.date)
@@ -27,11 +27,10 @@ class Meal(models.Model):
 class DayMeal(models.Model):
     day_id = models.ForeignKey(Day, on_delete=models.CASCADE)
     meal_id = models.ForeignKey(Meal, on_delete=models.DO_NOTHING)
-    for_student = models.BooleanField()
-    is_additional = models.BooleanField(default=False)
+    menu_type = models.CharField(max_length=1, default='N')  # N == None
 
     def __str__(self):
-        return str(self.day_id) + '/' + str(self.meal_id)
+        return f"{str(self.day_id)} / {str(self.meal_id)} [{self.menu_type}]"
 
     class Meta:
         db_table = 'day_meal'
@@ -49,7 +48,7 @@ class User(AbstractBaseUser):
     update_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"[{self.kakao_name}/{self.nickname}] -> {self.email}"
+        return f"[{self.kakao_name}/{self.nickname}/{self.role}] -> {self.email}"
 
     class Meta:
         db_table = 'user'

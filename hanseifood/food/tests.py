@@ -1,5 +1,4 @@
 from typing import List
-
 from django.test import TestCase
 
 from .dtos.abstract_dto import Dto

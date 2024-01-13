@@ -1,6 +1,7 @@
-from django.http import HttpResponse
-from abc import *
+from abc import ABCMeta, abstractmethod
+
 from typing import Any
+from django.http import HttpResponse
 
 
 class AbstractResponse(metaclass=ABCMeta):

@@ -1,6 +1,7 @@
+import logging
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import register_events, DjangoJobStore
-import logging
 
 logger = logging.getLogger(__name__)
 

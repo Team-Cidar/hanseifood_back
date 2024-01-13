@@ -1,5 +1,3 @@
-import requests
-
 from .request_methods import APIRequests
 from ..constants.strings import env_strings as env
 

@@ -1,5 +1,4 @@
 from typing import Tuple, List, Union
-
 from django.http import HttpResponse, JsonResponse
 
 from ..dtos.abstract_dto import Dto

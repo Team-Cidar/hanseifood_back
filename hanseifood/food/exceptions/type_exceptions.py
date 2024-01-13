@@ -25,3 +25,8 @@ class DynamicTypeError(Exception):
                                          "1. set unhashable type as dict key\n"
                                          "2. set Union types"):
         super(DynamicTypeError, self).__init__(msg.format(field, field_type))
+
+
+class DefaultEnumTypeError(Exception):
+    def __init__(self, msg: str = "Improper usage of default enum type 'Enum.NONE'"):
+        super(DefaultEnumTypeError, self).__init__(msg)

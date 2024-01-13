@@ -1,6 +1,8 @@
 from typing import Dict
 
 from ..abstract_dto import Dto
+from ...enums.menu_enums import MenuType
+from ...exceptions.type_exceptions import DefaultEnumTypeError
 
 
 class MenuResponseDto(Dto):
@@ -18,14 +20,16 @@ class MenuResponseDto(Dto):
         self.additional_menu += menus.additional_menu
         return self
 
-    def add_employee(self, key: str, value: list):
-        self.employee_menu.add_menus(key, value)
+    def add_menus_by_type(self, _type: MenuType, date_key: str, value: list):
+        if _type == MenuType.EMPLOYEE:
+            self.employee_menu.add_menus(date_key, value)
+        elif _type == MenuType.STUDENT:
+            self.student_menu.add_menus(date_key, value)
+        elif _type == MenuType.ADDITIONAL:
+            self.additional_menu.add_menus(date_key, value)
+        else:
+            raise DefaultEnumTypeError()
 
-    def add_student(self, key: str, value: list):
-        self.student_menu.add_menus(key, value)
-
-    def add_additional(self, key: str, value: list):
-        self.additional_menu.add_menus(key, value)
 
 class MenuDto(Dto):
     def __init__(self, key: str = None):

@@ -1,11 +1,11 @@
-from django.db.models import QuerySet
 from datetime import datetime
+import logging
+
+from typing import List, Tuple
 import openpyxl
 from openpyxl.styles import Alignment
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from typing import List, Tuple
-import logging
 
 from .abstract_service import AbstractService
 from .menu_service import MenuService
@@ -16,6 +16,7 @@ from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
 from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
 from ..dtos.responses.menu_response_dto import MenuResponseDto
 from ..dtos.general.daily_menu import DailyMenuDto
+from ..enums.menu_enums import MenuType
 from ..exceptions.request_exceptions import WeekendDateError
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
@@ -39,35 +40,25 @@ class BackOfficeService(AbstractService):
         if date_utils.is_weekend(date):
             raise WeekendDateError(date=date)
 
-        day_model: QuerySet = self.__day_repository.findByDate(date=date)
-        if not day_model.exists():  # first add
-            daily_menu: DailyMenuDto = DailyMenuDto(date=date, student=student, employee=employee,
-                                                    additional=additional)
-            self.__menu_service.save_daily_menu(data=daily_menu)
-            return MenuModificationResponseDto(is_new=True)
+        exists, day_queries = self.__day_repository.existByDate(date=date)
+        day_model: Day
+        if exists:
+            day_model = day_queries[0]
+            if len(additional) != 0:
+                self.__day_meal_repository.deleteByDayIdAndMenuType(day_id=day_model, menu_type=MenuType.ADDITIONAL)
+            if len(student) != 0:
+                self.__day_meal_repository.deleteByDayIdAndMenuType(day_id=day_model, menu_type=MenuType.STUDENT)
+            if len(employee) != 0:
+                self.__day_meal_repository.deleteByDayIdAndMenuType(day_id=day_model, menu_type=MenuType.EMPLOYEE)
+        else:
+            day_model = self.__day_repository.save(date=date)
 
-        # modify menus
-        day_model: Day = day_model[0]
-
-        if len(additional) != 0:
-            daymeal_models: QuerySet = self.__day_meal_repository.findAdditionalByDayId(day_id=day_model)
-            self.__menu_service.delete_daily_menus(daymeal_models=daymeal_models)
-
-        if len(student) != 0:
-            daymeal_models: QuerySet = self.__day_meal_repository.findStudentByDayId(day_id=day_model)
-            self.__menu_service.delete_daily_menus(daymeal_models=daymeal_models)
-
-        if len(employee) != 0:
-            daymeal_models: QuerySet = self.__day_meal_repository.findEmployeeByDayId(day_id=day_model)
-            self.__menu_service.delete_daily_menus(daymeal_models=daymeal_models)
-
-        daily_menu: DailyMenuDto = DailyMenuDto(date=day_model, student=student, employee=employee,
-                                                additional=additional)
-        self.__menu_service.save_daily_menu(data=daily_menu, is_update=True)
+        daily_menu: DailyMenuDto = DailyMenuDto(date=day_model, student=student, employee=employee, additional=additional)
+        self.__menu_service.save_daily_menu(data=daily_menu)
 
         self.__delete_excel_file(date=date)
 
-        return MenuModificationResponseDto(is_new=False)
+        return MenuModificationResponseDto(is_new=not exists)
 
     def get_excel_file(self, data: GetExcelFileRequestDto):
         date: datetime = datetime.strptime(data.date, "%Y%m%d")

@@ -1,6 +1,7 @@
-from django.db.models import QuerySet
-from typing import Tuple
 from datetime import datetime
+
+from typing import Tuple
+from django.db.models import QuerySet
 
 from .abstract_repository import AbstractRepository
 from ..enums.role_enums import UserRole
