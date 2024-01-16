@@ -23,10 +23,12 @@ class DayMealRepository(AbstractRepository):
         return datas.exists(), datas
 
     def deleteByDayIdAndMenuType(self, day_id: Day, menu_type: MenuType):
-        self.findByDayIdAndMenuType(day_id=day_id, menu_type=menu_type).delete()
+        item: DayMeal
+        for item in self.findByDayIdAndMenuType(day_id=day_id, menu_type=menu_type):
+            item.delete()  # do not delete DayMeal record with queryset.delete() to call overriden delete method
 
     # override
-    def save(self, day_id: Day, meal_id: Meal, menu_type: MenuType) -> DayMeal:
-        entity = DayMeal(day_id=day_id, meal_id=meal_id, menu_type=menu_type.value)
+    def save(self, day_id: Day, meal_id: Meal, menu_type: MenuType, menu_id: str) -> DayMeal:
+        entity = DayMeal(day_id=day_id, meal_id=meal_id, menu_type=menu_type.value, menu_id=menu_id)
         entity.save()
         return entity

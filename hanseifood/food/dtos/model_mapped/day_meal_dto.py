@@ -7,9 +7,10 @@ from ...models import DayMeal
 
 class DayMealDto(Dto):
     def __init__(self, day_dto: DayDto, meal_dto: MealDto):
-        self.day: DayDto = day_dto
-        self.meal: MealDto = meal_dto
+        self.day_dto: DayDto = day_dto
+        self.meal_dto: MealDto = meal_dto
         self.menu_type: MenuType = MenuType.NONE
+        self.menu_id: str = ''
 
     @classmethod
     def from_model(cls, day_meal_model: DayMeal):

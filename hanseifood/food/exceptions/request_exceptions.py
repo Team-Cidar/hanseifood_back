@@ -7,4 +7,9 @@ class MissingFieldError(KeyError):
 
 class WeekendDateError(Exception):
     def __init__(self, date: datetime, msg="'{}' is weekend."):
-        super().__init__(msg.format(date.strftime("%Y-%m-%d")))
+        super(WeekendDateError, self).__init__(msg.format(date.strftime("%Y-%m-%d")))
+
+
+class PastDateModificationError(Exception):
+    def __init__(self, msg="Modification of past date's data is not allowed"):
+        super(PastDateModificationError, self).__init__(msg)

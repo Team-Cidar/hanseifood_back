@@ -17,7 +17,7 @@ from ..dtos.responses.menu_modification_response_dto import MenuModificationResp
 from ..dtos.responses.menu_response_dto import MenuResponseDto
 from ..dtos.general.daily_menu import DailyMenuDto
 from ..enums.menu_enums import MenuType
-from ..exceptions.request_exceptions import WeekendDateError
+from ..exceptions.request_exceptions import WeekendDateError, PastDateModificationError
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
 from ..models import Day
@@ -39,6 +39,9 @@ class BackOfficeService(AbstractService):
 
         if date_utils.is_weekend(date):
             raise WeekendDateError(date=date)
+
+        if date_utils.is_past(date):
+            raise PastDateModificationError()
 
         exists, day_queries = self.__day_repository.existByDate(date=date)
         day_model: Day

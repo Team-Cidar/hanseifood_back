@@ -76,3 +76,10 @@ def get_weekday_kor(day: datetime) -> str:
 
 def is_weekend(date: datetime) -> bool:
     return date.weekday() in [5, 6]
+
+def is_past(date: datetime) -> bool:
+    """
+    Return true if the date is past.
+    If passed date is today, return false
+    """
+    return date < datetime.today() - timedelta(days=1)

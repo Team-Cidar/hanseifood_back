@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 import logging
 
@@ -62,12 +63,13 @@ class MenuService(AbstractService):
             exists, menu_queries = self.__day_meal_repository.existByDayIdAndMenuType(day_id=day_model, menu_type=menu_type)
             if not exists:
                 continue
-            menu_values: List[str] = [DayMealDto.from_model(item).meal.meal_name for item in menu_queries]
+            menu_values: List[str] = [DayMealDto.from_model(item).meal_dto.meal_name for item in menu_queries]
             result.add_menus_by_type(_type=menu_type, date_key=key, value=menu_values)
 
         return result
 
     def __save_daily_menus_to_db(self, day_model, datas: list, menu_type: MenuType):
+        daily_menu_id: str = str(uuid.uuid4())
         for menu in datas:
             menu_model = self.__meal_repository.findByMenuName(menu)
             if not menu_model.exists():
@@ -75,4 +77,4 @@ class MenuService(AbstractService):
             else:
                 menu_model = menu_model[0]
 
-            self.__day_meal_repository.save(day_id=day_model, meal_id=menu_model, menu_type=menu_type)
+            self.__day_meal_repository.save(day_id=day_model, meal_id=menu_model, menu_type=menu_type, menu_id=daily_menu_id)
