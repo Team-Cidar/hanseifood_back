@@ -14,6 +14,12 @@ from ...responses.error_response import ErrorResponse
 
 def require_auth(roles: List[UserRole] = UserRole.get_all()):
     def decorator(view_method):
+        def __check_user_key() -> bool:
+            for key, _type in view_method.__annotations__.items():
+                print(key)
+                if key == 'user':
+                    return True
+            return False
         def authenticate(request: Request) -> Tuple[User, AccessToken]:
             return jwt.jwt_authenticate(request)
 
@@ -27,11 +33,14 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
 
         def check_token(*args, **kwargs):
             try:
+                exists_user_key: bool = __check_user_key()
+
                 request: Request = get_request_from_args(*args)
                 user, token = authenticate(request)
                 authorize(token)
 
-                kwargs['user'] = UserDto.from_model(user)  # allow access to user info in token by using 'user' keyword in view method
+                if exists_user_key:
+                    kwargs['user'] = UserDto.from_model(user)  # allow access to user info in token by using 'user' keyword in view method
                 return view_method(*args, **kwargs)
             except TokenNotProvidedError as e:
                 return ErrorResponse.response(e, 401)
