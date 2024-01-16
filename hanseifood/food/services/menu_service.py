@@ -62,7 +62,7 @@ class MenuService(AbstractService):
             exists, menu_queries = self.__day_meal_repository.existByDayIdAndMenuType(day_id=day_model, menu_type=menu_type)
             if not exists:
                 continue
-            menu_values: List[str] = [DayMealDto.from_model(item).meal_name for item in menu_queries]
+            menu_values: List[str] = [DayMealDto.from_model(item).meal.meal_name for item in menu_queries]
             result.add_menus_by_type(_type=menu_type, date_key=key, value=menu_values)
 
         return result
