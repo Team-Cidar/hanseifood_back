@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import Any, List, Tuple, Dict, Union
 
@@ -69,6 +70,8 @@ class Dto:
             return data.serialize()
         elif isinstance(data, Enum):
             return data.value
+        elif isinstance(data, datetime):
+            return data.strftime('%Y-%m-%d')
         elif isinstance(data, (list, tuple)):
             return [self.__serialize_field(elem) for elem in data]
         elif isinstance(data, dict):
