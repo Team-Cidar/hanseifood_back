@@ -29,4 +29,5 @@ class UserDto(Dto):
         user.kakao_id = kakao_info['kakao_id']
         user.email = kakao_info['kakao_email']
         user.kakao_name = kakao_info['kakao_nickname']
+        return user
 

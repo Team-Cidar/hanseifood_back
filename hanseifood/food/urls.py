@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenVerifyView
 
-from .views import base_views, menu_views, ticket_views, login_views, backoffice_views
+from .views import base_views, menu_views, ticket_views, login_views, backoffice_views, comment_views
 
 
 urlpatterns = [
@@ -23,5 +23,8 @@ urlpatterns = [
 
     # /views/backoffice_views
     path('back/menus', backoffice_views.add_menu, name='add_menu'),
-    path('back/menus/excel', backoffice_views.get_excel_file, name='get_excel_file')
+    path('back/menus/excel', backoffice_views.get_excel_file, name='get_excel_file'),
+
+    # /views/comment_views
+    path('comment', comment_views.add_comment, name='add_comment')
 ]

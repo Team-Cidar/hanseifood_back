@@ -40,7 +40,7 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
                 authorize(token)
 
                 if exists_user_key:
-                    kwargs['user'] = UserDto.from_model(user)  # allow access to user info in token by using 'user' keyword in view method
+                    kwargs['user'] = user  # allow access to user info in token by using 'user' keyword in view method
                 return view_method(*args, **kwargs)
             except TokenNotProvidedError as e:
                 return ErrorResponse.response(e, 401)
