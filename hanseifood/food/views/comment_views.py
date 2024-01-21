@@ -23,6 +23,7 @@ comment_service = CommentService()
 @deserialize
 def add_comment(request, data: AddCommentRequestDto, user: User) -> HttpResponse:
     try:
+        print(user)
         response = comment_service.add_comment(data=data, user=user)
         return DtoResponse.response(response, 201)
     except EmptyDataError as e:

@@ -10,7 +10,7 @@ from ...responses.error_response import ErrorResponse
 
 
 def deserialize(view_method):
-    def _get_raw_query_params(params: QueryDict) -> dict:
+    def __get_raw_query_params(params: QueryDict) -> dict:
         query_params: dict = dict()
         for key, value in params.items():
             if len(value) == 1:
@@ -19,22 +19,22 @@ def deserialize(view_method):
                 query_params[key] = value
         return query_params
 
-    def _get_req_data(request: Request) -> dict:
+    def __get_req_data(request: Request) -> dict:
         data: dict = request.data
-        data.update(_get_raw_query_params(request.query_params))
+        data.update(__get_raw_query_params(request.query_params))
         return data
 
-    def _get_target_datatype_pair() -> Tuple[str, Type[Dto]]:
+    def __get_target_datatype_pair() -> Tuple[str, Type[Dto]]:
         for arg in view_method.__annotations__.items():
             if issubclass(arg[1], Dto):
                 return arg
 
     def pass_deserialized_obj(*args, **kwargs):
         try:
-            key, _type = _get_target_datatype_pair()
+            key, _type = __get_target_datatype_pair()
 
             request: Request = get_request_from_args(*args)
-            data: dict = _get_req_data(request)
+            data: dict = __get_req_data(request)
 
             deserialized_obj: Dto = _type.deserialize(data)
 
@@ -52,4 +52,6 @@ def deserialize(view_method):
             return ErrorResponse.response(e, 500)
         except Exception as e:
             return ErrorResponse.response(e, 500)
+
+    pass_deserialized_obj.__annotations__ = view_method.__annotations__
     return pass_deserialized_obj

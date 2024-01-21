@@ -5,7 +5,6 @@ from rest_framework.request import Request
 
 from ..utils import jwt_utils as jwt
 from ..utils.decorator_utils import get_request_from_args
-from ...dtos.model_mapped.user_dto import UserDto
 from ...enums.role_enums import UserRole
 from ...models import User
 from ...exceptions.jwt_exceptions import InvalidTokenError, PermissionDeniedError, TokenNotProvidedError
@@ -16,7 +15,6 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
     def decorator(view_method):
         def __check_user_key() -> bool:
             for key, _type in view_method.__annotations__.items():
-                print(key)
                 if key == 'user':
                     return True
             return False
@@ -52,5 +50,7 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
                 return ErrorResponse.response(e, 403)
             except Exception as e:
                 return ErrorResponse.response(e, 500)
+
+        check_token.__annotations__ = view_method.__annotations__
         return check_token
     return decorator
