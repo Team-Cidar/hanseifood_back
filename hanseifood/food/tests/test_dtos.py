@@ -1,8 +1,8 @@
 from typing import List
 from django.test import TestCase
 
-from .dtos.abstract_dto import Dto
-from .enums.role_enums import UserRole
+from ..dtos.abstract_dto import Dto
+from ..enums.role_enums import UserRole
 
 
 class FriendDto(Dto):
@@ -84,9 +84,6 @@ class DtoTestClass(TestCase):
                 'exists': False,
                 'menus': []
             },
-        }
-        cls.daily_menu_data = {
-            'only_employee': ''
         }
 
     def test_deserializer_serializer(self):

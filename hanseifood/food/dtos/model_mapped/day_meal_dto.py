@@ -19,4 +19,5 @@ class DayMealDto(Dto):
             meal_dto=MealDto.from_model(day_meal_model.meal_id)
         )
         day_meal.menu_type = MenuType.from_value(str(day_meal_model.menu_type))
+        day_meal.menu_id = str(day_meal_model.menu_id)
         return day_meal
