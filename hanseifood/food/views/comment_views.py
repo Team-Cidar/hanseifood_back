@@ -17,6 +17,7 @@ from ..services.comment_service import CommentService
 
 comment_service = CommentService()
 
+
 # /comments POST
 @require_auth()
 @deserialize
@@ -32,6 +33,7 @@ def add_comment(request, data: AddCommentRequestDto, user: User) -> HttpResponse
         return ErrorResponse.response(e, 500)
 
 
+# /comments DELETE
 @require_auth()
 @deserialize
 def delete_comment(request, data: DeleteCommentRequestDto, user: User) -> HttpResponse:
@@ -47,13 +49,15 @@ def delete_comment(request, data: DeleteCommentRequestDto, user: User) -> HttpRe
     except Exception as e:
         return ErrorResponse.response(e, 500)
 
+
+# /comments POST DELETE (acceptor)
 @api_view(['POST', 'DELETE'])
 @multi_methods(POST=add_comment, DELETE=delete_comment)
 def comments_multi_methods():
     pass
 
 
-# /comments
+# /comments/menu
 @api_view(['GET'])
 @deserialize
 def get_comment_by_menu_id(request, data: GetCommentRequestDto) -> HttpResponse:
@@ -68,6 +72,7 @@ def get_comment_by_menu_id(request, data: GetCommentRequestDto) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
+# /comments/user
 @api_view(['GET'])
 @require_auth()
 def get_comment_by_user(request, user: User) -> HttpResponse:

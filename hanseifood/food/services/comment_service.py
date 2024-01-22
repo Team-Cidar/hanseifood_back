@@ -44,13 +44,13 @@ class CommentService(AbstractService):
 
         comment: MenuComment = comments[0]
         if user.role == UserRole.ADMIN:
-            comment.delete()
+            self.__menu_comment_repository.delete(comment)
             return CommonStatusResponseDto(True)
 
         if comment.user_id != user:
             raise PermissionDeniedError("Trying to delete other user's comment")
 
-        comment.delete()
+        self.__menu_comment_repository.delete(comment)
         return CommonStatusResponseDto(True)
 
     def get_comment_by_menu_id(self, data: GetCommentRequestDto) -> List[CommentResponseDto]:
@@ -75,7 +75,3 @@ class CommentService(AbstractService):
             response.append(CommentResponseDto(MenuCommentDto.from_model(model)))
 
         return response
-
-    def __delete_comment(self, comment_id: int):
-        pass
-

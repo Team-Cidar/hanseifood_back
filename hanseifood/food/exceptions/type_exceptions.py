@@ -30,3 +30,8 @@ class DynamicTypeError(Exception):
 class DefaultEnumTypeError(Exception):
     def __init__(self, msg: str = "Improper usage of default enum type 'Enum.NONE'"):
         super(DefaultEnumTypeError, self).__init__(msg)
+
+
+class NotCallableError(Exception):
+    def __init__(self, msg=f"Trying to call not callable object"):
+        super(NotCallableError, self).__init__(msg)

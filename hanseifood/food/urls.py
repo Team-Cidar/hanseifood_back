@@ -3,7 +3,6 @@ from rest_framework_simplejwt.views import TokenVerifyView
 
 from .views import base_views, menu_views, ticket_views, login_views, backoffice_views, comment_views
 
-
 urlpatterns = [
     # /views/base_views
     path("", base_views.index, name="index"),

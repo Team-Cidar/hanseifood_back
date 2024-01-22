@@ -30,6 +30,9 @@ class MenuCommentRepository(AbstractRepository):
         comment: QuerySet = self.findByCommentId(comment_id=comment_id)
         return comment.exists(), comment
 
+    def delete(self, comment: MenuComment):
+        comment.delete()
+
     # override
     def save(self, menu_id: str, user_id: User, comment: str) -> MenuComment:
         entity: MenuComment = MenuComment(
