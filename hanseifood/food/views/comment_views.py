@@ -3,9 +3,12 @@ from rest_framework.decorators import api_view
 
 from ..core.decorators.deserialize_decorator import deserialize
 from ..core.decorators.authentication_decorator import require_auth
+from ..core.decorators.multi_method_decorator import multi_methods
 from ..dtos.requests.add_comment_request_dto import AddCommentRequestDto
+from ..dtos.requests.delete_comment_request_dto import DeleteCommentRequestDto
 from ..dtos.requests.get_comment_request_dto import GetCommentRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
+from ..exceptions.jwt_exceptions import PermissionDeniedError
 from ..exceptions.type_exceptions import NotDtoClassError
 from ..models import User
 from ..responses.error_response import ErrorResponse
@@ -14,9 +17,7 @@ from ..services.comment_service import CommentService
 
 comment_service = CommentService()
 
-
 # /comments POST
-@api_view(['POST'])
 @require_auth()
 @deserialize
 def add_comment(request, data: AddCommentRequestDto, user: User) -> HttpResponse:
@@ -29,6 +30,27 @@ def add_comment(request, data: AddCommentRequestDto, user: User) -> HttpResponse
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
+
+
+@require_auth()
+@deserialize
+def delete_comment(request, data: DeleteCommentRequestDto, user: User) -> HttpResponse:
+    try:
+        response = comment_service.delete_comment(data=data, user=user)
+        return DtoResponse.response(response, 200)
+    except PermissionDeniedError as e:
+        return ErrorResponse.response(e, 403)
+    except EmptyDataError as e:
+        return ErrorResponse.response(e, 404)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
+    except Exception as e:
+        return ErrorResponse.response(e, 500)
+
+@api_view(['POST', 'DELETE'])
+@multi_methods(POST=add_comment, DELETE=delete_comment)
+def comments_multi_methods():
+    pass
 
 
 # /comments

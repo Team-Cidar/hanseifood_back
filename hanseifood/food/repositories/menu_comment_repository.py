@@ -22,6 +22,14 @@ class MenuCommentRepository(AbstractRepository):
         data: QuerySet = self.manager.filter(user_id=user_id)
         return data
 
+    def findByCommentId(self, comment_id: int) -> QuerySet:
+        comment: QuerySet = self.manager.filter(comment_id=comment_id)
+        return comment
+
+    def existByCommentId(self, comment_id: int) -> Tuple[bool, QuerySet]:
+        comment: QuerySet = self.findByCommentId(comment_id=comment_id)
+        return comment.exists(), comment
+
     # override
     def save(self, menu_id: str, user_id: User, comment: str) -> MenuComment:
         entity: MenuComment = MenuComment(
