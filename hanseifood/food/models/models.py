@@ -125,16 +125,16 @@ class UserTicket(models.Model):
 
 
 class MenuComment(models.Model):
-    _id = models.BigAutoField(primary_key=True, verbose_name='id')
+    comment_id = models.BigAutoField(primary_key=True, verbose_name='id')
     menu_id = models.CharField(max_length=40, null=False)
     user_id = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='user_id')
     comment = models.CharField(max_length=100)
     commented_at = models.DateTimeField(auto_now_add=True)
 
-    # Override
+    # OverrideUUIDField
     def delete(self, using=None, keep_parents=False):
         deleted: CommentDeleted = CommentDeleted(
-            origin_id=self._id,
+            origin_id=self.comment_id,
             menu_id=self.menu_id,
             user_id=self.user_id,
             comment=self.comment,

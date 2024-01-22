@@ -71,7 +71,7 @@ class Dto:
         elif isinstance(data, Enum):
             return data.value
         elif isinstance(data, datetime):
-            return data.strftime('%Y-%m-%d')
+            return data.strftime('%Y-%m-%d %H:%M:%S')
         elif isinstance(data, (list, tuple)):
             return [self.__serialize_field(elem) for elem in data]
         elif isinstance(data, dict):

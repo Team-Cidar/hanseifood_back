@@ -26,5 +26,7 @@ urlpatterns = [
     path('back/menus/excel', backoffice_views.get_excel_file, name='get_excel_file'),
 
     # /views/comment_views
-    path('comment', comment_views.add_comment, name='add_comment')
+    path('comments', comment_views.add_comment, name='add_comments'),
+    path('comments/menu', comment_views.get_comment_by_menu_id, name='get_comments_by_menu_id'),
+    path('comments/user', comment_views.get_comment_by_user, name='get_comments_by_user')
 ]

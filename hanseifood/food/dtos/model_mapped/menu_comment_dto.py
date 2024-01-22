@@ -7,6 +7,7 @@ from ...models import MenuComment
 
 class MenuCommentDto(Dto):
     def __init__(self, user_dto: UserDto):
+        self.comment_id: int = 0
         self.menu_id: str = ''
         self.user: UserDto = user_dto
         self.comment: str = ''
@@ -17,6 +18,7 @@ class MenuCommentDto(Dto):
         menu_comment: MenuCommentDto = cls(
             user_dto=UserDto.from_model(menu_comment_model.user_id)
         )
+        menu_comment.comment_id = int(menu_comment_model.comment_id)
         menu_comment.menu_id = str(menu_comment_model.menu_id)
         menu_comment.comment = str(menu_comment_model.comment)
         menu_comment.commented_at = menu_comment_model.commented_at
