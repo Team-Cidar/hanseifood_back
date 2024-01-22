@@ -53,7 +53,7 @@ def delete_comment(request, data: DeleteCommentRequestDto, user: User) -> HttpRe
 # /comments POST DELETE (acceptor)
 @api_view(['POST', 'DELETE'])
 @multi_methods(POST=add_comment, DELETE=delete_comment)
-def comments_multi_methods():
+def comments_multi_methods_acceptor():
     pass
 
 
