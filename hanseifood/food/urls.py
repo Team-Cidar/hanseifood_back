@@ -23,6 +23,7 @@ urlpatterns = [
     # /views/backoffice_views
     path('back/menus', backoffice_views.add_menu, name='add_menu'),
     path('back/menus/excel', backoffice_views.get_excel_file, name='get_excel_file'),
+    path('back/users/role', backoffice_views.modify_user_role, name='modify_user_role'),
 
     # /views/comment_views
     path('comments', comment_views.comments_multi_methods_acceptor, name='add_delete_comments'),

@@ -13,14 +13,18 @@ from ..core.utils import date_utils, os_utils
 from ..core.utils.string_utils import parse_str_to_list
 from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
+from ..dtos.requests.modify_user_role_request_dto import ModifyUserRoleRequestDto
+from ..dtos.responses.common_status_response_dto import CommonStatusResponseDto
 from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
 from ..dtos.responses.menu_response_dto import MenuResponseDto
 from ..dtos.general.daily_menu import DailyMenuDto
 from ..enums.menu_enums import MenuType
+from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.request_exceptions import WeekendDateError, PastDateModificationError
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
-from ..models import Day
+from ..models import Day, User
+from ..repositories.user_respository import UserRepository
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +33,7 @@ class BackOfficeService(AbstractService):
     def __init__(self):
         self.__day_repository = DayRepository()
         self.__day_meal_repository = DayMealRepository()
+        self.__user_repository = UserRepository()
         self.__menu_service = MenuService()
 
     def add_menus(self, data: AddMenuRequestDto) -> MenuModificationResponseDto:
@@ -89,6 +94,19 @@ class BackOfficeService(AbstractService):
             template.close()
 
         return f"datas/{file_name}"
+
+    def modify_user_role(self, data: ModifyUserRoleRequestDto) -> CommonStatusResponseDto:
+        exists, users = self.__user_repository.existsByKakaoId(kakao_id=data.user_id)
+        if not exists:
+            raise EmptyDataError(f"There's no such user 'kakao_id={data.user_id}'")
+
+        user: User = users[0]
+        if user.role == data.role.value:
+            return CommonStatusResponseDto(False, msg=f"user already has role of '{data.role}'")
+
+        user.role = data.role.value
+        self.__user_repository.update(user)
+        return CommonStatusResponseDto(True)
 
     def __check_excel_exists(self, date: datetime) -> Tuple[str, bool]:
         dates: List[str] = [item.strftime("%Y%m%d") for item in date_utils.get_dates_in_this_week(today=date)]

@@ -6,10 +6,13 @@ from ..core.decorators.authentication_decorator import require_auth
 from ..core.decorators.deserialize_decorator import deserialize
 from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
+from ..dtos.requests.modify_user_role_request_dto import ModifyUserRoleRequestDto
+from ..dtos.responses.common_status_response_dto import CommonStatusResponseDto
 from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
 from ..enums.role_enums import UserRole
+from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotDtoClassError
-from ..exceptions.request_exceptions import MissingFieldError, WeekendDateError, PastDateModificationError
+from ..exceptions.request_exceptions import WeekendDateError, PastDateModificationError
 from ..services.backoffice_service import BackOfficeService
 from ..responses.error_response import ErrorResponse
 from ..responses.dto_response import DtoResponse
@@ -29,8 +32,6 @@ def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
         if response.is_new:
             return DtoResponse.response(response, 201)
         return DtoResponse.response(response)
-    except MissingFieldError as e:
-        return ErrorResponse.response(e, 400)
     except WeekendDateError as e:
         return ErrorResponse.response(e, 400)
     except PastDateModificationError as e:
@@ -49,7 +50,20 @@ def get_excel_file(request: HttpRequest, data: GetExcelFileRequestDto) -> HttpRe
     try:
         file_name = backoffice_service.get_excel_file(data)
         return FileResponse.response(file_path=file_name, content_type="application/vnd.ms-excel")
-    except MissingFieldError as e:
-        return ErrorResponse.response(e, 400)
+    except Exception as e:
+        return ErrorResponse.response(e, 500)
+
+
+@api_view(['POST'])
+@require_auth([UserRole.ADMIN])
+@deserialize
+def modify_user_role(request, data: ModifyUserRoleRequestDto) -> HttpResponse:
+    try:
+        response: CommonStatusResponseDto = backoffice_service.modify_user_role(data)
+        return DtoResponse.response(response)
+    except EmptyDataError as e:
+        return ErrorResponse.response(e, 404)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
