@@ -22,11 +22,11 @@ class MenuCommentRepository(AbstractRepository):
         data: QuerySet = self.manager.filter(user_id=user_id)
         return data
 
-    def findByCommentId(self, comment_id: int) -> QuerySet:
+    def findByCommentId(self, comment_id: str) -> QuerySet:
         comment: QuerySet = self.manager.filter(comment_id=comment_id)
         return comment
 
-    def existByCommentId(self, comment_id: int) -> Tuple[bool, QuerySet]:
+    def existByCommentId(self, comment_id: str) -> Tuple[bool, QuerySet]:
         comment: QuerySet = self.findByCommentId(comment_id=comment_id)
         return comment.exists(), comment
 

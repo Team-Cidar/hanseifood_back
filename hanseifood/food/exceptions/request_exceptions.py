@@ -13,3 +13,10 @@ class WeekendDateError(Exception):
 class PastDateModificationError(Exception):
     def __init__(self, msg="Modification of past date's data is not allowed"):
         super(PastDateModificationError, self).__init__(msg)
+
+
+class EmptyValueError(Exception):
+    def __init__(self, field: str=None, msg="Request data '{}' is empty."):
+        super(EmptyValueError, self).__init__(
+            msg.format(field) if field else msg
+        )

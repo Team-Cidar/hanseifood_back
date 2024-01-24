@@ -7,8 +7,10 @@ from ..core.decorators.multi_method_decorator import multi_methods
 from ..dtos.requests.add_comment_request_dto import AddCommentRequestDto
 from ..dtos.requests.delete_comment_request_dto import DeleteCommentRequestDto
 from ..dtos.requests.get_comment_request_dto import GetCommentRequestDto
+from ..dtos.requests.report_comment_request_dto import ReportCommentRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.jwt_exceptions import PermissionDeniedError
+from ..exceptions.request_exceptions import EmptyValueError
 from ..exceptions.type_exceptions import NotDtoClassError
 from ..models import User
 from ..responses.error_response import ErrorResponse
@@ -72,6 +74,23 @@ def get_comment_by_user(request, user: User) -> HttpResponse:
     try:
         response = comment_service.get_comment_by_user(user=user)
         return DtoResponse.response(response, 200)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
+    except Exception as e:
+        return ErrorResponse.response(e, 500)
+
+
+@api_view(['POST'])
+@require_auth()
+@deserialize
+def report_comment(request, data: ReportCommentRequestDto, user: User) -> HttpResponse:
+    try:
+        response = comment_service.report_comment(data=data, user=user)
+        return DtoResponse.response(response, 200)
+    except EmptyValueError as e:
+        return ErrorResponse.response(e, 400)
+    except EmptyDataError as e:
+        return ErrorResponse.response(e, 404)
     except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:

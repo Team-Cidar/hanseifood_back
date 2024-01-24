@@ -125,7 +125,7 @@ class UserTicket(models.Model):
 
 
 class MenuComment(models.Model):
-    comment_id = models.BigAutoField(primary_key=True, verbose_name='id')
+    comment_id = models.CharField(max_length=40, null=False, default=uuid.uuid4)
     menu_id = models.CharField(max_length=40, null=False)
     user_id = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='user_id')
     comment = models.CharField(max_length=100)
@@ -134,7 +134,7 @@ class MenuComment(models.Model):
     # OverrideUUIDField
     def delete(self, using=None, keep_parents=False):
         deleted: CommentDeleted = CommentDeleted(
-            origin_id=self.comment_id,
+            comment_id=self.comment_id,
             menu_id=self.menu_id,
             user_id=self.user_id,
             comment=self.comment,
@@ -151,8 +151,9 @@ class MenuComment(models.Model):
 
 
 class CommentReport(models.Model):
-    comment_id = models.ForeignKey(MenuComment, on_delete=models.DO_NOTHING, verbose_name='comment_id')
+    comment_id = models.CharField(max_length=40, null=False, default='')
     reporter = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='reporter_id')
+    report_type = models.IntegerField(null=False, default=0)
     report_msg = models.CharField(max_length=30)
     reported_at = models.DateTimeField(auto_now_add=True)
 
@@ -164,7 +165,7 @@ class CommentReport(models.Model):
 
 
 class CommentDeleted(models.Model):
-    origin_id = models.BigIntegerField(unique=True, null=False)
+    comment_id = models.CharField(max_length=40, null=False, default='')
     menu_id = models.CharField(max_length=40, null=False)
     user_id = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='user_id')
     comment = models.CharField(max_length=100)

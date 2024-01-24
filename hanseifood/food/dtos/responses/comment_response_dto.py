@@ -13,7 +13,7 @@ class CommenterDto(Dto):
 
 class CommentResponseDto(Dto):
     def __init__(self, menu_comment_dto: MenuCommentDto):
-        self.comment_id: int = menu_comment_dto.comment_id
+        self.comment_id: str = menu_comment_dto.comment_id
         self.commenter: CommenterDto = CommenterDto(menu_comment_dto.user)
         self.comment: str = menu_comment_dto.comment
         self.commented_at: datetime = menu_comment_dto.commented_at

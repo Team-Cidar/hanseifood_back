@@ -11,7 +11,8 @@ class AbstractRepository(metaclass=Singleton):
         self.manager.all().delete()
 
     def update(self, model: Model) -> Model:
-        return model.save()
+        result = model.save()
+        return result
 
     # abstract method
     def save(self, *args, **kwargs) -> Model:
