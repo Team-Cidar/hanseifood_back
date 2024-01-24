@@ -3,9 +3,7 @@ from rest_framework.decorators import api_view
 
 from ..core.decorators.deserialize_decorator import deserialize
 from ..core.decorators.authentication_decorator import require_auth
-from ..core.decorators.multi_method_decorator import multi_methods
 from ..dtos.requests.like_request_dto import LikeRequestDto
-from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotDtoClassError
 from ..models import User
 from ..responses.error_response import ErrorResponse

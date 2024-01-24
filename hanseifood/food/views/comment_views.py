@@ -50,13 +50,6 @@ def delete_comment(request, data: DeleteCommentRequestDto, user: User) -> HttpRe
         return ErrorResponse.response(e, 500)
 
 
-# /comments POST DELETE (acceptor)
-@api_view(['POST', 'DELETE'])
-@multi_methods(POST=add_comment, DELETE=delete_comment)
-def comments_multi_methods_acceptor():
-    pass
-
-
 # /comments/menu
 @api_view(['GET'])
 @deserialize
@@ -83,3 +76,10 @@ def get_comment_by_user(request, user: User) -> HttpResponse:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
+
+
+# /comments POST DELETE
+@api_view(['POST', 'DELETE'])
+@multi_methods(POST=add_comment, DELETE=delete_comment)
+def comments_multi_methods_acceptor():
+    pass
