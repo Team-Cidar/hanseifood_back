@@ -30,6 +30,9 @@ class MenuCommentRepository(AbstractRepository):
         comment: QuerySet = self.findByCommentId(comment_id=comment_id)
         return comment.exists(), comment
 
+    def countByMenuId(self, menu_id: str) -> int:
+        return self.findByMenuId(menu_id=menu_id).count()
+
     def delete(self, comment: MenuComment):
         comment.delete()
 

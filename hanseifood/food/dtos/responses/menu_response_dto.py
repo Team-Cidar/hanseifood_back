@@ -10,6 +10,8 @@ class MenuDto(Dto):
     def __init__(self):
         self.menu: List[str] = list()
         self.menu_id: str = ''
+        self.like_count: int = 0
+        self.comment_count: int = 0
 
 
 class MenuSetDto(Dto):
@@ -23,10 +25,12 @@ class MenuSetDto(Dto):
         self.menus.update(menu.menus)
         return self
 
-    def add_menus(self, key: str, day_meal_dtos: List[DayMealDto]):
+    def add_menus(self, key: str, day_meal_dtos: List[DayMealDto], menu_id: str, like_count: int, comment_count: int):
         menu_dto: MenuDto = MenuDto()
         menu_dto.menu = [dto.meal_dto.meal_name for dto in day_meal_dtos]
-        menu_dto.menu_id = day_meal_dtos[0].menu_id
+        menu_dto.menu_id = menu_id
+        menu_dto.like_count = like_count
+        menu_dto.comment_count = comment_count
         self.menus[key] = menu_dto
         self.exists = True
 
@@ -49,13 +53,13 @@ class MenuResponseDto(Dto):
         self.additional_menu += menus.additional_menu
         return self
 
-    def add_menus_by_type(self, _type: MenuType, date_key: str, day_meal_dtos: List[DayMealDto]):
+    def add_menus_by_type(self, _type: MenuType, date_key: str, day_meal_dtos: List[DayMealDto], menu_id: str, like_count: int, comment_count: int):
         if _type == MenuType.EMPLOYEE:
-            self.employee_menu.add_menus(date_key, day_meal_dtos)
+            self.employee_menu.add_menus(date_key, day_meal_dtos, menu_id, like_count, comment_count)
         elif _type == MenuType.STUDENT:
-            self.student_menu.add_menus(date_key, day_meal_dtos)
+            self.student_menu.add_menus(date_key, day_meal_dtos, menu_id, like_count, comment_count)
         elif _type == MenuType.ADDITIONAL:
-            self.additional_menu.add_menus(date_key, day_meal_dtos)
+            self.additional_menu.add_menus(date_key, day_meal_dtos, menu_id, like_count, comment_count)
         else:
             raise DefaultEnumTypeError()
 

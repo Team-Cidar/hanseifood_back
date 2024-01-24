@@ -14,6 +14,8 @@ from ..repositories.day_repository import DayRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.meal_repository import MealRepository
 from ..models import Day
+from ..repositories.menu_comment_repository import MenuCommentRepository
+from ..repositories.menu_like_repository import MenuLikeRepository
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,8 @@ class MenuService(AbstractService):
         self.__day_repository = DayRepository()
         self.__day_meal_repository = DayMealRepository()
         self.__meal_repository = MealRepository()
+        self.__menu_like_repository = MenuLikeRepository()
+        self.__menu_comment_repository = MenuCommentRepository()
 
     def get_today_menu(self) -> MenuResponseDto:
         return self.get_target_days_menu(datetime.today())
@@ -64,7 +68,17 @@ class MenuService(AbstractService):
             if not exists:
                 continue
             day_meal_dtos: List[DayMealDto] = [DayMealDto.from_model(item) for item in menu_queries]
-            result.add_menus_by_type(_type=menu_type, date_key=key, day_meal_dtos=day_meal_dtos)
+            menu_id: str = day_meal_dtos[0].menu_id
+            like_count: int = self.__menu_like_repository.countByMenuId(menu_id=menu_id)
+            comment_count: int = self.__menu_comment_repository.countByMenuId(menu_id=menu_id)
+            result.add_menus_by_type(
+                _type=menu_type,
+                date_key=key,
+                day_meal_dtos=day_meal_dtos,
+                menu_id=menu_id,
+                like_count=like_count,
+                comment_count=comment_count
+            )
 
         return result
 
