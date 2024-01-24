@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, List, Tuple, Dict, Union
 
+from ..core.utils.string_utils import snake_to_camel
 from ..exceptions.request_exceptions import MissingFieldError
 from ..exceptions.type_exceptions import DtoFieldTypeError, RequestDataConversionError, DeserializeDataTypeError, \
     DynamicTypeError
@@ -25,9 +26,9 @@ class Dto:
         deserialized_obj: cls = cls.__new__(cls)
         for field, field_type in fields.items():
             try:
-                setattr(deserialized_obj, field, cls.__deserialize_field(field_type, data[field]))
+                setattr(deserialized_obj, field, cls.__deserialize_field(field_type, data[snake_to_camel(field)]))
             except KeyError:
-                raise MissingFieldError(field_names=list(fields.keys()))
+                raise MissingFieldError(field_names=[snake_to_camel(field) for field in fields.keys()])
             except ValueError:
                 raise RequestDataConversionError(income_data=data[field], dto_type=field_type)
             except TypeError:
@@ -40,7 +41,7 @@ class Dto:
         Instance of Dto -> serialized data can be dumped into json
         """
         fields: dict = self.__dict__
-        return {key: self.__serialize_field(value) for key, value in fields.items()}
+        return {snake_to_camel(key): self.__serialize_field(value) for key, value in fields.items()}
 
     @classmethod
     def serialize_from_iter(cls, datas: Union[list, tuple]):
