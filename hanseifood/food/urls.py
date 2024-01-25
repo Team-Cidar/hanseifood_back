@@ -29,7 +29,7 @@ urlpatterns = [
     path('comments', comment_views.comments_multi_methods_acceptor, name='add_delete_comments'),
     path('comments/menu', comment_views.get_comment_by_menu_id, name='get_comments_by_menu_id'),
     path('comments/user', comment_views.get_comment_by_user, name='get_comments_by_user'),
-    path('comments/report', comment_views.report_comment, name='report_comments'),
+    path('comments/report', comment_views.comments_report_methods_acceptor, name='report_get_reported_comments'),
 
     # /views/like_views
     path('likes', like_views.toggle_like, name='toggle_like'),

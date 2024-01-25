@@ -54,6 +54,7 @@ def get_excel_file(request: HttpRequest, data: GetExcelFileRequestDto) -> HttpRe
         return ErrorResponse.response(e, 500)
 
 
+# /back/users/role POST
 @api_view(['POST'])
 @require_auth([UserRole.ADMIN])
 @deserialize

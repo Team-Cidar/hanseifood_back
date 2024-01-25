@@ -9,3 +9,7 @@ class ReportType(Enum):
     UNPLEASANT = 5
     SPAM = 6
     ETC = 0
+
+    @classmethod
+    def from_value(cls, value: int):
+        return cls(value)

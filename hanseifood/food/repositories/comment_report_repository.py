@@ -1,7 +1,3 @@
-from typing import Tuple
-
-from django.db.models import QuerySet
-
 from .abstract_repository import AbstractRepository
 from ..enums.report_type_enums import ReportType
 from ..models import User, CommentReport

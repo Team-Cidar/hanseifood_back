@@ -10,6 +10,9 @@ class AbstractRepository(metaclass=Singleton):
     def clearAll(self):
         self.manager.all().delete()
 
+    def all(self):
+        return self.manager.all()
+
     def update(self, model: Model) -> Model:
         result = model.save()
         return result
