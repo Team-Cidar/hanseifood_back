@@ -22,19 +22,17 @@ urlpatterns = [
     path('tickets/validate/<str:ticket_id>', ticket_views.get_ticket_validation, name='validate_ticket'),
 
     # /views/backoffice_views
-    path('back/menus', backoffice_views.menu_methods_acceptor, name='add_delete_menu'),
+    path('back/menus', backoffice_views.menu_methods_acceptor, name='add_delete_menu'),  # POST DELETE
     path('back/menus/excel', backoffice_views.get_excel_file, name='get_excel_file'),
     path('back/menus/history', backoffice_views.get_menu_modification_history, name='get_menu_modification_history'),
     path('back/users/role', backoffice_views.modify_user_role, name='modify_user_role'),
 
     # /views/comment_views
-    path('comments', comment_views.comments_multi_methods_acceptor, name='add_delete_comments'),
-    path('comments/menu', comment_views.get_comment_by_menu_id, name='get_comments_by_menu_id'),
-    path('comments/user', comment_views.get_comment_by_user, name='get_comments_by_user'),
-    path('comments/report', comment_views.comments_report_methods_acceptor, name='report_get_reported_comments'),
+    path('comments/menus', comment_views.comments_multi_methods_acceptor, name='add_delete_get_comments'),  # GET POST DELETE
+    path('comments/menus/users', comment_views.get_comment_by_user, name='get_comments_by_user'),
+    path('comments/report', comment_views.comments_report_methods_acceptor, name='report_get_reported_comments'),  # GET POST
 
     # /views/like_views
-    path('likes/menu', like_views.toggle_like, name='toggle_like'),
-    path('likes/menu/count', like_views.count_likes_by_menu_id, name='count_like'),
-    path('likes/menu/user', like_views.get_liked_menus_by_user, name='liked_menus')
+    path('likes/menus', like_views.like_multi_methods_acceptor, name='toggle_count_liked_menus'),  # GET POST
+    path('likes/menus/users', like_views.get_liked_menus_by_user, name='liked_menus_by_user')
 ]

@@ -21,7 +21,7 @@ from ..services.comment_service import CommentService
 comment_service = CommentService()
 
 
-# /comments POST
+# /comments/menus POST
 @require_auth()
 @deserialize
 def add_comment(request, data: AddCommentRequestDto, user: User) -> HttpResponse:
@@ -36,7 +36,7 @@ def add_comment(request, data: AddCommentRequestDto, user: User) -> HttpResponse
         return ErrorResponse.response(e, 500)
 
 
-# /comments DELETE
+# /comments/menus DELETE
 @require_auth()
 @deserialize
 def delete_comment(request, data: DeleteCommentRequestDto, user: User) -> HttpResponse:
@@ -53,8 +53,7 @@ def delete_comment(request, data: DeleteCommentRequestDto, user: User) -> HttpRe
         return ErrorResponse.response(e, 500)
 
 
-# /comments/menu
-@api_view(['GET'])
+# /comments/menus GET
 @deserialize
 def get_comment_by_menu_id(request, data: GetCommentRequestDto) -> HttpResponse:
     try:
@@ -68,7 +67,7 @@ def get_comment_by_menu_id(request, data: GetCommentRequestDto) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
-# /comments/user
+# /comments/menus/users GET
 @api_view(['GET'])
 @require_auth()
 def get_comment_by_user(request, user: User) -> HttpResponse:
@@ -110,9 +109,9 @@ def get_reported_comment(request) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
-# /comments POST DELETE
-@api_view(['POST', 'DELETE'])
-@multi_methods(POST=add_comment, DELETE=delete_comment)
+# /comments GET POST DELETE
+@api_view(['GET', 'POST', 'DELETE'])
+@multi_methods(GET=get_comment_by_menu_id, POST=add_comment, DELETE=delete_comment)
 def comments_multi_methods_acceptor():
     pass
 

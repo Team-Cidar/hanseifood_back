@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 
 from ..core.decorators.deserialize_decorator import deserialize
 from ..core.decorators.authentication_decorator import require_auth
+from ..core.decorators.multi_method_decorator import multi_methods
 from ..dtos.requests.like_request_dto import LikeRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotDtoClassError
@@ -14,8 +15,7 @@ from ..services.like_service import LikeService
 like_service = LikeService()
 
 
-# /likes/menu POST
-@api_view(['POST'])
+# /likes/menus POST
 @require_auth()
 @deserialize
 def toggle_like(request, data: LikeRequestDto, user: User) -> HttpResponse:
@@ -31,8 +31,7 @@ def toggle_like(request, data: LikeRequestDto, user: User) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
-# /likes/menu/count GET
-@api_view(['GET'])
+# /likes/menus GET
 @deserialize
 def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
     try:
@@ -46,7 +45,7 @@ def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
-# /likes/menu/user GET
+# /likes/menus/user GET
 @api_view(['GET'])
 @require_auth()
 def get_liked_menus_by_user(request, user: User) -> HttpResponse:
@@ -57,3 +56,9 @@ def get_liked_menus_by_user(request, user: User) -> HttpResponse:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
+
+
+@api_view(['GET', 'POST'])
+@multi_methods(GET=count_likes_by_menu_id, POST=toggle_like)
+def like_multi_methods_acceptor():
+    pass

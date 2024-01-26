@@ -77,7 +77,7 @@ class BackOfficeService(AbstractService):
     def delete_menu(self, data: DeleteMenuRequestDto) -> CommonStatusResponseDto:
         exists, menus = self.__day_meal_repository.existByMenuId(data.menu_id)
         if not exists:
-            return CommonStatusResponseDto(False, "menu not exists")
+            return CommonStatusResponseDto(True, "menu not exists")
 
         menu_date: Date = menus[0].day_id.date
         menu_datetime: datetime = datetime(menu_date.year, menu_date.month, menu_date.day)
