@@ -14,7 +14,7 @@ from ..services.like_service import LikeService
 like_service = LikeService()
 
 
-# /likes POST
+# /likes/menu POST
 @api_view(['POST'])
 @require_auth()
 @deserialize
@@ -31,7 +31,7 @@ def toggle_like(request, data: LikeRequestDto, user: User) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
-# /likes/menu GET
+# /likes/menu/count GET
 @api_view(['GET'])
 @deserialize
 def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
@@ -46,7 +46,7 @@ def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
-# /likes/user GET
+# /likes/menu/user GET
 @api_view(['GET'])
 @require_auth()
 def get_liked_menus_by_user(request, user: User) -> HttpResponse:

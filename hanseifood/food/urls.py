@@ -34,7 +34,7 @@ urlpatterns = [
     path('comments/report', comment_views.comments_report_methods_acceptor, name='report_get_reported_comments'),
 
     # /views/like_views
-    path('likes', like_views.toggle_like, name='toggle_like'),
-    path('likes/menu', like_views.count_likes_by_menu_id, name='count_like'),
-    path('likes/user', like_views.get_liked_menus_by_user, name='liked_menus')
+    path('likes/menu', like_views.toggle_like, name='toggle_like'),
+    path('likes/menu/count', like_views.count_likes_by_menu_id, name='count_like'),
+    path('likes/menu/user', like_views.get_liked_menus_by_user, name='liked_menus')
 ]
