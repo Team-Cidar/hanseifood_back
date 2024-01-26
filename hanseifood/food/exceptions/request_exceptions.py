@@ -20,3 +20,8 @@ class EmptyValueError(Exception):
         super(EmptyValueError, self).__init__(
             msg.format(field) if field else msg
         )
+
+
+class InadequateDataError(Exception):
+    def __init__(self, msg="Data is inappropriate"):
+        super(InadequateDataError, self).__init__(msg)

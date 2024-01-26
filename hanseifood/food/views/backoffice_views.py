@@ -7,6 +7,7 @@ from ..core.decorators.multi_method_decorator import multi_methods
 from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
 from ..dtos.requests.delete_menu_request_dto import DeleteMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
+from ..dtos.requests.get_menu_history_request_dto import GetMenuHistoryRequestDto
 from ..dtos.requests.modify_user_role_request_dto import ModifyUserRoleRequestDto
 from ..dtos.responses.common_status_response_dto import CommonStatusResponseDto
 from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
@@ -64,6 +65,22 @@ def get_excel_file(request: HttpRequest, data: GetExcelFileRequestDto) -> HttpRe
     try:
         file_name = backoffice_service.get_excel_file(data)
         return FileResponse.response(file_path=file_name, content_type="application/vnd.ms-excel")
+    except Exception as e:
+        return ErrorResponse.response(e, 500)
+
+
+# /back/menus/history
+@api_view(['GET'])
+@require_auth([UserRole.ADMIN])
+@deserialize
+def get_menu_modification_history(request, data: GetMenuHistoryRequestDto) -> HttpResponse:
+    try:
+        response = backoffice_service.get_menu_history(data=data)
+        return DtoResponse.response(response)
+    except EmptyDataError as e:
+        return ErrorResponse.response(e, 404)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
 

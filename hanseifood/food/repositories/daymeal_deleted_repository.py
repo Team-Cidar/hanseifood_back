@@ -14,6 +14,10 @@ class DayMealDeletedRepository(AbstractRepository):
         data: QuerySet = self.manager.filter(menu_id=menu_id)
         return data
 
+    def findByDayIdAndMenuType(self, day_id: Day, menu_type: MenuType) -> QuerySet:
+        data: QuerySet = self.manager.filter(day_id=day_id, menu_type=menu_type)
+        return data
+
     def existByMenuId(self, menu_id: str) -> Tuple[bool, QuerySet]:
         data: QuerySet = self.findByMenuId(menu_id)
         return data.exists(), data

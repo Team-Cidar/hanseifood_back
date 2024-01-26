@@ -24,6 +24,7 @@ urlpatterns = [
     # /views/backoffice_views
     path('back/menus', backoffice_views.menu_methods_acceptor, name='add_delete_menu'),
     path('back/menus/excel', backoffice_views.get_excel_file, name='get_excel_file'),
+    path('back/menus/history', backoffice_views.get_menu_modification_history, name='get_menu_modification_history'),
     path('back/users/role', backoffice_views.modify_user_role, name='modify_user_role'),
 
     # /views/comment_views

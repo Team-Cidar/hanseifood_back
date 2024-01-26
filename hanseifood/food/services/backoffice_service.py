@@ -3,6 +3,7 @@ import logging
 
 from typing import List, Tuple
 import openpyxl
+from django.db.models import QuerySet
 from openpyxl.styles import Alignment
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -14,17 +15,20 @@ from ..core.utils.string_utils import parse_str_to_list
 from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
 from ..dtos.requests.delete_menu_request_dto import DeleteMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
+from ..dtos.requests.get_menu_history_request_dto import GetMenuHistoryRequestDto
 from ..dtos.requests.modify_user_role_request_dto import ModifyUserRoleRequestDto
 from ..dtos.responses.common_status_response_dto import CommonStatusResponseDto
+from ..dtos.responses.menu_by_id_response_dto import MenuByIdResponseDto
 from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
 from ..dtos.responses.menu_response_dto import MenuResponseDto
 from ..dtos.general.daily_menu import DailyMenuDto
 from ..enums.menu_enums import MenuType
 from ..exceptions.data_exceptions import EmptyDataError
-from ..exceptions.request_exceptions import WeekendDateError, PastDateModificationError
+from ..exceptions.request_exceptions import WeekendDateError, PastDateModificationError, InadequateDataError
+from ..repositories.daymeal_deleted_repository import DayMealDeletedRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
-from ..models import Day, User, DayMeal
+from ..models import Day, User, DayMeal, DayMealDeleted
 from ..repositories.user_respository import UserRepository
 
 logger = logging.getLogger(__name__)
@@ -34,6 +38,7 @@ class BackOfficeService(AbstractService):
     def __init__(self):
         self.__day_repository = DayRepository()
         self.__day_meal_repository = DayMealRepository()
+        self.__day_meal_deleted_repository = DayMealDeletedRepository()
         self.__user_repository = UserRepository()
         self.__menu_service = MenuService()
 
@@ -85,6 +90,24 @@ class BackOfficeService(AbstractService):
         self.__delete_excel_file(date=menu_datetime)
 
         return CommonStatusResponseDto()
+
+    def get_menu_history(self, data: GetMenuHistoryRequestDto) -> List[MenuByIdResponseDto]:
+        menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(data.menu_id)
+        if menu_dto.deleted:
+            raise InadequateDataError("Target menu is not current menu")
+        response: List[MenuByIdResponseDto] = []
+
+        day: Day = self.__day_repository.findByDate(date=datetime.strptime(menu_dto.date, '%Y-%m-%d'))[0]
+        deleted_menus: QuerySet = self.__day_meal_deleted_repository.findByDayIdAndMenuType(day_id=day, menu_type=menu_dto.menu_type)
+
+        deleted_menu: DayMealDeleted
+        for deleted_menu in deleted_menus:
+            response.append(self.__menu_service.get_by_menu_id(deleted_menu.menu_id))
+
+        # sort
+        response.sort(key=lambda dto: dto.deleted_at, reverse=True)
+        response.insert(0, menu_dto)
+        return response
 
     def get_excel_file(self, data: GetExcelFileRequestDto):
         date: datetime = datetime.strptime(data.date, "%Y%m%d")
