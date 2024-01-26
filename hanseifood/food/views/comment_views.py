@@ -116,6 +116,7 @@ def get_reported_comment(request) -> HttpResponse:
 def comments_multi_methods_acceptor():
     pass
 
+
 # /comments/report POST GET
 @api_view(['POST', 'GET'])
 @multi_methods(POST=report_comment, GET=get_reported_comment)

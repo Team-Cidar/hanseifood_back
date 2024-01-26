@@ -11,6 +11,7 @@ urlpatterns = [
     path('menus/day', menu_views.get_today_menu, name='daily_menu'),
     path('menus/week', menu_views.get_weekly_menus, name='weekly_menu'),
     path('menus/target', menu_views.get_target_days_menu, name='target_menu'),
+    path('menus/<str:menu_id>', menu_views.get_menus_by_id, name='menu_by_id'),
 
     # /view/login_views
     path("login", login_views.try_login, name='try_login'),

@@ -1,6 +1,7 @@
 import logging
 
 from .abstract_service import AbstractService
+from .menu_service import MenuService
 from ..dtos.requests.like_request_dto import LikeRequestDto
 from ..dtos.responses.count_like_response_dto import CountLikeResponseDto
 from ..dtos.responses.toggle_like_response_dto import ToggleLikeResponseDto
@@ -16,6 +17,7 @@ class LikeService(AbstractService):
     def __init__(self):
         self.__menu_like_repository = MenuLikeRepository()
         self.__day_meal_repository = DayMealRepository()
+        self.__menu_service = MenuService()
 
     def toggle_like(self, data: LikeRequestDto, user: User):
         exists, like = self.__menu_like_repository.existByMenuIdAndUserId(menu_id=data.menu_id, user_id=user)
@@ -36,4 +38,8 @@ class LikeService(AbstractService):
         like_count: int = self.__menu_like_repository.countByMenuId(menu_id=data.menu_id)
         return CountLikeResponseDto(menu_id=data.menu_id, like_count=like_count)
 
-
+    def get_liked_menus_by_user(self, user: User):
+        exists, menu_likes = self.__menu_like_repository.findByUserId(user=user)
+        if not exists:
+            return []
+        pass

@@ -56,3 +56,16 @@ def get_target_days_menu(request: HttpRequest, data: GetTargetMenuRequestDto) ->
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
+
+
+@api_view(['GET'])
+def get_menus_by_id(request, menu_id: str) -> HttpResponse:
+    try:
+        response = menu_service.get_by_menu_id(menu_id)
+        return DtoResponse.response(response)
+    except EmptyDataError as e:
+        return ErrorResponse.response(e, 404)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
+    except Exception as e:
+        return ErrorResponse.response(e, 500)

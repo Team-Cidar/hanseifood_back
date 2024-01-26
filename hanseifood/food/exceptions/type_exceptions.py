@@ -35,3 +35,8 @@ class DefaultEnumTypeError(Exception):
 class NotCallableError(Exception):
     def __init__(self, msg=f"Trying to call not callable object"):
         super(NotCallableError, self).__init__(msg)
+
+
+class OperateDifferentTypesError(Exception):
+    def __init__(self, msg="Trying to operate between different types"):
+        super(OperateDifferentTypesError, self).__init__(msg)

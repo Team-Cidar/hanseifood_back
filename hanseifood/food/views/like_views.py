@@ -43,3 +43,14 @@ def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
+
+
+@api_view(['GET'])
+def get_liked_menus_by_user(request, user: User) -> HttpResponse:
+    try:
+        response = like_service.get_liked_menus_by_user(user=user)
+        return DtoResponse.response(response, 200)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
+    except Exception as e:
+        return ErrorResponse.response(e, 500)

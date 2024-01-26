@@ -6,11 +6,14 @@ from typing import List
 
 from .abstract_service import AbstractService
 from ..core.utils import date_utils
+from ..dtos.model_mapped.day_meal_deleted_dto import DayMealDeletedDto
 from ..dtos.model_mapped.day_meal_dto import DayMealDto
 from ..dtos.general.daily_menu import DailyMenuDto
-from ..dtos.responses.menu_response_dto import MenuResponseDto
+from ..dtos.responses.menu_response_dto import MenuResponseDto, MenuDto, MenuDeletedDto
 from ..enums.menu_enums import MenuType
+from ..exceptions.data_exceptions import EmptyDataError
 from ..repositories.day_repository import DayRepository
+from ..repositories.daymeal_deleted_repository import DayMealDeletedRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.meal_repository import MealRepository
 from ..models import Day
@@ -24,6 +27,7 @@ class MenuService(AbstractService):
     def __init__(self):
         self.__day_repository = DayRepository()
         self.__day_meal_repository = DayMealRepository()
+        self.__day_meal_deleted_repository = DayMealDeletedRepository()
         self.__meal_repository = MealRepository()
         self.__menu_like_repository = MenuLikeRepository()
         self.__menu_comment_repository = MenuCommentRepository()
@@ -51,6 +55,24 @@ class MenuService(AbstractService):
         self.__save_daily_menus_to_db(day_model=data.date, datas=data.employee, menu_type=MenuType.EMPLOYEE)
         self.__save_daily_menus_to_db(day_model=data.date, datas=data.additional, menu_type=MenuType.ADDITIONAL)
 
+    def get_by_menu_id(self, menu_id: str) -> MenuDto:
+        result: MenuDto = MenuDto()
+        exists, day_meals = self.__day_meal_repository.existByMenuId(menu_id=menu_id)
+        if not exists:
+            exists, deleted_day_meals = self.__day_meal_deleted_repository.existByMenuId(menu_id=menu_id)
+            if not exists:
+                raise EmptyDataError(f"Menu with id '{menu_id}' is not exists")
+
+            for model in deleted_day_meals:
+                dto: DayMealDeletedDto = DayMealDeletedDto.from_model(model)
+                result += MenuDeletedDto(dto)
+        else:
+            for model in day_meals:
+                dto: DayMealDto = DayMealDto.from_model(model)
+                result += MenuDto(dto)
+
+        return result
+
     def __get_daily_menus(self, date: datetime) -> MenuResponseDto:
         weekday_kor: str = date_utils.get_weekday_kor(date)
         key: str = f'{date.strftime("%Y-%m-%d")} ({weekday_kor})'
@@ -75,7 +97,6 @@ class MenuService(AbstractService):
                 _type=menu_type,
                 date_key=key,
                 day_meal_dtos=day_meal_dtos,
-                menu_id=menu_id,
                 like_count=like_count,
                 comment_count=comment_count
             )

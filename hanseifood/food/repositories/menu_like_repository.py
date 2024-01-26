@@ -18,8 +18,16 @@ class MenuLikeRepository(AbstractRepository):
         data: QuerySet = self.manager.filter(menu_id=menu_id)
         return data
 
+    def findByUserId(self, user_id: User) -> QuerySet:
+        data: QuerySet = self.manager.filter(user_id=user_id)
+        return data
+
     def existByMenuIdAndUserId(self, menu_id: str, user_id: User) -> Tuple[bool, QuerySet]:
         data: QuerySet = self.findByMenuIdAndUserId(menu_id=menu_id, user_id=user_id)
+        return data.exists(), data
+
+    def existByUserId(self, user_id: User) -> Tuple[bool, QuerySet]:
+        data: QuerySet = self.findByUserId(user_id=user_id)
         return data.exists(), data
 
     def countByMenuId(self, menu_id: str) -> int:
