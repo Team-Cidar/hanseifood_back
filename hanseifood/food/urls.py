@@ -22,7 +22,7 @@ urlpatterns = [
     path('tickets/validate/<str:ticket_id>', ticket_views.get_ticket_validation, name='validate_ticket'),
 
     # /views/backoffice_views
-    path('back/menus', backoffice_views.add_menu, name='add_menu'),
+    path('back/menus', backoffice_views.menu_methods_acceptor, name='add_delete_menu'),
     path('back/menus/excel', backoffice_views.get_excel_file, name='get_excel_file'),
     path('back/users/role', backoffice_views.modify_user_role, name='modify_user_role'),
 

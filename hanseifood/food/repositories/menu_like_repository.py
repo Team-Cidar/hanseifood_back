@@ -33,9 +33,6 @@ class MenuLikeRepository(AbstractRepository):
     def countByMenuId(self, menu_id: str) -> int:
         return self.findByMenuId(menu_id=menu_id).count()
 
-    def delete(self, like: MenuLike):
-        like.delete()
-
     # override
     def save(self, menu_id: str, user_id: User) -> MenuLike:
         entity: MenuLike = MenuLike(

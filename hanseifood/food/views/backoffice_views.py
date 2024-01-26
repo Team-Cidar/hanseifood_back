@@ -1,10 +1,11 @@
 from django.http import HttpRequest, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 
 from ..core.decorators.authentication_decorator import require_auth
 from ..core.decorators.deserialize_decorator import deserialize
+from ..core.decorators.multi_method_decorator import multi_methods
 from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
+from ..dtos.requests.delete_menu_request_dto import DeleteMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
 from ..dtos.requests.modify_user_role_request_dto import ModifyUserRoleRequestDto
 from ..dtos.responses.common_status_response_dto import CommonStatusResponseDto
@@ -22,8 +23,6 @@ backoffice_service: BackOfficeService = BackOfficeService()
 
 
 # /back/menus POST
-@api_view(['POST'])
-@csrf_exempt
 @require_auth([UserRole.ADMIN])
 @deserialize
 def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
@@ -34,6 +33,20 @@ def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
         return DtoResponse.response(response)
     except WeekendDateError as e:
         return ErrorResponse.response(e, 400)
+    except PastDateModificationError as e:
+        return ErrorResponse.response(e, 400)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
+    except Exception as e:
+        return ErrorResponse.response(e, 500)
+
+
+@require_auth([UserRole.ADMIN])
+@deserialize
+def delete_menu(request, data: DeleteMenuRequestDto) -> HttpResponse:
+    try:
+        response: CommonStatusResponseDto = backoffice_service.delete_menu(data)
+        return DtoResponse.response(response)
     except PastDateModificationError as e:
         return ErrorResponse.response(e, 400)
     except NotDtoClassError as e:
@@ -68,3 +81,9 @@ def modify_user_role(request, data: ModifyUserRoleRequestDto) -> HttpResponse:
         return ErrorResponse.response(e, 500)
     except Exception as e:
         return ErrorResponse.response(e, 500)
+
+
+@api_view(['POST', 'DELETE'])
+@multi_methods(POST=add_menu, DELETE=delete_menu)
+def menu_methods_acceptor():
+    pass

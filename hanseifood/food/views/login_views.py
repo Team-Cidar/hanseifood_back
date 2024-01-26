@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from requests import HTTPError
 from rest_framework.decorators import api_view
 
@@ -17,7 +16,6 @@ login_service = LoginService()
 
 # /login POST
 @api_view(['POST'])
-@csrf_exempt
 @deserialize
 def try_login(request, data: KakaoLoginRequestDto) -> HttpResponse:
     try:
@@ -34,7 +32,6 @@ def try_login(request, data: KakaoLoginRequestDto) -> HttpResponse:
 
 # /signup POST
 @api_view(['POST'])
-@csrf_exempt
 @deserialize
 def create_user(request, data: KakaoSignupRequestDto) -> HttpResponse:
     try:

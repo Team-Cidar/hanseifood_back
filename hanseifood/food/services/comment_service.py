@@ -24,32 +24,26 @@ from ..exceptions.request_exceptions import EmptyValueError
 from ..models import User, MenuComment
 from ..repositories.comment_deleted_repository import CommentDeletedRepository
 from ..repositories.comment_report_repository import CommentReportRepository
-from ..repositories.daymeal_deleted_repository import DayMealDeletedRepository
-from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.menu_comment_repository import MenuCommentRepository
-from ..repositories.menu_like_repository import MenuLikeRepository
 
 logger = logging.getLogger(__name__)
 
 
 class CommentService(AbstractService):
     def __init__(self):
-        self.__day_meal_repository = DayMealRepository()
-        self.__day_meal_deleted_repository = DayMealDeletedRepository()
         self.__menu_comment_repository = MenuCommentRepository()
-        self.__menu_like_repository = MenuLikeRepository()
         self.__comment_report_repository = CommentReportRepository()
         self.__comment_deleted_repository = CommentDeletedRepository()
         self.__menu_service = MenuService()
 
     def add_comment(self, data: AddCommentRequestDto, user: User) -> CommentResponseDto:
         menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(data.menu_id)
-        menu_comment_model: MenuComment = self.__menu_comment_repository.save(
+        menu_comment: MenuComment = self.__menu_comment_repository.save(
             menu_id=data.menu_id,
             comment=data.comment,
             user_id=user
         )
-        comment_dto: MenuCommentDto = MenuCommentDto.from_model(menu_comment_model)
+        comment_dto: MenuCommentDto = MenuCommentDto.from_model(menu_comment)
         return CommentResponseDto(comment_dto, menu_dto)
 
     def delete_comment(self, data: DeleteCommentRequestDto, user: User):
@@ -82,10 +76,10 @@ class CommentService(AbstractService):
         return response
 
     def get_comment_by_user(self, user: User) -> List[CommentResponseDto]:
-        comment_models: QuerySet = self.__menu_comment_repository.findByUserId(user_id=user)
+        comments: QuerySet = self.__menu_comment_repository.findByUserId(user_id=user)
         response: List[CommentResponseDto] = []
         comment: MenuComment
-        for comment in comment_models:
+        for comment in comments:
             menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(comment.menu_id)
             comment_dto: MenuCommentDto = MenuCommentDto.from_model(comment)
             response.append(CommentResponseDto(comment_dto, menu_dto))
@@ -113,11 +107,11 @@ class CommentService(AbstractService):
         return CommonStatusResponseDto(True)
 
     def get_reported_comments(self) -> List[ReportedCommentResponseDto]:
-        reported_comments: List[CommentReportDto] = [CommentReportDto.from_model(model) for model in self.__comment_report_repository.all()]
+        reported_comments_dto: List[CommentReportDto] = [CommentReportDto.from_model(model) for model in self.__comment_report_repository.all()]
         response: List[ReportedCommentResponseDto] = []
-        for r_comment in reported_comments:
-            comment_response_dto: CommentResponseDto = self.get_by_comment_id(r_comment.comment_id)
-            response.append(ReportedCommentResponseDto(r_comment, comment_response_dto))
+        for r_comment_dto in reported_comments_dto:
+            comment_response_dto: CommentResponseDto = self.get_by_comment_id(r_comment_dto.comment_id)
+            response.append(ReportedCommentResponseDto(r_comment_dto, comment_response_dto))
         return response
 
     def get_by_comment_id(self, comment_id: str) -> CommentResponseDto:

@@ -33,9 +33,6 @@ class MenuCommentRepository(AbstractRepository):
     def countByMenuId(self, menu_id: str) -> int:
         return self.findByMenuId(menu_id=menu_id).count()
 
-    def delete(self, comment: MenuComment):
-        comment.delete()
-
     # override
     def save(self, menu_id: str, user_id: User, comment: str) -> MenuComment:
         entity: MenuComment = MenuComment(

@@ -1,4 +1,4 @@
-from django.db.models import Model, Manager
+from django.db.models import Model, Manager, QuerySet
 
 from ..core.patterns.singleton_cls import Singleton
 
@@ -8,7 +8,7 @@ class AbstractRepository(metaclass=Singleton):
         self.manager: Manager = manager
 
     def clearAll(self):
-        self.manager.all().delete()
+        self.delete_models(self.manager.all())
 
     def all(self):
         return self.manager.all()
@@ -16,6 +16,14 @@ class AbstractRepository(metaclass=Singleton):
     def update(self, model: Model) -> Model:
         result = model.save()
         return result
+
+    def delete(self, model: Model):
+        model.delete()
+
+    def delete_models(self, models: QuerySet):
+        model: Model
+        for model in models:
+            model.delete()
 
     # abstract method
     def save(self, *args, **kwargs) -> Model:

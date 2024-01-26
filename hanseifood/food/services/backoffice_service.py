@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date as Date
 import logging
 
 from typing import List, Tuple
@@ -12,6 +12,7 @@ from .menu_service import MenuService
 from ..core.utils import date_utils, os_utils
 from ..core.utils.string_utils import parse_str_to_list
 from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
+from ..dtos.requests.delete_menu_request_dto import DeleteMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
 from ..dtos.requests.modify_user_role_request_dto import ModifyUserRoleRequestDto
 from ..dtos.responses.common_status_response_dto import CommonStatusResponseDto
@@ -23,7 +24,7 @@ from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.request_exceptions import WeekendDateError, PastDateModificationError
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.day_repository import DayRepository
-from ..models import Day, User
+from ..models import Day, User, DayMeal
 from ..repositories.user_respository import UserRepository
 
 logger = logging.getLogger(__name__)
@@ -67,6 +68,23 @@ class BackOfficeService(AbstractService):
         self.__delete_excel_file(date=date)
 
         return MenuModificationResponseDto(is_new=not exists)
+
+    def delete_menu(self, data: DeleteMenuRequestDto) -> CommonStatusResponseDto:
+        exists, menus = self.__day_meal_repository.existByMenuId(data.menu_id)
+        if not exists:
+            return CommonStatusResponseDto(False, "menu not exists")
+
+        menu_date: Date = menus[0].day_id.date
+        menu_datetime: datetime = datetime(menu_date.year, menu_date.month, menu_date.day)
+
+        if date_utils.is_past(menu_datetime):
+            raise PastDateModificationError()
+
+        self.__day_meal_repository.delete_models(menus)
+
+        self.__delete_excel_file(date=menu_datetime)
+
+        return CommonStatusResponseDto()
 
     def get_excel_file(self, data: GetExcelFileRequestDto):
         date: datetime = datetime.strptime(data.date, "%Y%m%d")

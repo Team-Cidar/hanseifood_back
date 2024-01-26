@@ -1,15 +1,13 @@
-from datetime import datetime
 from typing import Dict, List
 
 from ..abstract_dto import Dto
-from ..model_mapped.day_meal_deleted_dto import DayMealDeletedDto
 from ..model_mapped.day_meal_dto import DayMealDto
 from ...enums.menu_enums import MenuType
-from ...exceptions.type_exceptions import DefaultEnumTypeError, OperateDifferentTypesError
+from ...exceptions.type_exceptions import DefaultEnumTypeError
 
 
 class MenuDto(Dto):
-    def __init__(self, menus: List[str], menu_id: str, menu_type: MenuType, like_count: int, comment_count: int):
+    def __init__(self, menus: List[str]=(), menu_id: str='', menu_type: MenuType=MenuType.NONE, like_count: int=0, comment_count: int=0):
         self.menu: List[str] = menus
         self.menu_id: str = menu_id
         self.menu_type: MenuType = menu_type
