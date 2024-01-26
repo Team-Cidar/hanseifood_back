@@ -4,6 +4,7 @@ from typing import List
 from django.db.models import QuerySet
 
 from .abstract_service import AbstractService
+from .menu_service import MenuService
 from ..dtos.model_mapped.comment_deleted_dto import CommentDeletedDto
 from ..dtos.model_mapped.comment_report_dto import CommentReportDto
 from ..dtos.model_mapped.menu_comment_dto import MenuCommentDto
@@ -13,17 +14,20 @@ from ..dtos.requests.get_comment_request_dto import GetCommentRequestDto
 from ..dtos.requests.report_comment_request_dto import ReportCommentRequestDto
 from ..dtos.responses.comment_response_dto import CommentResponseDto, DeletedCommentResponseDto
 from ..dtos.responses.common_status_response_dto import CommonStatusResponseDto
+from ..dtos.responses.menu_by_id_response_dto import MenuByIdResponseDto
 from ..dtos.responses.reported_comment_response_dto import ReportedCommentResponseDto
 from ..enums.report_type_enums import ReportType
 from ..enums.role_enums import UserRole
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.jwt_exceptions import PermissionDeniedError
 from ..exceptions.request_exceptions import EmptyValueError
-from ..models import User, MenuComment, CommentDeleted
+from ..models import User, MenuComment
 from ..repositories.comment_deleted_repository import CommentDeletedRepository
 from ..repositories.comment_report_repository import CommentReportRepository
+from ..repositories.daymeal_deleted_repository import DayMealDeletedRepository
 from ..repositories.daymeal_repository import DayMealRepository
 from ..repositories.menu_comment_repository import MenuCommentRepository
+from ..repositories.menu_like_repository import MenuLikeRepository
 
 logger = logging.getLogger(__name__)
 
@@ -31,21 +35,22 @@ logger = logging.getLogger(__name__)
 class CommentService(AbstractService):
     def __init__(self):
         self.__day_meal_repository = DayMealRepository()
+        self.__day_meal_deleted_repository = DayMealDeletedRepository()
         self.__menu_comment_repository = MenuCommentRepository()
+        self.__menu_like_repository = MenuLikeRepository()
         self.__comment_report_repository = CommentReportRepository()
         self.__comment_deleted_repository = CommentDeletedRepository()
+        self.__menu_service = MenuService()
 
     def add_comment(self, data: AddCommentRequestDto, user: User) -> CommentResponseDto:
-        exists, menus = self.__day_meal_repository.existByMenuId(menu_id=data.menu_id)
-        if not exists:
-            raise EmptyDataError(f"Menus with id '{data.menu_id}' are not exists")
-
+        menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(data.menu_id)
         menu_comment_model: MenuComment = self.__menu_comment_repository.save(
             menu_id=data.menu_id,
             comment=data.comment,
             user_id=user
         )
-        return CommentResponseDto(MenuCommentDto.from_model(menu_comment_model))
+        comment_dto: MenuCommentDto = MenuCommentDto.from_model(menu_comment_model)
+        return CommentResponseDto(comment_dto, menu_dto)
 
     def delete_comment(self, data: DeleteCommentRequestDto, user: User):
         exists, comments = self.__menu_comment_repository.existByCommentId(comment_id=data.comment_id)
@@ -64,25 +69,26 @@ class CommentService(AbstractService):
         return CommonStatusResponseDto(True)
 
     def get_comment_by_menu_id(self, data: GetCommentRequestDto) -> List[CommentResponseDto]:
-        exists, menus = self.__day_meal_repository.existByMenuId(menu_id=data.menu_id)
-        if not exists:
-            raise EmptyDataError(f"Menus with id '{data.menu_id}' are not exists")
-
         response: List[CommentResponseDto] = []
         exists, comments = self.__menu_comment_repository.existByMenuId(menu_id=data.menu_id)
         if not exists:
             return response
 
+        menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(data.menu_id)
         for comment in comments:
-            response.append(CommentResponseDto(MenuCommentDto.from_model(comment)))
+            comment_dto: MenuCommentDto = MenuCommentDto.from_model(comment)
+            response.append(CommentResponseDto(comment_dto, menu_dto))
 
         return response
 
     def get_comment_by_user(self, user: User) -> List[CommentResponseDto]:
         comment_models: QuerySet = self.__menu_comment_repository.findByUserId(user_id=user)
         response: List[CommentResponseDto] = []
-        for model in comment_models:
-            response.append(CommentResponseDto(MenuCommentDto.from_model(model)))
+        comment: MenuComment
+        for comment in comment_models:
+            menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(comment.menu_id)
+            comment_dto: MenuCommentDto = MenuCommentDto.from_model(comment)
+            response.append(CommentResponseDto(comment_dto, menu_dto))
 
         return response
 
@@ -91,8 +97,11 @@ class CommentService(AbstractService):
         if not exists:
             raise EmptyDataError(f"Comment with id '{data.comment_id}' is deleted or not exists.")
 
-        if data.report_type is ReportType.ETC and len(data.report_msg) == 0:
-            raise EmptyValueError(msg=f'reportMsg field is required with ReportType.ETC. But not given.')
+        if data.report_type is not ReportType.ETC:
+            data.report_msg = data.report_type.name
+        else:
+            if len(data.report_msg) == 0:
+                raise EmptyValueError(msg=f'reportMsg field is required with ReportType.ETC. But not given.')
 
         self.__comment_report_repository.save(
             comment_id=data.comment_id,
@@ -107,17 +116,22 @@ class CommentService(AbstractService):
         reported_comments: List[CommentReportDto] = [CommentReportDto.from_model(model) for model in self.__comment_report_repository.all()]
         response: List[ReportedCommentResponseDto] = []
         for r_comment in reported_comments:
-            exists, comment_models = self.__menu_comment_repository.existByCommentId(comment_id=r_comment.comment_id)
-            if not exists:
-                # find in deleted
-                deleted_comments: QuerySet = self.__comment_deleted_repository.findByCommentId(comment_id=r_comment.comment_id)
-                deleted_comment_model: CommentDeleted = deleted_comments[0]
-                deleted_comment_dto: CommentDeletedDto = CommentDeletedDto.from_model(deleted_comment_model)
-                deleted_comment_response: DeletedCommentResponseDto = DeletedCommentResponseDto(deleted_comment_dto)
-                response.append(ReportedCommentResponseDto(r_comment, deleted_comment_response))
-                continue
-            comment_model: MenuComment = comment_models[0]
-            comment_dto: MenuCommentDto = MenuCommentDto.from_model(comment_model)
-            comment_response: CommentResponseDto = CommentResponseDto(comment_dto)
-            response.append(ReportedCommentResponseDto(r_comment, comment_response))
+            comment_response_dto: CommentResponseDto = self.get_by_comment_id(r_comment.comment_id)
+            response.append(ReportedCommentResponseDto(r_comment, comment_response_dto))
         return response
+
+    def get_by_comment_id(self, comment_id: str) -> CommentResponseDto:
+        result: CommentResponseDto
+        exists, comments = self.__menu_comment_repository.existByCommentId(comment_id)
+        if not exists:
+            exists, deleted_comments = self.__comment_deleted_repository.existByCommentId(comment_id)
+            if not exists:
+                raise EmptyDataError(f"Comment with id '{comment_id}' is not exists")
+            deleted_dto = CommentDeletedDto.from_model(deleted_comments[0])
+            menu_dto = self.__menu_service.get_by_menu_id(deleted_dto.menu_id)
+            result = DeletedCommentResponseDto(deleted_dto, menu_dto)
+        else:
+            comment_dto = MenuCommentDto.from_model(comments[0])
+            menu_dto = self.__menu_service.get_by_menu_id(comment_dto.menu_id)
+            result = CommentResponseDto(comment_dto, menu_dto)
+        return result

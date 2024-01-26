@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Tuple
 
 from django.db.models import QuerySet
 
@@ -13,6 +14,10 @@ class CommentDeletedRepository(AbstractRepository):
     def findByCommentId(self, comment_id: str) -> QuerySet:
         data: QuerySet = self.manager.filter(comment_id=comment_id)
         return data
+
+    def existByCommentId(self, comment_id: str) -> Tuple[bool, QuerySet]:
+        data: QuerySet = self.findByCommentId(comment_id)
+        return data.exists(), data
 
     # override
     def save(self, comment_id: str, menu_id: str, commenter: User, comment: str, commented_at: datetime) -> CommentDeleted:
