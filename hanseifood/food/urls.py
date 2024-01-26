@@ -34,6 +34,6 @@ urlpatterns = [
 
     # /views/like_views
     path('likes', like_views.toggle_like, name='toggle_like'),
-    path('likes/menu', like_views.count_likes_by_menu_id, name='count_like')
-
+    path('likes/menu', like_views.count_likes_by_menu_id, name='count_like'),
+    path('likes/user', like_views.get_liked_menus_by_user, name='liked_menus')
 ]

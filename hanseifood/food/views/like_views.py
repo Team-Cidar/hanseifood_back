@@ -31,6 +31,7 @@ def toggle_like(request, data: LikeRequestDto, user: User) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
+# /likes/menu GET
 @api_view(['GET'])
 @deserialize
 def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
@@ -45,7 +46,9 @@ def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
+# /likes/user GET
 @api_view(['GET'])
+@require_auth()
 def get_liked_menus_by_user(request, user: User) -> HttpResponse:
     try:
         response = like_service.get_liked_menus_by_user(user=user)

@@ -41,6 +41,7 @@ def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
         return ErrorResponse.response(e, 500)
 
 
+# /back/menus DELETE
 @require_auth([UserRole.ADMIN])
 @deserialize
 def delete_menu(request, data: DeleteMenuRequestDto) -> HttpResponse:
