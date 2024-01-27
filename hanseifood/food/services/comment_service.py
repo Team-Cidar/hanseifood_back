@@ -76,6 +76,8 @@ class CommentService(AbstractService):
             comment_dto: MenuCommentDto = MenuCommentDto.from_model(comment)
             response.append(CommentResponseDto(comment_dto, menu_dto))
 
+        response.sort(key=lambda dto: dto.commented_at)
+
         return PagingResponseDto(page, response)
 
     def get_comment_by_user(self, user: User, paging_data: PagingDto) -> PagingResponseDto:
@@ -88,6 +90,8 @@ class CommentService(AbstractService):
             menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(comment.menu_id)
             comment_dto: MenuCommentDto = MenuCommentDto.from_model(comment)
             response.append(CommentResponseDto(comment_dto, menu_dto))
+
+        response.sort(key=lambda dto:dto.commented_at)
 
         return PagingResponseDto(page, response)
 

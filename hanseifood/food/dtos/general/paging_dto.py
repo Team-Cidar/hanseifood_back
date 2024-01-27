@@ -13,7 +13,7 @@ class PagingDto(Dto):
 class PagingResponseDto(Dto):
     def __init__(self, page: Page, data: List[Dto]):
         paginator: Paginator = page.paginator
+        self.datas: List[Dto] = data
         self.page_size: int = paginator.per_page
         self.page_no: int = page.number
         self.max_page: int = paginator.num_pages
-        self.datas: List[Dto] = data
