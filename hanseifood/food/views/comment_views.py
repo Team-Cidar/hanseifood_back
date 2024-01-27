@@ -58,10 +58,13 @@ def delete_comment(request, data: DeleteCommentRequestDto, user: User) -> HttpRe
 
 # /comments/menus GET
 @deserialize
-def get_comment_by_menu_id(request, data: GetCommentRequestDto) -> HttpResponse:
+@paging()
+def get_comment_by_menu_id(request, data: GetCommentRequestDto, paging_data: PagingDto) -> HttpResponse:
     try:
-        response = comment_service.get_comment_by_menu_id(data=data)
+        response = comment_service.get_comment_by_menu_id(data=data, paging_data=paging_data)
         return DtoResponse.response(response, 200)
+    except EmptyPage as e:
+        return ErrorResponse.response(e, 400)
     except EmptyDataError as e:
         return ErrorResponse.response(e, 404)
     except NotDtoClassError as e:
@@ -73,7 +76,7 @@ def get_comment_by_menu_id(request, data: GetCommentRequestDto) -> HttpResponse:
 # /comments/menus/users GET
 @api_view(['GET'])
 @require_auth()
-@paging
+@paging()
 def get_comment_by_user(request, user: User, paging_data: PagingDto) -> HttpResponse:
     try:
         response = comment_service.get_comment_by_user(user=user, paging_data=paging_data)
