@@ -4,6 +4,8 @@ from rest_framework.decorators import api_view
 from ..core.decorators.deserialize_decorator import deserialize
 from ..core.decorators.authentication_decorator import require_auth
 from ..core.decorators.multi_method_decorator import multi_methods
+from ..core.decorators.paging_decorator import paging
+from ..dtos.general.paging_dto import PagingDto
 from ..dtos.requests.add_comment_request_dto import AddCommentRequestDto
 from ..dtos.requests.delete_comment_request_dto import DeleteCommentRequestDto
 from ..dtos.requests.get_comment_request_dto import GetCommentRequestDto
@@ -70,7 +72,8 @@ def get_comment_by_menu_id(request, data: GetCommentRequestDto) -> HttpResponse:
 # /comments/menus/users GET
 @api_view(['GET'])
 @require_auth()
-def get_comment_by_user(request, user: User) -> HttpResponse:
+@paging
+def get_comment_by_user(request, user: User, paging_data: PagingDto) -> HttpResponse:
     try:
         response = comment_service.get_comment_by_user(user=user)
         return DtoResponse.response(response, 200)
