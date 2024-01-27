@@ -1,3 +1,4 @@
+from django.core.paginator import EmptyPage
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 
@@ -75,8 +76,10 @@ def get_comment_by_menu_id(request, data: GetCommentRequestDto) -> HttpResponse:
 @paging
 def get_comment_by_user(request, user: User, paging_data: PagingDto) -> HttpResponse:
     try:
-        response = comment_service.get_comment_by_user(user=user)
+        response = comment_service.get_comment_by_user(user=user, paging_data=paging_data)
         return DtoResponse.response(response, 200)
+    except EmptyPage as e:
+        return ErrorResponse.response(e, 400)
     except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
     except Exception as e:

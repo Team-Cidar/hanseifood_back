@@ -3,6 +3,7 @@ from typing import Tuple
 from django.db.models import QuerySet
 
 from .abstract_repository import AbstractRepository
+from ..dtos.general.paging_dto import PagingDto
 from ..models import MenuComment, User
 
 

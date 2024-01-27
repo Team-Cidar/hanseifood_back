@@ -1,6 +1,8 @@
+from django.core.paginator import Paginator
 from django.db.models import Model, Manager, QuerySet
 
 from ..core.patterns.singleton_cls import Singleton
+from ..dtos.general.paging_dto import PagingDto
 
 
 class AbstractRepository(metaclass=Singleton):
@@ -24,6 +26,10 @@ class AbstractRepository(metaclass=Singleton):
         model: Model
         for model in models:
             model.delete()
+
+    def get_page(self, data: QuerySet, paging_data: PagingDto):
+        paginator = Paginator(data, paging_data.page_size)
+        return paginator.page(paging_data.page_no)
 
     # abstract method
     def save(self, *args, **kwargs) -> Model:

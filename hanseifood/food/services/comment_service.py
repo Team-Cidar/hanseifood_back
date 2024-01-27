@@ -1,10 +1,12 @@
 import logging
 from typing import List
 
+from django.core.paginator import Paginator, Page
 from django.db.models import QuerySet
 
 from .abstract_service import AbstractService
 from .menu_service import MenuService
+from ..dtos.general.paging_dto import PagingDto, PagingResponseDto
 from ..dtos.model_mapped.comment_deleted_dto import CommentDeletedDto
 from ..dtos.model_mapped.comment_report_dto import CommentReportDto
 from ..dtos.model_mapped.menu_comment_dto import MenuCommentDto
@@ -75,16 +77,18 @@ class CommentService(AbstractService):
 
         return response
 
-    def get_comment_by_user(self, user: User) -> List[CommentResponseDto]:
+    def get_comment_by_user(self, user: User, paging_data: PagingDto) -> PagingResponseDto:
         comments: QuerySet = self.__menu_comment_repository.findByUserId(user_id=user)
+        page: Page = self.__menu_comment_repository.get_page(comments, paging_data)
+
         response: List[CommentResponseDto] = []
         comment: MenuComment
-        for comment in comments:
+        for comment in page.object_list:
             menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(comment.menu_id)
             comment_dto: MenuCommentDto = MenuCommentDto.from_model(comment)
             response.append(CommentResponseDto(comment_dto, menu_dto))
 
-        return response
+        return PagingResponseDto(page, response)
 
     def report_comment(self, data: ReportCommentRequestDto, user: User) -> CommonStatusResponseDto:
         exists, comments = self.__menu_comment_repository.existByCommentId(data.comment_id)
