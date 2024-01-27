@@ -95,18 +95,17 @@ class BackOfficeService(AbstractService):
         menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(data.menu_id)
         if menu_dto.deleted:
             raise InadequateDataError("Target menu is not current menu")
-        response: List[MenuByIdResponseDto] = []
+        response: List[MenuByIdResponseDto] = [menu_dto]
 
         day: Day = self.__day_repository.findByDate(date=datetime.strptime(menu_dto.date, '%Y-%m-%d'))[0]
         deleted_menus: QuerySet = self.__day_meal_deleted_repository.findByDayIdAndMenuType(day_id=day, menu_type=menu_dto.menu_type)
 
+        sorted_deleted_menus: QuerySet = deleted_menus.order_by('deleted_at').reverse()
+
         deleted_menu: DayMealDeleted
-        for deleted_menu in deleted_menus:
+        for deleted_menu in sorted_deleted_menus:
             response.append(self.__menu_service.get_by_menu_id(deleted_menu.menu_id))
 
-        # sort
-        response.sort(key=lambda dto: dto.deleted_at, reverse=True)
-        response.insert(0, menu_dto)
         return response
 
     def get_excel_file(self, data: GetExcelFileRequestDto):
