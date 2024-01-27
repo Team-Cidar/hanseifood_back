@@ -1,8 +1,11 @@
 import logging
 from typing import List
 
+from django.core.paginator import Page
+
 from .abstract_service import AbstractService
 from .menu_service import MenuService
+from ..dtos.general.paging_dto import PagingDto, PagingResponseDto
 from ..dtos.model_mapped.menu_like_dto import MenuLikeDto
 from ..dtos.requests.like_request_dto import LikeRequestDto
 from ..dtos.responses.count_like_response_dto import CountLikeResponseDto
@@ -41,14 +44,15 @@ class LikeService(AbstractService):
         like_count: int = self.__menu_like_repository.countByMenuId(menu_id=data.menu_id)
         return CountLikeResponseDto(menu_id=data.menu_id, like_count=like_count)
 
-    def get_liked_menus_by_user(self, user: User) -> List[MenuByIdResponseDto]:
+    def get_liked_menus_by_user(self, user: User, paging_data: PagingDto) -> PagingResponseDto:
         response: List[MenuByIdResponseDto] = []
         exists, menu_likes = self.__menu_like_repository.existByUserId(user_id=user)
+        page: Page = self.__menu_like_repository.get_page(menu_likes, paging_data)
         if not exists:
-            return response
+            return PagingResponseDto(page, response)
 
         for menu_like in menu_likes:
             menu_like_dto: MenuLikeDto = MenuLikeDto.from_model(menu_like)
             menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(menu_like_dto.menu_id)
             response.append(menu_dto)
-        return response
+        return PagingResponseDto(page, response)

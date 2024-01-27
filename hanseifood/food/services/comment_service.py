@@ -113,13 +113,17 @@ class CommentService(AbstractService):
 
         return CommonStatusResponseDto(True)
 
-    def get_reported_comments(self) -> List[ReportedCommentResponseDto]:
-        reported_comments_dto: List[CommentReportDto] = [CommentReportDto.from_model(model) for model in self.__comment_report_repository.all()]
+    def get_reported_comments(self, paging_data: PagingDto) -> PagingResponseDto:
+        sorted_reported_comments: QuerySet = self.__comment_report_repository.all().order_by('reported_at').reverse()
+        page: Page = self.__comment_report_repository.get_page(sorted_reported_comments, paging_data)
+
+        reported_comments_dto: List[CommentReportDto] = [CommentReportDto.from_model(model) for model in page.object_list]
         response: List[ReportedCommentResponseDto] = []
         for r_comment_dto in reported_comments_dto:
             comment_response_dto: CommentResponseDto = self.get_by_comment_id(r_comment_dto.comment_id)
             response.append(ReportedCommentResponseDto(r_comment_dto, comment_response_dto))
-        return response
+
+        return PagingResponseDto(page, response)
 
     def get_by_comment_id(self, comment_id: str) -> CommentResponseDto:
         result: CommentResponseDto

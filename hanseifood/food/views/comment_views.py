@@ -108,9 +108,10 @@ def report_comment(request, data: ReportCommentRequestDto, user: User) -> HttpRe
 
 # /comments/report GET
 @require_auth([UserRole.ADMIN])
-def get_reported_comment(request) -> HttpResponse:
+@paging()
+def get_reported_comment(request, paging_data: PagingDto) -> HttpResponse:
     try:
-        response = comment_service.get_reported_comments()
+        response = comment_service.get_reported_comments(paging_data=paging_data)
         return DtoResponse.response(response, 200)
     except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)

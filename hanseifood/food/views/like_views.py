@@ -4,6 +4,8 @@ from rest_framework.decorators import api_view
 from ..core.decorators.deserialize_decorator import deserialize
 from ..core.decorators.authentication_decorator import require_auth
 from ..core.decorators.multi_method_decorator import multi_methods
+from ..core.decorators.paging_decorator import paging
+from ..dtos.general.paging_dto import PagingDto
 from ..dtos.requests.like_request_dto import LikeRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotDtoClassError
@@ -48,9 +50,10 @@ def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
 # /likes/menus/user GET
 @api_view(['GET'])
 @require_auth()
-def get_liked_menus_by_user(request, user: User) -> HttpResponse:
+@paging()
+def get_liked_menus_by_user(request, user: User, paging_data: PagingDto) -> HttpResponse:
     try:
-        response = like_service.get_liked_menus_by_user(user=user)
+        response = like_service.get_liked_menus_by_user(user=user, paging_data=paging_data)
         return DtoResponse.response(response, 200)
     except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)
