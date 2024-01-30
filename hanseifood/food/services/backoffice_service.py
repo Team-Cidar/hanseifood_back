@@ -1,7 +1,7 @@
 from datetime import datetime, date as Date
 import logging
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 import openpyxl
 from django.db.models import QuerySet
 from openpyxl.styles import Alignment
@@ -12,6 +12,8 @@ from .abstract_service import AbstractService
 from .menu_service import MenuService
 from ..core.utils import date_utils, os_utils
 from ..core.utils.string_utils import parse_str_to_list
+from ..dtos.model_mapped.day_meal_deleted_dto import DayMealDeletedDto
+from ..dtos.model_mapped.day_meal_dto import DayMealDto
 from ..dtos.requests.add_menu_request_dto import AddMenuRequestDto
 from ..dtos.requests.delete_menu_request_dto import DeleteMenuRequestDto
 from ..dtos.requests.get_excel_file_request_dto import GetExcelFileRequestDto
@@ -92,19 +94,32 @@ class BackOfficeService(AbstractService):
         return CommonStatusResponseDto()
 
     def get_menu_history(self, data: GetMenuHistoryRequestDto) -> List[MenuByIdResponseDto]:
-        menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(data.menu_id)
-        if menu_dto.deleted:
-            raise InadequateDataError("Target menu is not current menu")
-        response: List[MenuByIdResponseDto] = [menu_dto]
+        response: List[MenuByIdResponseDto] = []
+        # day meal에서 찾기, deleted에서 찾기
+        exists, days = self.__day_repository.existByDate(datetime.strptime(data.date, '%Y-%m-%d'))
+        if not exists:
+            raise EmptyDataError(f"{data.date}'s menu is not exists")
+        day: Day = days[0]
 
-        day: Day = self.__day_repository.findByDate(date=datetime.strptime(menu_dto.date, '%Y-%m-%d'))[0]
-        deleted_menus: QuerySet = self.__day_meal_deleted_repository.findByDayIdAndMenuType(day_id=day, menu_type=menu_dto.menu_type)
+        menu_dtos: List[DayMealDto] = [DayMealDto.from_model(menu) for menu in self.__day_meal_repository.findByDayIdAndMenuType(day, data.menu_type)]
+        response.append(self.__menu_service.get_menu_by_day_meal_dto(menu_dtos, False))
 
-        sorted_deleted_menus: QuerySet = deleted_menus.order_by('deleted_at').reverse()
+        menu_history: QuerySet = self.__day_meal_deleted_repository.findByDayIdAndMenuType(day, data.menu_type)
+        deleted_menu_dict: Dict[str, List[DayMealDeleted]] = {}
 
         deleted_menu: DayMealDeleted
-        for deleted_menu in sorted_deleted_menus:
-            response.append(self.__menu_service.get_by_menu_id(deleted_menu.menu_id))
+        for deleted_menu in menu_history:
+            if deleted_menu.menu_id not in deleted_menu_dict.keys():
+                deleted_menu_dict[deleted_menu.menu_id] = [deleted_menu]
+            else:
+                deleted_menu_dict[deleted_menu.menu_id].append(deleted_menu)
+
+        deleted_menus_set = list(deleted_menu_dict.values())
+        deleted_menus_set.sort(key=lambda x: x[0].deleted_at, reverse=True)
+
+        for deleted_menus in deleted_menus_set:
+            deleted_menu_dtos: List[DayMealDeletedDto] = [DayMealDeletedDto.from_model(item) for item in deleted_menus]
+            response.append(self.__menu_service.get_menu_by_day_meal_dto(deleted_menu_dtos, True))
 
         return response
 

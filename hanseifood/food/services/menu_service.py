@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 import logging
 
-from typing import List
+from typing import List, Union
 
 from .abstract_service import AbstractService
 from ..core.utils import date_utils
@@ -77,6 +77,22 @@ class MenuService(AbstractService):
                 comment_count=comment_count
             )
         return menu_dto
+
+    def get_menu_by_day_meal_dto(self, dtos, deleted: bool):
+        menu_id: str = dtos[0].menu_id
+        like_count: int = self.__menu_like_repository.countByMenuId(menu_id)
+        comment_count: int = self.__menu_comment_repository.countByMenuId(menu_id)
+        if deleted:
+            return DeletedMenuByIdResponseDto(
+                deleted_menu_dtos=dtos,
+                like_count=like_count,
+                comment_count=comment_count
+            )
+        return MenuByIdResponseDto(
+            day_meal_dtos=dtos,
+            like_count=like_count,
+            comment_count=comment_count
+        )
 
     def __get_daily_menus(self, date: datetime) -> MenuResponseDto:
         weekday_kor: str = date_utils.get_weekday_kor(date)

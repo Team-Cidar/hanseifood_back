@@ -1,5 +1,7 @@
 from ..abstract_dto import Dto
+from ...enums.menu_enums import MenuType
 
 
 class GetMenuHistoryRequestDto(Dto):
-    menu_id: str
+    date: str
+    menu_type: MenuType

@@ -56,5 +56,4 @@ class LikeService(AbstractService):
             menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(menu_like_dto.menu_id)
             response.append(menu_dto)
 
-        print(response)
         return PagingResponseDto(page, response)
