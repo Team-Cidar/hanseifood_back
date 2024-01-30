@@ -51,8 +51,10 @@ class LikeService(AbstractService):
         if not exists:
             return PagingResponseDto(page, response)
 
-        for menu_like in menu_likes:
+        for menu_like in page.object_list:
             menu_like_dto: MenuLikeDto = MenuLikeDto.from_model(menu_like)
             menu_dto: MenuByIdResponseDto = self.__menu_service.get_by_menu_id(menu_like_dto.menu_id)
             response.append(menu_dto)
+
+        print(response)
         return PagingResponseDto(page, response)
