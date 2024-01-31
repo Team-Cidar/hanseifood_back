@@ -95,14 +95,14 @@ class BackOfficeService(AbstractService):
 
     def get_menu_history(self, data: GetMenuHistoryRequestDto) -> List[MenuByIdResponseDto]:
         response: List[MenuByIdResponseDto] = []
-        # day meal에서 찾기, deleted에서 찾기
         exists, days = self.__day_repository.existByDate(datetime.strptime(data.date, '%Y-%m-%d'))
         if not exists:
             raise EmptyDataError(f"{data.date}'s menu is not exists")
         day: Day = days[0]
 
         menu_dtos: List[DayMealDto] = [DayMealDto.from_model(menu) for menu in self.__day_meal_repository.findByDayIdAndMenuType(day, data.menu_type)]
-        response.append(self.__menu_service.get_menu_by_day_meal_dto(menu_dtos, False))
+        if len(menu_dtos) > 0:
+            response.append(self.__menu_service.get_menu_by_day_meal_dto(menu_dtos, False))
 
         menu_history: QuerySet = self.__day_meal_deleted_repository.findByDayIdAndMenuType(day, data.menu_type)
         deleted_menu_dict: Dict[str, List[DayMealDeleted]] = {}
