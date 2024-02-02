@@ -6,6 +6,7 @@ from ..core.decorators.authentication_decorator import require_auth
 from ..core.decorators.multi_method_decorator import multi_methods
 from ..core.decorators.paging_decorator import paging
 from ..dtos.general.paging_dto import PagingDto
+from ..dtos.requests.check_liked_request_dto import CheckLikedRequestDto
 from ..dtos.requests.like_request_dto import LikeRequestDto
 from ..exceptions.data_exceptions import EmptyDataError
 from ..exceptions.type_exceptions import NotDtoClassError
@@ -34,6 +35,20 @@ def toggle_like(request, data: LikeRequestDto, user: User) -> HttpResponse:
 
 
 # /likes/menus GET
+@require_auth()
+@deserialize
+def check_liked_by_user(request, user: User, data: CheckLikedRequestDto):
+    try:
+        response = like_service.check_liked(user, data.menu_id)
+        return DtoResponse.response(response, 200)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
+    except Exception as e:
+        return ErrorResponse.response(e, 500)
+
+
+# /likes/menus/count GET
+@api_view(['GET'])
 @deserialize
 def count_likes_by_menu_id(request, data: LikeRequestDto) -> HttpResponse:
     try:
@@ -62,6 +77,6 @@ def get_liked_menus_by_user(request, user: User, paging_data: PagingDto) -> Http
 
 
 @api_view(['GET', 'POST'])
-@multi_methods(GET=count_likes_by_menu_id, POST=toggle_like)
+@multi_methods(GET=check_liked_by_user, POST=toggle_like)
 def like_multi_methods_acceptor():
     pass

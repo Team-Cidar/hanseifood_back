@@ -8,6 +8,7 @@ from .menu_service import MenuService
 from ..dtos.general.paging_dto import PagingDto, PagingResponseDto
 from ..dtos.model_mapped.menu_like_dto import MenuLikeDto
 from ..dtos.requests.like_request_dto import LikeRequestDto
+from ..dtos.responses.check_liked_response_dto import CheckLikedResponseDto
 from ..dtos.responses.count_like_response_dto import CountLikeResponseDto
 from ..dtos.responses.menu_by_id_response_dto import MenuByIdResponseDto
 from ..dtos.responses.toggle_like_response_dto import ToggleLikeResponseDto
@@ -57,3 +58,7 @@ class LikeService(AbstractService):
             response.append(menu_dto)
 
         return PagingResponseDto(page, response)
+
+    def check_liked(self, user: User, menu_id: str) -> CheckLikedResponseDto:
+        exists, _ = self.__menu_like_repository.existByMenuIdAndUserId(menu_id=menu_id, user_id=user)
+        return CheckLikedResponseDto(exists)
