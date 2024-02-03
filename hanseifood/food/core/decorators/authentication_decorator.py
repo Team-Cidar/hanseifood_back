@@ -21,11 +21,13 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
         def authenticate(request: Request) -> Tuple[User, AccessToken]:
             return jwt.jwt_authenticate(request)
 
-        def authorize(token: AccessToken):
+        def authorize(token: AccessToken, user: User):
             if len(roles) == 0:
                 return
             payload: dict = token.payload
             role: UserRole = UserRole.from_value(payload['role'])
+            if role.value != str(user.role):
+                raise InvalidTokenError("User's role and role in jwt is not same. Please sign in again.")
             if role not in roles:
                 raise PermissionDeniedError(f"User's role is '{role}'. But this api required {[str(item) for item in roles]}")
 
@@ -35,7 +37,7 @@ def require_auth(roles: List[UserRole] = UserRole.get_all()):
 
                 request: Request = get_request_from_args(*args)
                 user, token = authenticate(request)
-                authorize(token)
+                authorize(token, user)
 
                 if exists_user_key:
                     kwargs['user'] = user  # allow access to user info in token by using 'user' keyword in view method
