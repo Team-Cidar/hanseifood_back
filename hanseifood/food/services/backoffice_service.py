@@ -25,7 +25,9 @@ from ..dtos.responses.menu_modification_response_dto import MenuModificationResp
 from ..dtos.responses.menu_response_dto import MenuResponseDto
 from ..dtos.general.daily_menu import DailyMenuDto
 from ..enums.menu_enums import MenuType
+from ..enums.role_enums import UserRole
 from ..exceptions.data_exceptions import EmptyDataError
+from ..exceptions.jwt_exceptions import PermissionDeniedError
 from ..exceptions.request_exceptions import WeekendDateError, PastDateModificationError, InadequateDataError
 from ..repositories.daymeal_deleted_repository import DayMealDeletedRepository
 from ..repositories.daymeal_repository import DayMealRepository
@@ -150,10 +152,13 @@ class BackOfficeService(AbstractService):
 
         return f"datas/{file_name}"
 
-    def modify_user_role(self, data: ModifyUserRoleRequestDto) -> CommonStatusResponseDto:
+    def modify_user_role(self, data: ModifyUserRoleRequestDto, requestUser: User) -> CommonStatusResponseDto:
         exists, users = self.__user_repository.existsByKakaoId(kakao_id=data.user_id)
         if not exists:
             raise EmptyDataError(f"There's no such user 'kakao_id={data.user_id}'")
+
+        if requestUser.role == UserRole.MANAGER.value and data.role == UserRole.ADMIN.value:
+            raise PermissionDeniedError("Manager can't modify user's role as ADMIN")
 
         user: User = users[0]
         if user.role == data.role.value:

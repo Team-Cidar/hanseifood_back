@@ -13,8 +13,10 @@ from ..dtos.responses.common_status_response_dto import CommonStatusResponseDto
 from ..dtos.responses.menu_modification_response_dto import MenuModificationResponseDto
 from ..enums.role_enums import UserRole
 from ..exceptions.data_exceptions import EmptyDataError
+from ..exceptions.jwt_exceptions import PermissionDeniedError
 from ..exceptions.type_exceptions import NotDtoClassError
 from ..exceptions.request_exceptions import WeekendDateError, PastDateModificationError
+from ..models import User
 from ..services.backoffice_service import BackOfficeService
 from ..responses.error_response import ErrorResponse
 from ..responses.dto_response import DtoResponse
@@ -24,7 +26,7 @@ backoffice_service: BackOfficeService = BackOfficeService()
 
 
 # /back/menus POST
-@require_auth([UserRole.ADMIN])
+@require_auth([UserRole.ADMIN, UserRole.MANAGER])
 @deserialize
 def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
     try:
@@ -43,7 +45,7 @@ def add_menu(request: HttpRequest, data: AddMenuRequestDto) -> HttpResponse:
 
 
 # /back/menus DELETE
-@require_auth([UserRole.ADMIN])
+@require_auth([UserRole.ADMIN, UserRole.MANAGER])
 @deserialize
 def delete_menu(request, data: DeleteMenuRequestDto) -> HttpResponse:
     try:
@@ -59,7 +61,7 @@ def delete_menu(request, data: DeleteMenuRequestDto) -> HttpResponse:
 
 # /back/menus/excel? GET
 @api_view(['GET'])
-@require_auth([UserRole.ADMIN])
+@require_auth([UserRole.ADMIN, UserRole.MANAGER])
 @deserialize
 def get_excel_file(request: HttpRequest, data: GetExcelFileRequestDto) -> HttpResponse:
     try:
@@ -71,7 +73,7 @@ def get_excel_file(request: HttpRequest, data: GetExcelFileRequestDto) -> HttpRe
 
 # /back/menus/history
 @api_view(['GET'])
-@require_auth([UserRole.ADMIN])
+@require_auth([UserRole.ADMIN, UserRole.MANAGER])
 @deserialize
 def get_menu_modification_history(request, data: GetMenuHistoryRequestDto) -> HttpResponse:
     try:
@@ -87,12 +89,14 @@ def get_menu_modification_history(request, data: GetMenuHistoryRequestDto) -> Ht
 
 # /back/users/role POST
 @api_view(['POST'])
-@require_auth([UserRole.ADMIN])
+@require_auth([UserRole.ADMIN, UserRole.MANAGER])
 @deserialize
-def modify_user_role(request, data: ModifyUserRoleRequestDto) -> HttpResponse:
+def modify_user_role(request, data: ModifyUserRoleRequestDto, user: User) -> HttpResponse:
     try:
-        response: CommonStatusResponseDto = backoffice_service.modify_user_role(data)
+        response: CommonStatusResponseDto = backoffice_service.modify_user_role(data, user)
         return DtoResponse.response(response)
+    except PermissionDeniedError as e:
+        return ErrorResponse.response(e, 403)
     except EmptyDataError as e:
         return ErrorResponse.response(e, 404)
     except NotDtoClassError as e:
