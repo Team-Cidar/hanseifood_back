@@ -13,13 +13,10 @@ urlpatterns = [
     path('menus/target', menu_views.get_target_days_menu, name='target_menu'),
     path('menus/<str:menu_id>', menu_views.get_menus_by_id, name='menu_by_id'),
 
-    # /view/login_views
-    path("login", user_views.try_login, name='try_login'),
-    path("signup", user_views.create_user, name="create_user"),
-    path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
-
     # /view/user_views
-    # path('users', user_views.try_login, name='get_users'),
+    path("users/login", user_views.try_login, name='try_login'),
+    path("users", user_views.users_multi_methods_acceptor, name="create_get_user"),  # GET POST
+    path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
 
     # /views/ticket_views
     path('tickets/validate/<str:ticket_id>', ticket_views.get_ticket_validation, name='validate_ticket'),

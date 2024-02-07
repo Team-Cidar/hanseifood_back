@@ -1,6 +1,12 @@
+from typing import List
+
+from django.core.paginator import Page
+from django.db.models import QuerySet
+
 from .abstract_service import AbstractService
 from ..core.apis.kakao import KakaoApi
 from ..core.utils import jwt_utils as jwt
+from ..dtos.general.paging_dto import PagingDto, PagingResponseDto
 from ..dtos.model_mapped.user_dto import UserDto
 from ..dtos.requests.kakao_login_request_dto import KakaoLoginRequestDto
 from ..dtos.requests.kakao_signup_request_dto import KakaoSignupRequestDto
@@ -45,6 +51,15 @@ class UserService(AbstractService):
             kakao_id=data.kakao_id,
             role=UserRole.get_default_role())
         return self.__allow_login(user)
+
+    def get_users(self, paging_data: PagingDto) -> PagingResponseDto:
+        response: List[UserDto]
+        users: QuerySet = self.__user_repository.all()
+        sorted_users: QuerySet = users.order_by('created_at')
+        page: Page = self.__user_repository.get_page(sorted_users, paging_data)
+
+        response = [UserDto.from_model(user) for user in page.object_list]
+        return PagingResponseDto(page, response)
 
     def __allow_login(self, user: User) -> UserLoginResponseDto:
         user = self.__user_repository.modifyLastLoginByUser(user)
