@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenVerifyView
 
-from .views import base_views, menu_views, ticket_views, login_views, backoffice_views, comment_views, like_views
+from .views import base_views, menu_views, ticket_views, user_views, backoffice_views, comment_views, like_views
 
 urlpatterns = [
     # /views/base_views
@@ -14,9 +14,12 @@ urlpatterns = [
     path('menus/<str:menu_id>', menu_views.get_menus_by_id, name='menu_by_id'),
 
     # /view/login_views
-    path("login", login_views.try_login, name='try_login'),
-    path("signup", login_views.create_user, name="create_user"),
+    path("login", user_views.try_login, name='try_login'),
+    path("signup", user_views.create_user, name="create_user"),
     path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
+
+    # /view/user_views
+    # path('users', user_views.try_login, name='get_users'),
 
     # /views/ticket_views
     path('tickets/validate/<str:ticket_id>', ticket_views.get_ticket_validation, name='validate_ticket'),

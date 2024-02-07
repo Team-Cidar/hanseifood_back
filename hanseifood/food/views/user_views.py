@@ -10,9 +10,9 @@ from ..exceptions.request_exceptions import MissingFieldError
 from ..exceptions.type_exceptions import NotDtoClassError
 from ..responses.error_response import ErrorResponse
 from ..responses.dto_response import DtoResponse
-from ..services.login_service import LoginService
+from ..services.user_service import UserService
 
-login_service = LoginService()
+login_service = UserService()
 
 # /login POST
 @api_view(['POST'])

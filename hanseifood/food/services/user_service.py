@@ -11,7 +11,7 @@ from ..models import User
 from ..repositories.user_respository import UserRepository
 
 
-class LoginService(AbstractService):
+class UserService(AbstractService):
     def __init__(self):
         self.__user_repository = UserRepository()
 
