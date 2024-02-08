@@ -16,6 +16,7 @@ urlpatterns = [
     # /view/user_views
     path("users/login", user_views.try_login, name='try_login'),
     path("users", user_views.users_multi_methods_acceptor, name="create_get_user"),  # GET POST
+    path("users/validate", user_views.check_modified, name="check_user_updated"),
     path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
 
     # /views/ticket_views

@@ -13,6 +13,7 @@ from ..enums.role_enums import UserRole
 from ..exceptions.data_exceptions import AlreadyExistsError
 from ..exceptions.request_exceptions import MissingFieldError
 from ..exceptions.type_exceptions import NotDtoClassError
+from ..models import User
 from ..responses.error_response import ErrorResponse
 from ..responses.dto_response import DtoResponse
 from ..services.user_service import UserService
@@ -56,6 +57,17 @@ def create_user(request, data: KakaoSignupRequestDto) -> HttpResponse:
 def get_users(request, paging_data: PagingDto):
     try:
         response = user_service.get_users(paging_data)
+        return DtoResponse.response(response, 200)
+    except NotDtoClassError as e:
+        return ErrorResponse.response(e, 500)
+    except Exception as e:
+        return ErrorResponse.response(e, 500)
+
+@api_view(['GET'])
+@require_auth()
+def check_modified(request, user: User):
+    try:
+        response = user_service.check_modified(user)
         return DtoResponse.response(response, 200)
     except NotDtoClassError as e:
         return ErrorResponse.response(e, 500)

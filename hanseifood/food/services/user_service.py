@@ -10,6 +10,7 @@ from ..dtos.general.paging_dto import PagingDto, PagingResponseDto
 from ..dtos.model_mapped.user_dto import UserDto
 from ..dtos.requests.kakao_login_request_dto import KakaoLoginRequestDto
 from ..dtos.requests.kakao_signup_request_dto import KakaoSignupRequestDto
+from ..dtos.responses.check_user_updated_response_dto import CheckUserUpdatedResponseDto
 from ..dtos.responses.user_login_response_dto import UserLoginResponseDto
 from ..enums.role_enums import UserRole
 from ..exceptions.data_exceptions import AlreadyExistsError
@@ -60,6 +61,13 @@ class UserService(AbstractService):
 
         response = [UserDto.from_model(user) for user in page.object_list]
         return PagingResponseDto(page, response)
+
+    def check_modified(self, user: User) -> CheckUserUpdatedResponseDto:
+        user: User = self.__user_repository.findByKakaoId(user.kakao_id)[0]
+        if user.last_login < user.updated_at:
+            return CheckUserUpdatedResponseDto(self.__allow_login(user))
+        return CheckUserUpdatedResponseDto()
+
 
     def __allow_login(self, user: User) -> UserLoginResponseDto:
         user = self.__user_repository.modifyLastLoginByUser(user)
