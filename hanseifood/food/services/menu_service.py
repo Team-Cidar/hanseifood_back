@@ -36,7 +36,9 @@ class MenuService(AbstractService):
     def get_today_menu(self) -> MenuResponseDto:
         return self.get_target_days_menu(datetime.today())
 
-    def get_weekly_menu(self, date: datetime = datetime.today()) -> MenuResponseDto:
+    def get_weekly_menu(self, date: datetime = None) -> MenuResponseDto:
+        if date == None:
+            date = datetime.today()
         this_week: List[datetime] = date_utils.get_dates_in_this_week(today=date)
 
         response: MenuResponseDto = MenuResponseDto()
