@@ -39,7 +39,8 @@ services:
       - TZ=Asia/Seoul
 
 networks:
-  django-network:
+  ws_proxy:
+    external: true
 
 volumes:
   mysql-data:
