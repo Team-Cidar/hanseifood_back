@@ -11,7 +11,7 @@ services:
       MYSQL_USER: hansei
       MYSQL_PASSWORD: hansei_food
     networks:
-      - django-network
+      - ws_proxy
     healthcheck:
       test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD']
       interval: 10s
@@ -34,7 +34,7 @@ services:
       mysql:
         condition: service_healthy
     networks:
-      - django-network
+      - ws_proxy
     environment:
       - TZ=Asia/Seoul
 
